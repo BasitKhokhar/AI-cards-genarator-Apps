@@ -11,7 +11,7 @@ const SplashScreen2 = ({ onNext }) => {
       {/* Top Image with gradient overlay */}
       <View style={styles.topcontainer}>
         <ImageBackground
-          source={require("../../../assets/splash1.jpg")}
+          source={require("../../../assets/splash11.jpg")}
           style={styles.image}
         >
           {/* Gradient Overlay at bottom */}
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
   },
   topcontainer: {
     width: "100%",
-    height: "65%",
+    height: "70%",
     justifyContent: "flex-end",
     alignItems: "center",
     overflow: "hidden",

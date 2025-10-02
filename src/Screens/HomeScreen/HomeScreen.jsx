@@ -6,8 +6,8 @@ import {
 } from "react-native";
 import { useTheme } from "../../Context/ThemeContext";
 import ImageSlider from "../../Components/Sliders/Slider";
-import CardsCategoriesScreen from "./CardsCategories";
-import CategoriesWithTemplates from "./CardsCategories";
+import CategoriesScreen from "./CardsCategories";
+// import CategoriesWithTemplates from "./CardsCategories";
 import EnhancedImageGallery from "./EnhancedImagesGallery";
 import PromptInputComponent from "./PromptinputComponent";
 import FeaturedGrid from "./Featuredgrid";
@@ -96,7 +96,7 @@ const HomeScreen = ({ navigation }) => {
 
   const sections = [
     { key: "slider", render: () => <ImageSlider sliderData={homeData.sliderData} /> },
-   { key: "categoriesWithTemplates", render: () => <CategoriesWithTemplates navigation={navigation} /> },
+   { key: "categoriesWithTemplates", render: () => <CategoriesScreen /> },
     // {
     //   key: "Featuredgridinput",
     //   render: () => (

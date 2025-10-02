@@ -5,7 +5,7 @@
     "owner": "basitkhokhar4949",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/picnova.png",
+    "icon": "./assets/logo.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
@@ -18,7 +18,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/picnova.png"
+        "foregroundImage": "./assets/logo.png"
       },
       "package": "com.basitkhokhar4949.BasitSanitaryApp"
     },

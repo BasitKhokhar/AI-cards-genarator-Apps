@@ -11,7 +11,7 @@ const SplashScreen4 = ({ onNext }) => {
       {/* Top Image with Gradient Overlay */}
       <View style={styles.topcontainer}>
         <Image
-          source={require("../../../assets/splash1.jpg")}
+          source={require("../../../assets/splash33.jpg")}
           style={styles.image}
         />
         <LinearGradient
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
   },
   topcontainer: {
     width: "100%",
-    height: "65%",
+    height: "70%",
     position: "relative",
   },
   image: {

@@ -7,21 +7,21 @@ export default () => ({
     owner: "basitkhokhar4949",
     version: "1.0.0",
     orientation: "portrait",
-    icon: "./assets/picnova.png",
+    icon: "./assets/logo.png",
     userInterfaceStyle: "light",
     splash: {
-      image: "./assets/picnova.png",
+      image: "./assets/logo.png",
       resizeMode: "contain",
       backgroundColor: "#ffffff"
     },
     android: {
       package: "com.basitkhokhar.sanitaryapp",
       adaptiveIcon: {
-        foregroundImage: "./assets/picnova.png",
+        foregroundImage: "./assets/logo.png",
       }
     },
     web: {
-      favicon: "./assets/picnova.png"
+      favicon: "./assets/logo.png"
     },
     plugins: [
       "expo-secure-store",

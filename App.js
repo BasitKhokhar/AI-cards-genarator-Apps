@@ -23,6 +23,7 @@ import SignupScreen from "./src/Components/Authentication/Signup";
 import LoginScreen from "./src/Components/Authentication/Login";
 
 import HomeScreen from "./src/Screens/HomeScreen/HomeScreen";
+import TemplateDetail from "./src/Screens/HomeScreen/CardsTemplates";
 import CardsCategoriesScreen from "./src/Screens/HomeScreen/CardsCategories";
 import CardCategoryTemplatesScreen from "./src/Screens/HomeScreen/CardsTemplates";
 
@@ -50,25 +51,11 @@ const Tab = createBottomTabNavigator();
 
 const MainLayout = ({ navigation, children, currentScreen }) => {
   const { theme } = useTheme();
-  // const [logo, setLogo] = useState(null);
-
-  // useEffect(() => {
-  //   const fetchLogo = async () => {
-  //     try {
-  //       const response = await fetch(`${API_BASE_URL}/content/logo_image`);
-  //       const data = await response.json();
-  //       setLogo(data.image_url);
-  //     } catch (error) {
-  //       console.error("Error fetching logo:", error);
-  //     }
-  //   };
-  //   fetchLogo();
-  // }, []);
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerItem}>
-          <Image source={require("./assets/picnova.png")} style={styles.logo} />
+          <Image source={require("./assets/logo.png")} style={styles.logo} />
         </View>
 
         <View style={styles.headerItem}>
@@ -275,7 +262,7 @@ const App = () => {
                 {(props) => <BottomTabs {...props} />}
               </Stack.Screen>
               <Stack.Screen name="AllNotifications" component={AllNotifications} />
-              <Stack.Screen name="AIpicsfeatures" component={AIPicsFeatureList} options={{ title: "AI Pics Features" }} />
+              <Stack.Screen name="templatefeatures" component={TemplateDetail}options={{ headerShown: false }} />
               <Stack.Screen name="AIpicsfeaturedetail" component={PicFeatureDetailScreen} options={{ title: "AI Pics Features Detail" }} />
 
               <Stack.Screen name="SimpleImageEditor" component={SimpleImageEditor} options={{ title: "Image Editor" }} />
@@ -312,8 +299,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    borderBottomWidth: 1,
-    borderColor: "#222",
+    // borderBottomWidth: 1,
+    // borderColor: "#222",
     backgroundColor: "#141414",
     shadowColor: "#8b3dff",
     shadowOpacity: 0.6,
@@ -326,32 +313,37 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   logo: {
-    width: 50,
-    height: 50,
+    width: 70,
+    height: 70,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: "#8b3dff",
-    shadowColor: "#8b3dff",
-    shadowOpacity: 0.8,
-    shadowRadius: 12,
+    // borderColor: "#8b3dff",
+    // shadowColor: "#8b3dff",
+    // shadowOpacity: 0.8,
+    // shadowRadius: 12,
   },
-  appTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    letterSpacing: 1.2,
-    marginLeft: 10,
-    color: "#8b3dff",
-    textShadowColor: "#8b3dff",
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 10,
-  },
+ appTitle: {
+  fontSize: 26,
+  fontWeight: "900",
+  letterSpacing: 1.5,
+  marginLeft: 10,
+  textTransform: "uppercase",
+  color: "#ff3d9b", // base white text
+  textShadowColor: "#8b3dff",
+  textShadowOffset: { width: 0, height: 0 },
+  textShadowRadius: 12,
+  // Extra layered glow
+  shadowColor: "#ff3d9b",
+  shadowOpacity: 0.8,
+  shadowRadius: 16,
+},
   belliconmaincontainer: { paddingRight: 5 },
   belliconContainer: {
     padding: 8,
     backgroundColor: "#1f1f1f",
     borderRadius: 50,
     borderWidth: 2,
-    borderColor: "#8b3dff",
+    borderColor: "#ff3d9b",
     shadowColor: "#8b3dff",
     shadowOpacity: 0.8,
     shadowRadius: 10,

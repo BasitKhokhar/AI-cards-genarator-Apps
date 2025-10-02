@@ -8,30 +8,10 @@ import Constants from "expo-constants";
 const API_BASE_URL = Constants.expoConfig.extra.API_BASE_URL;
 
 const SplashScreen1 = () => {
-  // const [imageUrl, setImageUrl] = useState(null);
-
-  // useEffect(() => {
-  //   const fetchSplashImage = async () => {
-  //     try {
-  //       const response = await fetch(`${API_BASE_URL}/splashscreens/splash-image`);
-  //       const data = await response.json();
-
-  //       if (data && data.image_url) {
-  //         setImageUrl(data.image_url);
-  //       } else {
-  //         console.error("Invalid response format:", data);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching splash image:", error);
-  //     }
-  //   };
-
-  //   fetchSplashImage();
-  // }, []);
 
   return (
     <LinearGradient
-      colors={["#0d0d1a", "#3d0c61", "#8b3dff"]}
+      colors={["#8b3dff", "#ff3d9b"]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.container}
@@ -40,7 +20,7 @@ const SplashScreen1 = () => {
         <Animatable.Image
           animation="zoomIn"
           duration={1500}
-          source={require("../../../assets/picnova.png")}
+          source={require("../../../assets/logo.png")}
           style={styles.image}
         />
     

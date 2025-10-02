@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, RefreshControl } from "react-native";
+import { 
+  View, Text, StyleSheet, TouchableOpacity, Image, 
+  ScrollView, RefreshControl 
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from "@react-navigation/native";
-import SocialIconsRow from "./SocialIconsRow";
 import ThemeToggleButton from "../../Components/Buttons/ThemeToggleButton";
 import { useTheme } from "../../Context/ThemeContext";
 import Loader from "../../Components/Loader/Loader";
-import { colors } from "../../Themes/colors";
 import { apiFetch } from "../../apiFetch";
 import Constants from 'expo-constants';
 
@@ -17,7 +18,6 @@ const UserScreen = () => {
   const { theme } = useTheme();
   const [userData, setUserData] = useState(null);
   const [paymnetImgBtndata, setPaymnetImageBtnData] = useState(null);
-
   const [userImage, setUserImage] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -30,29 +30,24 @@ const UserScreen = () => {
       if (!Paymentimgresponse.ok) throw new Error(`HTTP Error: ${Paymentimgresponse.status}`);
       const PaymentImagedata = await Paymentimgresponse.json();
       setPaymnetImageBtnData(PaymentImagedata);
-      console.log("Payment Image Data:", PaymentImagedata);
 
       const storedUserId = await AsyncStorage.getItem("userId");
-      console.log("User ID in UserScreen is:", storedUserId);
       if (storedUserId) {
-
         const response = await apiFetch(`/users/${storedUserId}`);
         if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
         const data = await response.json();
         setUserData(data);
 
         const imageResponse = await apiFetch(`/users/user_images/${storedUserId}`);
-        console.log("Image Response Status:", imageResponse);
         if (imageResponse.ok) {
           const imageData = await imageResponse.json();
-          console.log("Fetched user image:", imageData.userImage);
           setUserImage(imageData.userImage);
         } else {
-          console.log("User image fetch failed.");
+          setUserImage(null);
         }
       }
     } catch (error) {
-      console.error("Error fetching user data or image:", error);
+      console.error("Error fetching user data:", error);
     } finally {
       setLoading(false);
     }
@@ -68,15 +63,11 @@ const UserScreen = () => {
     setRefreshing(false);
   };
 
-  console.log("userImage in UserScreen:", userImage);
-
   return (
-    <View style={[styles.maincontainer, { backgroundColor: theme.primary }]}>
+    <View style={styles.maincontainer}>
       <ScrollView
-        contentContainerStyle={[styles.container, { backgroundColor: theme.background }]}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
+        contentContainerStyle={styles.container}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         showsVerticalScrollIndicator={false}
       >
         {loading ? (
@@ -85,134 +76,102 @@ const UserScreen = () => {
           </View>
         ) : userData ? (
           <View style={styles.profileContainer}>
+            
             {/* Profile Header */}
             <View style={styles.header}>
               <View style={styles.imageContainer}>
-                {userImage && typeof userImage === 'string' && userImage.startsWith('http') ? (
-                  <Image
-                    source={{ uri: userImage }}
-                    style={styles.profileImage}
-                    onError={() => {
-                      console.log("Image load failed, setting fallback.");
-                      setUserImage(null);
-                    }}
-                  />
+                {userImage ? (
+                  <Image source={{ uri: userImage }} style={styles.profileImage} />
                 ) : (
                   <View style={styles.defaultProfileCircle} />
                 )}
               </View>
-              <View style={styles.headingscontianer}>
+              <View style={styles.headingsContainer}>
                 <Text style={styles.title}>{userData.name}</Text>
-                <Text style={[styles.email, { color: theme.text }]}>{userData.email}</Text>
+                <Text style={styles.email}>{userData.email}</Text>
               </View>
-
-
-            </View>
-            <View>
-              {paymnetImgBtndata && (
-                <TouchableOpacity
-                  style={styles.cardButton}
-                  onPress={() => navigation.navigate('AccountDetail', { userData })}
-                  activeOpacity={0.8}
-                >
-                  <Image
-                    source={{ uri: paymnetImgBtndata.sliderimage_url }} // ensure the key is correct
-                    style={styles.cardImage}
-                    resizeMode="cover"
-                  />
-                </TouchableOpacity>
-              )}
-
             </View>
 
+            {/* Payment Card Image */}
+            {paymnetImgBtndata && (
+              <TouchableOpacity
+                style={styles.cardButton}
+                onPress={() => navigation.navigate("AccountDetail", { userData })}
+                activeOpacity={0.8}
+              >
+                <Image
+                  source={{ uri: paymnetImgBtndata.sliderimage_url }}
+                  style={styles.cardImage}
+                  resizeMode="cover"
+                />
+              </TouchableOpacity>
+            )}
 
+            {/* General Section */}
             <View style={styles.sectionHeader}>
               <Text style={styles.heading}>General</Text>
               <View style={styles.line} />
             </View>
-            {/* <View>
+
+            {[
+              { name: "person", label: "Personal Info", color: "#9b59b6", route: "AccountDetail" },
+              { name: "credit-card", label: "Payment methods", color: "#00cec9", route: "AccountDetail" },
+              { name: "security", label: "Security", color: "#2ecc71", route: "AccountDetail" }
+            ].map((item, idx) => (
+              <TouchableOpacity 
+                key={idx} 
+                style={styles.section} 
+                onPress={() => navigation.navigate(item.route, { userData })}
+              >
+                <View style={styles.leftContent}>
+                  <Icon name={item.name} size={24} color={item.color} style={styles.icon} />
+                  <Text style={styles.sectionText}>{item.label}</Text>
+                </View>
+                <Icon name="chevron-right" size={24} color="#8b3dff" />
+              </TouchableOpacity>
+            ))}
+
+            {/* <View style={styles.section}>
+              <View style={styles.leftContent}>
+                <Icon name="brightness-6" size={24} color="#f39c12" />
+                <Text style={styles.sectionText}>Change Theme</Text>
+              </View>
               <ThemeToggleButton />
             </View> */}
-            <TouchableOpacity style={styles.section} onPress={() => navigation.navigate('AccountDetail', { userData })}>
-              <View style={styles.leftContent}>
-                <Icon name="person" size={24} color="#8b3dff" style={styles.icon} />
-                <Text style={[styles.sectionText, { color: theme.text }]}>Personal Info</Text>
-              </View>
-              <View><Icon name="chevron-right" size={24} color="#888" /></View>
-            </TouchableOpacity>
 
-            <TouchableOpacity style={styles.section} onPress={() => navigation.navigate('AccountDetail', { userData })}>
-              <View style={styles.leftContent}>
-                <Icon name="credit-card" size={24} color="#1e90ff" style={styles.icon} />
-                <Text style={[styles.sectionText, { color: theme.text }]}>Payment methods</Text>
-              </View>
-              <View><Icon name="chevron-right" size={24} color="#888" /></View>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.section} onPress={() => navigation.navigate('AccountDetail', { userData })}>
-              <View style={styles.leftContent}>
-                <Icon name="security" size={24} color="#00b894" style={styles.icon} />
-                <Text style={[styles.sectionText, { color: theme.text }]}>Security</Text>
-              </View>
-              <View><Icon name="chevron-right" size={24} color="#888" /></View>
-            </TouchableOpacity>
-
-            <View style={styles.section}>
-              <View style={styles.leftContent}>
-                <Icon name="brightness-6" size={24} color="#f39c12" style={styles.icon} />
-                <Text style={[styles.sectionText, { color: theme.text }]}>Change Theme</Text>
-              </View>
-              <View><ThemeToggleButton /></View>
-            </View>
-
+            {/* About Section */}
             <View style={styles.sectionHeader}>
               <Text style={styles.heading}>About</Text>
               <View style={styles.line} />
             </View>
 
-            <TouchableOpacity style={styles.section} onPress={() => navigation.navigate('about', { userData })}>
-              <View style={styles.leftContent}>
-                <Icon name="info" size={24} color="#3498db" style={styles.icon} />
-                <Text style={[styles.sectionText, { color: theme.text }]}>About PicNova-AI</Text>
-              </View>
-              <View><Icon name="chevron-right" size={24} color="#888" /></View>
-            </TouchableOpacity>
+            {[
+              { name: "info", label: "About PicNova-AI", color: "#00bcd4", route: "about" },
+              { name: "support-agent", label: "Customer Support", color: "#ff6b81", route: "CustomerSupport" },
+              { name: "shield", label: "Privacy Policy", color: "#ff9f43", route: "CustomerSupport" },
+              { name: "question-answer", label: "FAQs", color: "#1dd1a1", route: "faq" }
+            ].map((item, idx) => (
+              <TouchableOpacity 
+                key={idx} 
+                style={styles.section} 
+                onPress={() => navigation.navigate(item.route, { userData })}
+              >
+                <View style={styles.leftContent}>
+                  <Icon name={item.name} size={24} color={item.color} />
+                  <Text style={styles.sectionText}>{item.label}</Text>
+                </View>
+                <Icon name="chevron-right" size={24} color="#8b3dff" />
+              </TouchableOpacity>
+            ))}
 
-            <TouchableOpacity style={styles.section} onPress={() => navigation.navigate('CustomerSupport', { userData })}>
+            {/* Logout */}
+            <TouchableOpacity style={styles.section} onPress={() => navigation.navigate("Logout", { userData })}>
               <View style={styles.leftContent}>
-                <Icon name="support-agent" size={24} color="#9b59b6" style={styles.icon} />
-                <Text style={[styles.sectionText, { color: theme.text }]}>Customer Support</Text>
+                <Icon name="logout" size={24} color="#ff4757" />
+                <Text style={styles.logoutText}>Logout</Text>
               </View>
-              <View><Icon name="chevron-right" size={24} color="#888" /></View>
+              <Icon name="chevron-right" size={24} color="#ff4757" />
             </TouchableOpacity>
-
-            <TouchableOpacity style={styles.section} onPress={() => navigation.navigate('CustomerSupport', { userData })}>
-              <View style={styles.leftContent}>
-                <Icon name="shield" size={24} color="#e67e22" style={styles.icon} />
-                <Text style={[styles.sectionText, { color: theme.text }]}>Privacy Policy</Text>
-              </View>
-              <View><Icon name="chevron-right" size={24} color="#888" /></View>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.section} onPress={() => navigation.navigate('faq', { userData })}>
-              <View style={styles.leftContent}>
-                <Icon name="question-answer" size={24} color="#16a085" style={styles.icon} />
-                <Text style={[styles.sectionText, { color: theme.text }]}>FAQs</Text>
-              </View>
-              <View><Icon name="chevron-right" size={24} color="#888" /></View>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.section} onPress={() => navigation.navigate('Logout', { userData })}>
-              <View style={styles.leftContent}>
-                <Icon name="logout" size={24} color="#e74c3c" style={styles.icon} />
-                <Text style={[styles.logoutText, { color: "#e74c3c" }]}>Logout</Text>
-              </View>
-              <View><Icon name="chevron-right" size={24} color="#e74c3c" /></View>
-            </TouchableOpacity>
-
-            {/* <View style={styles.iconscontainer}>
-            <SocialIconsRow />
-          </View> */}
           </View>
         ) : (
           <Text style={styles.text}>No user data found.</Text>
@@ -220,151 +179,147 @@ const UserScreen = () => {
       </ScrollView>
     </View>
   );
-
 };
 
 const styles = StyleSheet.create({
   maincontainer: {
-    color: colors.primary,
+    flex: 1,
+    backgroundColor: "#0d0d0d", // deep dark background
     paddingTop: 50,
     paddingHorizontal: 16,
-    width: '100%',
-    height: '100%',
   },
   container: {
-    flex: 1,
-    color: colors.background,
+    flexGrow: 1,
     padding: 16,
+    paddingBottom:100,
     borderTopLeftRadius: 30,
-    borderTopRightRadius: 30
+    borderTopRightRadius: 30,
+    backgroundColor: "#1a1a1a", // card background
   },
   loaderContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    height: '100%',
-    borderRadius: 10,
-    color: '#fff',
+    justifyContent: "center",
+    alignItems: "center",
   },
   profileContainer: {
     width: "100%",
-    height: "100%",
-  },
-  imageContainer: {
-    width: 50,
-    height: 50,
-    borderRadius: 50,
-    overflow: "hidden",
-    borderWidth: 2,
-    borderColor: colors.primary,
-  },
-  profileImage: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 50
-  },
-  defaultProfileCircle: {
-    width: 50,
-    height: 50,
-    borderRadius: 50,
-    borderWidth: 2,
-    borderColor: colors.primary,
-    color: "#fff"
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
-    marginVertical: 20,
-    // justifyContent: "space-between",
-    width: "100%",
-    borderRadius: 10,
+    gap: 15,
+    marginBottom: 20,
   },
-  headingscontianer: {
-    display: 'flex',
-    flexDirection: 'column',
-
+  imageContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 60,
+    overflow: "hidden",
+    borderWidth: 2,
+    borderColor: "#9b59b6", // purple neon
+    shadowColor: "#9b59b6",
+    shadowOpacity: 0.9,
+    shadowRadius: 10,
+  },
+  profileImage: {
+    width: "100%",
+    height: "100%",
+  },
+  defaultProfileCircle: {
+    width: 60,
+    height: 60,
+    borderRadius: 60,
+    borderWidth: 2,
+    borderColor: "#9b59b6",
+    backgroundColor: "#2c2c2c",
+  },
+  headingsContainer: {
+    flexDirection: "column",
   },
   title: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "bold",
-    color: colors.primary
+    color: "#e056fd", // bright purple
+    // textShadowColor: "#ff00ff",
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 8,
   },
   email: {
     fontSize: 14,
-    // fontWeight: "bold",
-    color: "#333"
+    color: "#bbb",
   },
   cardButton: {
-    width: '100%',
+    width: "100%",
     height: 120,
     borderRadius: 16,
-    overflow: 'hidden',
-    color: colors.background,
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    justifyContent: 'center',
-    alignItems: 'center',
+    overflow: "hidden",
     marginBottom: 20,
+    borderWidth: 2,
+    borderColor: "#9b59b6",
+    shadowColor: "#9b59b6",
+    shadowOpacity: 0.6,
+    shadowRadius: 8,
   },
   cardImage: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 5,
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 8,
   },
   heading: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: colors.primary,
+    fontWeight: "bold",
+    color: "#e056fd",
     marginRight: 8,
   },
   line: {
     flex: 1,
-    height: 2,
-    color: colors.primary,
+    height: 1.5,
+    backgroundColor: "#9b59b6",
+    shadowColor: "#ff00ff",
+    shadowOpacity: 0.7,
+    shadowRadius: 6,
   },
   section: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 5,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 12,
     paddingHorizontal: 10,
+    backgroundColor: "#111",
+    borderRadius: 10,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: "#333",
+    shadowColor: "#9b59b6",
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
   },
   leftContent: {
-    flexDirection: 'row',
-    gap: 10,
-    alignItems: 'center',
+    flexDirection: "row",
+    gap: 12,
+    alignItems: "center",
   },
   sectionText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#f5f5f5", // text white
   },
   logoutText: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: 'red',
-  },
-  logout: {
-    borderBottomWidth: 0
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#ff4757", // red neon
   },
   text: {
     fontSize: 18,
-    marginVertical: 5,
-    color: "#555"
-  },
-  iconscontainer: {
-    display: 'flex',
+    marginTop: 20,
+    color: "#aaa",
+    textAlign: "center",
   },
 });
+
 
 export default UserScreen;

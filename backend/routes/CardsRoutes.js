@@ -1,10 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const {verifyToken, }= require('../middleware/authMiddleware');
-const {getCategories,getTemplatesByCategory,getTemplateDetails} = require("../controllers/CardsController");
+const { getCategoriesWithTemplates, getTemplateById } = require("../controllers/CardsController");
 
-router.get("/categories", verifyToken, getCategories);
-router.get("/templates/:categoryId",verifyToken ,getTemplatesByCategory);
-router.get("/template/:templateId",verifyToken ,getTemplateDetails);
+// ✅ Get all categories with templates (minimal info)
+router.get("/categories", verifyToken, getCategoriesWithTemplates);
+
+// ✅ Get a single template with full details
+router.get("/templates/:id", verifyToken, getTemplateById);
 
 module.exports = router;
