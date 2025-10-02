@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "PicNova",
+    "slug": "PicNova",
+    "owner": "basitkhokhar4949",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/picnova.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/picnova.png"
+      },
+      "package": "com.basitkhokhar4949.BasitSanitaryApp"
+    },
+    "web": {
+      "favicon": "./assets/picnova.png"
+    },
+    "extra": {
+      "stripePublishableKey": "pk_test_51QDQ8SFwMkFMTBSOlvaQpkvAtkXcpvW94d77oG94OK83dzf23WzbkvrVU29y0HaJLP4TbWhtdnqQTxCbit7N9AuN009e4UsCVL",
+      "API_BASE_URL": "http://192.168.8.106:5004",
+      "eas": {
+         "projectId": "efe6213b-a303-4ae6-b3f1-e8f715fbeb45"
+      }
+    }
+  }
+}
