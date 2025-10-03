@@ -23,7 +23,7 @@
       "package": "com.basitkhokhar4949.BasitSanitaryApp"
     },
     "web": {
-      "favicon": "./assets/picnova.png"
+      "favicon": "./assets/logo.png"
     },
     "extra": {
       "stripePublishableKey": "pk_test_51QDQ8SFwMkFMTBSOlvaQpkvAtkXcpvW94d77oG94OK83dzf23WzbkvrVU29y0HaJLP4TbWhtdnqQTxCbit7N9AuN009e4UsCVL",

@@ -7,6 +7,7 @@ import {
 import { useTheme } from "../../Context/ThemeContext";
 import ImageSlider from "../../Components/Sliders/Slider";
 import CategoriesScreen from "./CardsCategories";
+import SearchHeader from "./HomeinputSearch";
 // import CategoriesWithTemplates from "./CardsCategories";
 import EnhancedImageGallery from "./EnhancedImagesGallery";
 import PromptInputComponent from "./PromptinputComponent";
@@ -23,6 +24,9 @@ const HomeScreen = ({ navigation }) => {
   const { theme } = useTheme();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+
+  const [filterExpanded, setFilterExpanded] = useState(false);
+
   const [homeData, setHomeData] = useState({
     sliderData: [],
     EnhancedGalleryData: [],
@@ -95,17 +99,10 @@ const HomeScreen = ({ navigation }) => {
   }
 
   const sections = [
-    { key: "slider", render: () => <ImageSlider sliderData={homeData.sliderData} /> },
-   { key: "categoriesWithTemplates", render: () => <CategoriesScreen /> },
-    // {
-    //   key: "Featuredgridinput",
-    //   render: () => (
-    //     <PromptInputComponent defaultModel="prunaai/hidream-l1-fast:91752cc0b07ccd5976f1db2b6b7f10296ac12d6cb2ba87056f79b17ffacca5f5" />
-    //   ),
-    // },
-    
-    // { key: "Enhancedusergallery", render: () => <EnhancedImageGallery EnhancedGallerydata={homeData.EnhancedGalleryData} /> },
-  ];
+  { key: "slider", render: () => <ImageSlider sliderData={homeData.sliderData} /> },
+  { key: "Searchheader", render: () => <SearchHeader onToggle={(open) => setFilterExpanded(open)} /> },
+  { key: "categoriesWithTemplates", render: () => <CategoriesScreen /> },
+];
 
   return (
     <FlatList
@@ -131,8 +128,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    paddingHorizontal:16
   },
   listContainer: {
+    
     paddingBottom: 120,
     backgroundColor: "#0d0d0d",
   },

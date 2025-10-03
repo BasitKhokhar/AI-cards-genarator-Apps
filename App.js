@@ -82,8 +82,8 @@ const MainLayout = ({ navigation, children, currentScreen }) => {
         >
           {[
             { name: "Home", icon: "home" },
-            { name: "AI Photo", icon: "photo-camera" },
-            { name: "AI Video", icon: "video-library" },
+            { name: "Canvas", icon: "photo-camera" },
+            { name: "Assets", icon: "video-library" },
             { name: "Profile", icon: "person" },
           ].map(({ name, icon }) => {
             const isActive = currentScreen === name;
@@ -131,16 +131,16 @@ const BottomTabs = () => {
           </MainLayout>
         )}
       </Tab.Screen>
-      <Tab.Screen name="AI Photo">
+      <Tab.Screen name="Canvas">
         {({ navigation }) => (
-          <MainLayout navigation={navigation} currentScreen="AI Photo">
+          <MainLayout navigation={navigation} currentScreen="Canvas">
             <AIPicsFeatureList />
           </MainLayout>
         )}
       </Tab.Screen>
-      <Tab.Screen name="AI Video">
+      <Tab.Screen name="Assets">
         {({ navigation }) => (
-          <MainLayout navigation={navigation} currentScreen="AI Video">
+          <MainLayout navigation={navigation} currentScreen="Assets">
             <Videoscreen />
           </MainLayout>
         )}
