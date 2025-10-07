@@ -7,7 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model logoimage {
   id        Int    @id @default(autoincrement())
   image_url String @db.VarChar(255)
@@ -29,18 +28,50 @@ model CardCategory {
 model CardTemplate {
   id           Int          @id @default(autoincrement())
   categoryId   Int
-  title        String       @db.VarChar(150)  // e.g., "Elegant Wedding Invite"
-  description  String?      @db.Text          // optional: description of style
-  imageUrl     String       @db.VarChar(512)  // preview image
-  prompt       String       @db.Text          // original prompt used
-  aspectRatio  String       @default("16:9")  // e.g., "1:1", "9:16"
+  title        String       @db.VarChar(150)
+  description  String?      @db.Text
+  imageUrl     String       @db.VarChar(512)
+  prompt       String       @db.Text
+  aspectRatio  String       @default("16:9")
+  uses         Int          @default(0)
+  featured     Boolean      @default(false)   // ✅ admin picks
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
 
   category     CardCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  generated    UserGeneratedImage[]
+  favouritedBy UserFavouriteTemplate[]
 }
 
 
+model UserGeneratedImage {
+  id         Int           @id @default(autoincrement())
+  userId     Int
+  templateId Int?                          // optional: which template was used
+  prompt     String?       @db.Text        // prompt used for generation
+  imageUrl   String        @db.VarChar(512) // generated image url (firebase)
+  createdAt  DateTime      @default(now())
+
+  user       users         @relation(fields: [userId], references: [user_id], onDelete: Cascade)
+  template   CardTemplate? @relation(fields: [templateId], references: [id])
+
+  @@index([userId])
+  @@index([templateId])
+}
+
+model UserFavouriteTemplate {
+  id         Int          @id @default(autoincrement())
+  userId     Int
+  templateId Int
+  createdAt  DateTime     @default(now())
+
+  user       users        @relation(fields: [userId], references: [user_id], onDelete: Cascade)
+  template   CardTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, templateId]) // ✅ prevent duplicates
+  @@index([userId])
+  @@index([templateId])
+}
 
 model userimages {
   id         Int      @id @default(autoincrement())
@@ -53,27 +84,32 @@ model userimages {
 }
 
 model users {
-  user_id         Int              @id @default(autoincrement())
-  name            String           @db.VarChar(100)
-  email           String           @unique(map: "email") @db.VarChar(100)
-  password        String           @db.VarChar(255)
-  phone           String?          @db.VarChar(20)
-  termsStatus     Boolean       @default(false)
-  city            String?
-  address         String?
-  refreshToken    String? 
-  created_at DateTime @default(now()) @db.DateTime(0)
-  userimages       userimages[]
+  user_id      Int                  @id @default(autoincrement())
+  name         String               @db.VarChar(100)
+  email        String               @unique(map: "email") @db.VarChar(100)
+  password     String               @db.VarChar(255)
+  phone        String?              @db.VarChar(20)
+  termsStatus  Boolean              @default(false)
+  city         String?
+  address      String?
+  refreshToken String? 
+  created_at   DateTime             @default(now()) @db.DateTime(0)
+
+  userimages   userimages[]
+  generated    UserGeneratedImage[]
+  favourites   UserFavouriteTemplate[]
 }
 
 model AboutMe {
-  id        Int     @id @default(autoincrement())
-  paragraph String  @db.Text
+  id        Int    @id @default(autoincrement())
+  paragraph String @db.Text
 }
+
 model MissionVision {
-  id        Int     @id @default(autoincrement())
-  paragraph String  @db.Text
+  id        Int    @id @default(autoincrement())
+  paragraph String @db.Text
 }
+
 model PrivacyPolicy {
   id        Int      @id @default(autoincrement())
   title     String   @db.VarChar(255) // Optional: "Privacy Policy"
@@ -81,6 +117,7 @@ model PrivacyPolicy {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
 model AboutApp {
   id        Int      @id @default(autoincrement())
   title     String   @db.VarChar(255) // Optional: "About the Game"
@@ -88,6 +125,7 @@ model AboutApp {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
 model FAQ {
   id        Int      @id @default(autoincrement())
   question  String

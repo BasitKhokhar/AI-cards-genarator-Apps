@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -7,65 +7,79 @@ import {
   Image,
   ScrollView,
   StyleSheet,
+  RefreshControl,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { apiFetch } from "../../apiFetch";
 
-const FIXED_HEIGHT = 160; // ✅ All cards same height
+const FIXED_HEIGHT = 160;
 
 const CategoriesScreen = () => {
   const [categories, setCategories] = useState([]);
+  const [refreshing, setRefreshing] = useState(false); // 🔹 for pull-to-refresh
   const navigation = useNavigation();
 
-  useEffect(() => {
-    const loadCategories = async () => {
-      try {
-        const res = await apiFetch("/cards/categories", {}, navigation);
-        if (res.ok) {
-          const data = await res.json();
+  const loadCategories = async () => {
+    try {
+      const res = await apiFetch("/cards/categories", {}, navigation);
+      if (res.ok) {
+        const data = await res.json();
 
-          // 🔥 Calculate natural width for each image based on FIXED_HEIGHT
-          const updated = await Promise.all(
-            data.map(async (cat) => {
-              const templates = await Promise.all(
-                (cat.templates || []).map(async (t) => {
-                  if (t.imageUrl) {
-                    try {
-                      const { width, height } = await new Promise((resolve, reject) =>
-                        Image.getSize(
-                          t.imageUrl,
-                          (w, h) => resolve({ width: w, height: h }),
-                          reject
-                        )
-                      );
-                      const aspectRatio = width / height;
-                      return { ...t, calcWidth: FIXED_HEIGHT * aspectRatio };
-                    } catch {
-                      return { ...t, calcWidth: FIXED_HEIGHT }; // fallback square
-                    }
+        // 🔥 Calculate natural width for each image
+        const updated = await Promise.all(
+          data.map(async (cat) => {
+            const templates = await Promise.all(
+              (cat.templates || []).map(async (t) => {
+                if (t.imageUrl) {
+                  try {
+                    const { width, height } = await new Promise((resolve, reject) =>
+                      Image.getSize(
+                        t.imageUrl,
+                        (w, h) => resolve({ width: w, height: h }),
+                        reject
+                      )
+                    );
+                    const aspectRatio = width / height;
+                    return { ...t, calcWidth: FIXED_HEIGHT * aspectRatio };
+                  } catch {
+                    return { ...t, calcWidth: FIXED_HEIGHT };
                   }
-                  return { ...t, calcWidth: FIXED_HEIGHT };
-                })
-              );
-              return { ...cat, templates };
-            })
-          );
+                }
+                return { ...t, calcWidth: FIXED_HEIGHT };
+              })
+            );
+            return { ...cat, templates };
+          })
+        );
 
-          setCategories(updated);
-        } else {
-          console.log("❌ Failed to load categories");
-        }
-      } catch (err) {
-        console.error("⚠️ Error fetching categories:", err);
+        setCategories(updated);
+      } else {
+        console.log("❌ Failed to load categories");
       }
-    };
+    } catch (err) {
+      console.error("⚠️ Error fetching categories:", err);
+    }
+  };
 
+  useEffect(() => {
     loadCategories();
   }, []);
 
+  // 🔹 pull-to-refresh handler
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await loadCategories();
+    setRefreshing(false);
+  }, []);
+
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#8b3dff" />
+      }
+    >
       {categories.map((cat) => (
         <View key={cat.id} style={styles.categoryBlock}>
           <Text style={styles.categoryTitle}>{cat.name}</Text>

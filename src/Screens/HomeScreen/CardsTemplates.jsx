@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import Icon from "react-native-vector-icons/MaterialIcons"; // ✅ heart icon
+import {
+  View,
+  Text,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
@@ -12,9 +20,10 @@ const TemplateDetail = ({ route }) => {
   const [prompt, setPrompt] = useState("");
   const [aspectRatio, setAspectRatio] = useState("1:1");
   const [resolution, setResolution] = useState("512x512");
-
-  // ✅ aspect state
   const [aspect, setAspect] = useState(1);
+
+  const [isFavourite, setIsFavourite] = useState(false); // ✅ favourite state
+  const [loadingFav, setLoadingFav] = useState(false);
 
   const navigation = useNavigation();
 
@@ -27,6 +36,9 @@ const TemplateDetail = ({ route }) => {
           setTemplate(data);
           setPrompt(data.prompt || "");
           setAspectRatio(data.aspectRatio || "1:1");
+
+          // ✅ if backend sends "isFavourite"
+          setIsFavourite(data.isFavourite || false);
         } else {
           console.log("❌ Failed to load template", res.status);
         }
@@ -38,11 +50,11 @@ const TemplateDetail = ({ route }) => {
     loadTemplate();
   }, [templateId]);
 
-  // ✅ dynamically calculate aspect ratio
+  // ✅ aspect ratio from image
   useEffect(() => {
     if (template?.imageUrl) {
       Image.getSize(template.imageUrl, (w, h) => {
-        setAspect(w / h); // width ÷ height
+        setAspect(w / h);
       });
     }
   }, [template?.imageUrl]);
@@ -73,25 +85,60 @@ const TemplateDetail = ({ route }) => {
     }
   };
 
+  const toggleFavourite = async () => {
+    if (loadingFav) return;
+    setLoadingFav(true);
+
+    try {
+      const res = await apiFetch(
+        `/favourites/${templateId}`,
+        {
+          method: isFavourite ? "DELETE" : "POST",
+          headers: { "Content-Type": "application/json" },
+        },
+        navigation
+      );
+
+      if (res.ok) {
+        setIsFavourite(!isFavourite);
+      } else {
+        console.log("❌ Failed to update favourite");
+      }
+    } catch (err) {
+      console.error("⚠️ Error updating favourite:", err);
+    } finally {
+      setLoadingFav(false);
+    }
+  };
+
   if (!template) return <Text style={{ color: "white" }}>Loading...</Text>;
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Gradient Border Image */}
         <LinearGradient
-          colors={["#8b3dff", "#ff3d9b"]} // purple → pink
+          colors={["#8b3dff", "#ff3d9b"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.gradientBorder}
         >
           <Image
             source={{ uri: template.imageUrl || "https://via.placeholder.com/200" }}
-            style={[
-              styles.templateImage,
-              { aspectRatio: aspect }, // ✅ auto-scale height
-            ]}
+            style={[styles.templateImage, { aspectRatio: aspect }]}
           />
+
+          {/* ❤️ Heart Icon */}
+          <TouchableOpacity style={styles.heartIcon} onPress={toggleFavourite}>
+            <Icon
+              name={isFavourite ? "favorite" : "favorite-border"}
+              size={30}
+              color={isFavourite ? "#ff3d9b" : "#fff"}
+            />
+          </TouchableOpacity>
         </LinearGradient>
 
         <Text style={styles.title}>{template.title}</Text>
@@ -144,27 +191,32 @@ const TemplateDetail = ({ route }) => {
           </LinearGradient>
         </TouchableOpacity>
       </ScrollView>
-
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: "#0d0d0d", paddingTop: 20 },
-  scrollContent: {
-    paddingBottom: 20,
-    paddingTop: 50,
-  },
+  scrollContent: { paddingBottom: 20, paddingTop: 10 },
+
   gradientBorder: {
     borderRadius: 14,
     padding: 2,
     marginBottom: 15,
+    position: "relative",
   },
 
   templateImage: {
     width: "100%",
     borderRadius: 12,
-    backgroundColor: "#222", // fallback bg if image takes time to load
+    backgroundColor: "#222",
+  },
+
+  heartIcon: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    padding: 5,
   },
 
   title: {
@@ -172,8 +224,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 15,
     color: "#8b3dff",
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 6,
   },
 
   input: {

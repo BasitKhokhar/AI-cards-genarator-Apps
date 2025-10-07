@@ -52,10 +52,53 @@ exports.getTemplateById = async (req, res) => {
       return res.status(404).json({ message: "Template not found" });
     }
 
-    console.log("✅ Template fetched:", template.title);
-    res.json(template);
+    let isFavourite = false;
+
+    // ✅ if user is logged in (verifyToken middleware must add req.user)
+    if (req.user?.id) {
+      const fav = await prisma.userFavouriteTemplate.findFirst({
+        where: {
+          userId: req.user.id,
+          templateId: templateId,
+        },
+      });
+      isFavourite = !!fav;
+    }
+
+    console.log("✅ Template fetched:", template.title, " | Favourite:", isFavourite);
+
+    res.json({
+      ...template,
+      isFavourite, // ✅ send favourite status
+    });
   } catch (err) {
     console.error("❌ Error in getTemplateById:", err.message);
     res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+
+// ✅ Single payload: trending + featured
+// ✅ Get only Trending Templates (top 30 by uses)
+exports.getTrendingTemplates = async (req, res) => {
+  try {
+    const trending = await prisma.cardTemplate.findMany({
+      orderBy: { uses: "desc" },
+      take: 30,
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        imageUrl: true,
+        prompt: true,
+        uses: true,
+        aspectRatio: true,
+      },
+    });
+
+    res.json(trending); // ✅ just return trending list
+  } catch (err) {
+    console.error("❌ Error fetching trending templates:", err);
+    res.status(500).json({ error: "Failed to fetch trending templates" });
   }
 };

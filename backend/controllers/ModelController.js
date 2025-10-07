@@ -100,22 +100,34 @@ exports.enhanceImage = async (req, res) => {
   }
 };
 
-exports.getEnhancedImages = async (req, res) => {
+exports.getGeneratedImages = async (req, res) => {
   try {
-    const { userId } = req.query;
-    console.log("Fetching enhanced images for userId:", userId);
-    if (!userId) {
-      return res.status(400).json({ error: "Missing userId in query" });
-    }
-    const parseduserId = parseInt(userId);
-    const images = await prisma.enhancedimages.findMany({
-      where: { user_id: parseduserId },
-      orderBy: { enhanced_at: 'desc' },
+    const userId = req.user.id; // ✅ take from token
+    console.log("📥 Fetching generated images for userId:", userId);
+
+    const images = await prisma.userGeneratedImage.findMany({
+      where: { userId: userId },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        imageUrl: true,
+        prompt: true,
+        templateId: true,
+        createdAt: true,
+      },
     });
 
-    res.json(images);
+    const formatted = images.map((img) => ({
+      id: img.id,
+      url: img.imageUrl,
+      prompt: img.prompt,
+      templateId: img.templateId,
+      createdAt: img.createdAt,
+    }));
+
+    res.json(formatted);
   } catch (err) {
-    console.error("Error fetching images:", err);
+    console.error("❌ Error fetching generated images:", err);
     res.status(500).json({ error: "Failed to fetch images" });
   }
 };

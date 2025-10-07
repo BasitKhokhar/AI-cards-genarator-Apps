@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const {verifyToken, }= require('../middleware/authMiddleware');
-const { generateImage } = require('../controllers/OpenRouterController');
+const { enhanceImage, getGeneratedImages } = require('../controllers/ModelController');
 
 router.post('/enhance',verifyToken, enhanceImage);
-// router.get('/enhanced-images',verifyToken, getEnhancedImages);
+router.get('/gallery-images',verifyToken, getGeneratedImages);
 
 module.exports = router;

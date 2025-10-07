@@ -24,6 +24,11 @@ import LoginScreen from "./src/Components/Authentication/Login";
 
 import HomeScreen from "./src/Screens/HomeScreen/HomeScreen";
 import TemplateDetail from "./src/Screens/HomeScreen/CardsTemplates";
+
+import CategoriesScreen from "./src/Screens/HomeScreen/CardsCategories";
+import EnhancedImageGallery from "./src/Screens/HomeScreen/EnhancedImagesGallery";
+import AssetsMainScreen from "./src/Screens/AssetsScreen/AssetsMain";
+
 import CardsCategoriesScreen from "./src/Screens/HomeScreen/CardsCategories";
 import CardCategoryTemplatesScreen from "./src/Screens/HomeScreen/CardsTemplates";
 
@@ -82,7 +87,7 @@ const MainLayout = ({ navigation, children, currentScreen }) => {
         >
           {[
             { name: "Home", icon: "home" },
-            { name: "Canvas", icon: "photo-camera" },
+            { name: "Designs", icon: "photo-camera" },
             { name: "Assets", icon: "video-library" },
             { name: "Profile", icon: "person" },
           ].map(({ name, icon }) => {
@@ -131,17 +136,17 @@ const BottomTabs = () => {
           </MainLayout>
         )}
       </Tab.Screen>
-      <Tab.Screen name="Canvas">
+      <Tab.Screen name="Designs">
         {({ navigation }) => (
-          <MainLayout navigation={navigation} currentScreen="Canvas">
-            <AIPicsFeatureList />
+          <MainLayout navigation={navigation} currentScreen="Designs">
+            <CategoriesScreen />
           </MainLayout>
         )}
       </Tab.Screen>
       <Tab.Screen name="Assets">
         {({ navigation }) => (
           <MainLayout navigation={navigation} currentScreen="Assets">
-            <Videoscreen />
+            <AssetsMainScreen />
           </MainLayout>
         )}
       </Tab.Screen>
@@ -262,7 +267,15 @@ const App = () => {
                 {(props) => <BottomTabs {...props} />}
               </Stack.Screen>
               <Stack.Screen name="AllNotifications" component={AllNotifications} />
-              <Stack.Screen name="templatefeatures" component={TemplateDetail}options={{ headerShown: false }} />
+              <Stack.Screen name="templatefeatures" component={TemplateDetail} options={{
+                title: "AI Pics Features Detail", headerStyle: {
+                  backgroundColor: "#141414", // ✅ Change this to your desired color
+                },
+                headerTintColor: "#ff3d9b", // ✅ makes title & back button white
+                headerTitleStyle: {
+                  fontWeight: "bold", // optional styling for title
+                },
+              }} />
               <Stack.Screen name="AIpicsfeaturedetail" component={PicFeatureDetailScreen} options={{ title: "AI Pics Features Detail" }} />
 
               <Stack.Screen name="SimpleImageEditor" component={SimpleImageEditor} options={{ title: "Image Editor" }} />
@@ -322,21 +335,21 @@ const styles = StyleSheet.create({
     // shadowOpacity: 0.8,
     // shadowRadius: 12,
   },
- appTitle: {
-  fontSize: 26,
-  fontWeight: "900",
-  letterSpacing: 1.5,
-  marginLeft: 10,
-  textTransform: "uppercase",
-  color: "#ff3d9b", // base white text
-  textShadowColor: "#8b3dff",
-  textShadowOffset: { width: 0, height: 0 },
-  textShadowRadius: 12,
-  // Extra layered glow
-  shadowColor: "#ff3d9b",
-  shadowOpacity: 0.8,
-  shadowRadius: 16,
-},
+  appTitle: {
+    fontSize: 26,
+    fontWeight: "900",
+    letterSpacing: 1.5,
+    marginLeft: 10,
+    textTransform: "uppercase",
+    color: "#ff3d9b", // base white text
+    textShadowColor: "#8b3dff",
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 12,
+    // Extra layered glow
+    shadowColor: "#ff3d9b",
+    shadowOpacity: 0.8,
+    shadowRadius: 16,
+  },
   belliconmaincontainer: { paddingRight: 5 },
   belliconContainer: {
     padding: 8,

@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import {
   View,
   FlatList,
-  StyleSheet,
+  StyleSheet,ScrollView,RefreshControl
 } from "react-native";
 import { useTheme } from "../../Context/ThemeContext";
 import ImageSlider from "../../Components/Sliders/Slider";
 import CategoriesScreen from "./CardsCategories";
 import SearchHeader from "./HomeinputSearch";
+import TrendingTemplates from "./TrendinTemplates";
 // import CategoriesWithTemplates from "./CardsCategories";
 import EnhancedImageGallery from "./EnhancedImagesGallery";
 import PromptInputComponent from "./PromptinputComponent";
@@ -105,21 +106,19 @@ const HomeScreen = ({ navigation }) => {
 ];
 
   return (
-    <FlatList
-      data={sections}
-      keyExtractor={(item) => item.key}
-      renderItem={({ item }) => <View>{item.render()}</View>}
-      contentContainerStyle={styles.listContainer}
-      showsVerticalScrollIndicator={false}
-      initialNumToRender={2}
-      windowSize={5}
-      maxToRenderPerBatch={3}
-      updateCellsBatchingPeriod={100}
-      onScroll={handleScroll}
-      scrollEventThrottle={16}
-      refreshing={refreshing}
-      onRefresh={handleRefresh}
-    />
+    <ScrollView
+  contentContainerStyle={styles.listContainer}
+  showsVerticalScrollIndicator={false}
+  refreshControl={
+    <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+  }
+>
+  <ImageSlider sliderData={homeData.sliderData} />
+  <SearchHeader onToggle={(open) => setFilterExpanded(open)} />
+  {/* <CategoriesScreen /> */}
+   <TrendingTemplates />
+</ScrollView>
+
   );
 };
 
