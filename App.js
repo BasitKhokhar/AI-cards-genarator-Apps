@@ -26,6 +26,7 @@ import HomeScreen from "./src/Screens/HomeScreen/HomeScreen";
 import TemplateDetail from "./src/Screens/HomeScreen/CardsTemplates";
 
 import CategoriesScreen from "./src/Screens/HomeScreen/CardsCategories";
+import SearchResultsScreen from "./src/Screens/HomeScreen/SearchResultsScreen";
 import EnhancedImageGallery from "./src/Screens/HomeScreen/EnhancedImagesGallery";
 import AssetsMainScreen from "./src/Screens/AssetsScreen/AssetsMain";
 
@@ -160,6 +161,18 @@ const BottomTabs = () => {
     </Tab.Navigator>
   );
 };
+
+// 💫 Common header style for all screens
+export const commonHeaderOptions = {
+  headerStyle: {
+    backgroundColor: "#141414",
+  },
+  headerTintColor: "#ff3d9b",
+  headerTitleStyle: {
+    fontWeight: "bold",
+  },
+};
+
 const App = () => {
   const [userId, setUserId] = useState(null);
   const [checkingLogin, setCheckingLogin] = useState(true);
@@ -266,16 +279,13 @@ const App = () => {
               <Stack.Screen name="Main" options={{ headerShown: false }}>
                 {(props) => <BottomTabs {...props} />}
               </Stack.Screen>
-              <Stack.Screen name="AllNotifications" component={AllNotifications} />
+              <Stack.Screen name="AllNotifications" component={AllNotifications} options={{ title: "All Notifications", ...commonHeaderOptions, }} />
               <Stack.Screen name="templatefeatures" component={TemplateDetail} options={{
-                title: "AI Pics Features Detail", headerStyle: {
-                  backgroundColor: "#141414", // ✅ Change this to your desired color
-                },
-                headerTintColor: "#ff3d9b", // ✅ makes title & back button white
-                headerTitleStyle: {
-                  fontWeight: "bold", // optional styling for title
-                },
+                title: "Template Features Detail", ...commonHeaderOptions, // 👈 apply shared header style
               }} />
+              <Stack.Screen name="SearchResultsScreen" component={SearchResultsScreen} options={{ title: "Search Anything",...commonHeaderOptions, }} />
+
+
               <Stack.Screen name="AIpicsfeaturedetail" component={PicFeatureDetailScreen} options={{ title: "AI Pics Features Detail" }} />
 
               <Stack.Screen name="SimpleImageEditor" component={SimpleImageEditor} options={{ title: "Image Editor" }} />

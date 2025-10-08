@@ -77,14 +77,42 @@ exports.getTemplateById = async (req, res) => {
   }
 };
 
-
-// ✅ Single payload: trending + featured
 // ✅ Get only Trending Templates (top 30 by uses)
+// exports.getTrendingTemplates = async (req, res) => {
+//   try {
+//     const trending = await prisma.cardTemplate.findMany({
+//       orderBy: { uses: "desc" },
+//       take: 30,
+//       select: {
+//         id: true,
+//         title: true,
+//         description: true,
+//         imageUrl: true,
+//         prompt: true,
+//         uses: true,
+//         aspectRatio: true,
+//       },
+//     });
+
+//     res.json(trending); // ✅ just return trending list
+//   } catch (err) {
+//     console.error("❌ Error fetching trending templates:", err);
+//     res.status(500).json({ error: "Failed to fetch trending templates" });
+//   }
+// };
+
+// ✅ Get Trending Templates (with pagination for infinite scroll)
 exports.getTrendingTemplates = async (req, res) => {
   try {
-    const trending = await prisma.cardTemplate.findMany({
+    const page = parseInt(req.query.page) || 1; // default = 1
+    const limit = parseInt(req.query.limit) || 10; // default = 10
+    const skip = (page - 1) * limit;
+
+    // ✅ Fetch templates ordered by popularity
+    const templates = await prisma.cardTemplate.findMany({
       orderBy: { uses: "desc" },
-      take: 30,
+      skip,
+      take: limit,
       select: {
         id: true,
         title: true,
@@ -93,12 +121,58 @@ exports.getTrendingTemplates = async (req, res) => {
         prompt: true,
         uses: true,
         aspectRatio: true,
+        createdAt: true,
       },
     });
 
-    res.json(trending); // ✅ just return trending list
+    const totalCount = await prisma.cardTemplate.count();
+
+    res.status(200).json({
+      templates,
+      hasMore: skip + limit < totalCount, // ✅ tells frontend if more data available
+    });
   } catch (err) {
     console.error("❌ Error fetching trending templates:", err);
     res.status(500).json({ error: "Failed to fetch trending templates" });
+  }
+};
+
+
+
+// ✅ Search templates by title or description (Prisma 6+ compatible)
+exports.searchTemplates = async (req, res) => {
+  try {
+    const { q } = req.query;
+    console.log("🔍 Incoming search query:", q);
+
+    if (!q || q.trim() === "") {
+      return res.status(400).json({ message: "Search query is required" });
+    }
+
+    // ✅ Lowercase search (universal compatible fix)
+    const templates = await prisma.$queryRawUnsafe(
+      `
+      SELECT id, title, description, imageUrl, aspectRatio, uses, categoryId, createdAt
+      FROM cardTemplate
+      WHERE LOWER(title) LIKE LOWER(?) OR LOWER(description) LIKE LOWER(?)
+      ORDER BY createdAt DESC
+      `,
+      `%${q}%`,
+      `%${q}%`
+    );
+
+    if (!templates || templates.length === 0) {
+      console.log("⚠️ No templates found for:", q);
+      return res.status(200).json([]);
+    }
+
+    console.log(`✅ ${templates.length} templates found for query "${q}"`);
+    res.status(200).json(templates);
+  } catch (err) {
+    console.error("❌ Error in searchTemplates:", err);
+    res.status(500).json({
+      message: "Server error while searching templates",
+      error: err.message,
+    });
   }
 };

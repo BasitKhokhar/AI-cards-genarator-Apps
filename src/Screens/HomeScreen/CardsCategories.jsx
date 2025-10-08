@@ -12,6 +12,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { apiFetch } from "../../apiFetch";
+import SearchTemplates from "./SearchInput";
 
 const FIXED_HEIGHT = 160;
 
@@ -80,6 +81,12 @@ const CategoriesScreen = () => {
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#8b3dff" />
       }
     >
+      {/* 🔍 Search Bar Section */}
+      <View style={{ marginBottom: 20 }}>
+        <SearchTemplates />
+      </View>
+
+      {/* 🧭 Categories Section */}
       {categories.map((cat) => (
         <View key={cat.id} style={styles.categoryBlock}>
           <Text style={styles.categoryTitle}>{cat.name}</Text>
@@ -87,28 +94,19 @@ const CategoriesScreen = () => {
           <FlatList
             horizontal
             data={cat.templates || []}
-            keyExtractor={(item, idx) =>
-              item.id ? item.id.toString() : idx.toString()
-            }
+            keyExtractor={(item, idx) => (item.id ? item.id.toString() : idx.toString())}
             renderItem={({ item }) => (
               <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate("templatefeatures", { templateId: item.id })
-                }
+                onPress={() => navigation.navigate("templatefeatures", { templateId: item.id })}
               >
                 <LinearGradient
                   colors={["#8b3dff", "#ff3d9b"]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
-                  style={[
-                    styles.cardGradient,
-                    { width: item.calcWidth, height: FIXED_HEIGHT },
-                  ]}
+                  style={[styles.cardGradient, { width: item.calcWidth, height: FIXED_HEIGHT }]}
                 >
                   <Image
-                    source={{
-                      uri: item.imageUrl || "https://via.placeholder.com/150",
-                    }}
+                    source={{ uri: item.imageUrl || "https://via.placeholder.com/150" }}
                     style={styles.cardImage}
                     resizeMode="cover"
                   />
@@ -120,6 +118,7 @@ const CategoriesScreen = () => {
       ))}
     </ScrollView>
   );
+
 };
 
 const styles = StyleSheet.create({

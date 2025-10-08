@@ -8,7 +8,7 @@ import { useTheme } from "../../Context/ThemeContext";
 import ImageSlider from "../../Components/Sliders/Slider";
 import CategoriesScreen from "./CardsCategories";
 import SearchHeader from "./HomeinputSearch";
-import TrendingTemplates from "./TrendinTemplates";
+import TrendingTemplates from "./TrendingTemplates";
 // import CategoriesWithTemplates from "./CardsCategories";
 import EnhancedImageGallery from "./EnhancedImagesGallery";
 import PromptInputComponent from "./PromptinputComponent";

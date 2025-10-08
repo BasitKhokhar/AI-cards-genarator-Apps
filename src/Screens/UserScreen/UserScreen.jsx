@@ -99,11 +99,7 @@ const UserScreen = () => {
                 onPress={() => navigation.navigate("AccountDetail", { userData })}
                 activeOpacity={0.8}
               >
-                <Image
-                  source={{ uri: paymnetImgBtndata.sliderimage_url }}
-                  style={styles.cardImage}
-                  resizeMode="cover"
-                />
+                 <Image source={require('../../../assets/paymentpic.png')} style={styles.profileImage} />
               </TouchableOpacity>
             )}
 
@@ -146,7 +142,7 @@ const UserScreen = () => {
             </View>
 
             {[
-              { name: "info", label: "About PicNova-AI", color: "#00bcd4", route: "about" },
+              { name: "info", label: "About CardiFy-AI", color: "#00bcd4", route: "about" },
               { name: "support-agent", label: "Customer Support", color: "#ff6b81", route: "CustomerSupport" },
               { name: "shield", label: "Privacy Policy", color: "#ff9f43", route: "CustomerSupport" },
               { name: "question-answer", label: "FAQs", color: "#1dd1a1", route: "faq" }

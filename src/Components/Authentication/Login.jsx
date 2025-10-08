@@ -242,6 +242,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.8,
     shadowRadius: 20,
     elevation: 8,
+    marginTop:30
   },
   button: {
     paddingVertical: 16,
