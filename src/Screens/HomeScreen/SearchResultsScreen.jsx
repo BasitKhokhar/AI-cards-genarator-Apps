@@ -1,5 +1,5 @@
 // src/screens/Cards/SearchResultsScreen.js
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -8,79 +8,152 @@ import {
   Image,
   StyleSheet,
   ActivityIndicator,
+  Dimensions,
+  FlatList,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import MasonryList from "@react-native-seoul/masonry-list";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { apiFetch } from "../../apiFetch";
+
+const PAGE_SIZE = 10;
+const { width } = Dimensions.get("window");
+const CARD_WIDTH = (width - 36) / 2; // two columns with padding
 
 const SearchResultsScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
+
   const initialQuery = route.params?.query || "";
   const [query, setQuery] = useState(initialQuery);
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
-  const handleSearch = async () => {
-    if (!query.trim()) return;
-    setLoading(true);
-    setResults([]);
-    try {
-      const res = await apiFetch(
-        `/cards/templates/search?q=${encodeURIComponent(query)}`,
-        {},
-        navigation
-      );
-      if (res.ok) {
-        const data = await res.json();
-        const updated = await Promise.all(
-          data.map(async (item) => {
-            try {
-              const { width, height } = await new Promise((resolve, reject) =>
-                Image.getSize(item.imageUrl, (w, h) => resolve({ width: w, height: h }), reject)
-              );
-              return { ...item, width, height };
-            } catch {
-              return { ...item, width: 1, height: 1 };
-            }
-          })
+  // ✅ Fetch search results
+  const fetchResults = useCallback(
+    async (pageNum = 1, reset = false) => {
+      if (!query.trim()) return;
+
+      try {
+        if (pageNum === 1) setLoading(true);
+        else setLoadingMore(true);
+
+        const res = await apiFetch(
+          `/cards/templates/search?q=${encodeURIComponent(query)}&page=${pageNum}&limit=${PAGE_SIZE}`,
+          {},
+          navigation
         );
-        setResults(updated);
-      } else setResults([]);
-    } catch (err) {
-      console.error("❌ Search error:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
+        if (!res.ok) throw new Error("Failed to fetch search results");
+        const data = await res.json();
+
+        const { templates: fetched, hasMore: moreAvailable } = data;
+
+        // ✅ Calculate proportional image heights
+        const processed = await Promise.all(
+          fetched.map(
+            (item) =>
+              new Promise((resolve) => {
+                const uri = item.imageUrl || "https://via.placeholder.com/150";
+                Image.getSize(
+                  uri,
+                  (w, h) => {
+                    const aspectRatio = w / h || 1;
+                    const imgHeight = CARD_WIDTH / aspectRatio;
+                    resolve({ ...item, aspectRatio, height: imgHeight });
+                  },
+                  () => resolve({ ...item, aspectRatio: 1, height: 180 })
+                );
+              })
+          )
+        );
+
+        if (reset) setResults(processed);
+        else setResults((prev) => [...prev, ...processed]);
+
+        setHasMore(moreAvailable);
+      } catch (err) {
+        console.error("❌ Search fetch error:", err);
+      } finally {
+        setLoading(false);
+        setLoadingMore(false);
+      }
+    },
+    [query, navigation]
+  );
+
+  // 🔍 Fetch when coming from previous screen
   useEffect(() => {
-    if (initialQuery) handleSearch();
+    if (initialQuery) {
+      fetchResults(1, true);
+    }
   }, [initialQuery]);
 
-  const renderItem = ({ item }) => {
-    const aspectRatio = item.width / item.height || 1;
-    return (
-      <TouchableOpacity
-        style={styles.card}
-        onPress={() => navigation.navigate("templatefeatures", { templateId: item.id })}
-      >
-        <Image source={{ uri: item.imageUrl }} style={[styles.image, { aspectRatio }]} />
-        <Text style={styles.title} numberOfLines={1}>
+  // 🔍 Manual search
+  const handleSearch = () => {
+    if (query.trim()) fetchResults(1, true);
+  };
+
+  // ♾️ Infinite scroll
+  const handleLoadMore = useCallback(() => {
+    if (loadingMore || !hasMore) return;
+    const nextPage = Math.floor(results.length / PAGE_SIZE) + 1;
+    fetchResults(nextPage);
+  }, [loadingMore, hasMore, results.length, fetchResults]);
+
+  // ✅ Split into two columns
+  const formatMasonry = (data) => {
+    const left = [];
+    const right = [];
+    data.forEach((item, index) => {
+      if (index % 2 === 0) left.push(item);
+      else right.push(item);
+    });
+    return [left, right];
+  };
+
+  const [leftCol, rightCol] = formatMasonry(results);
+
+  // ✅ Render one card
+  const renderCard = (item) => (
+    <TouchableOpacity
+      key={item.id}
+      activeOpacity={0.9}
+      style={[styles.card, { height: item.height }]}
+      onPress={() =>
+        navigation.navigate("templatefeatures", { templateId: item.id })
+      }
+    >
+      <Image
+        source={{ uri: item.imageUrl }}
+        style={[styles.image, { height: item.height }]}
+        resizeMode="cover"
+      />
+      <View style={styles.cardOverlay}>
+        <Text style={styles.cardTitle} numberOfLines={1}>
           {item.title}
         </Text>
-      </TouchableOpacity>
-    );
-  };
+      </View>
+    </TouchableOpacity>
+  );
+
+  // ✅ Render the 2-column masonry layout
+  const renderMasonry = () => (
+    <View style={styles.masonryContainer}>
+      <View style={styles.column}>
+        {leftCol.map((item) => renderCard(item))}
+      </View>
+      <View style={styles.column}>
+        {rightCol.map((item) => renderCard(item))}
+      </View>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
-      {/* 🔍 Search Bar */}
+      {/* 🔍 Search bar */}
       <View style={styles.searchContainer}>
-        {/* <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={22} color="#fff" style={{ marginRight: 10 }} />
-        </TouchableOpacity> */}
         <Ionicons name="search" size={20} color="#bbb" style={{ marginRight: 8 }} />
         <TextInput
           style={styles.input}
@@ -104,16 +177,24 @@ const SearchResultsScreen = () => {
 
       {/* Results */}
       {!loading && results.length > 0 && (
-        <MasonryList
-          data={results}
-          keyExtractor={(item) => item.id.toString()}
-          numColumns={2}
-          renderItem={renderItem}
-          contentContainerStyle={styles.list}
+        <FlatList
+          data={[{}]} // one placeholder for custom layout
+          renderItem={renderMasonry}
+          keyExtractor={() => "masonry"}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.2}
+          showsVerticalScrollIndicator={false}
+          ListFooterComponent={
+            loadingMore && (
+              <View style={styles.footerLoader}>
+                <ActivityIndicator size="small" color="#8b3dff" />
+              </View>
+            )
+          }
         />
       )}
 
-      {/* Empty */}
+      {/* Empty State */}
       {!loading && results.length === 0 && query.length > 0 && (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>No templates found for "{query}"</Text>
@@ -124,41 +205,55 @@ const SearchResultsScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#0d0d0d", padding: 10 },
+  container: { flex: 1, backgroundColor: "#0d0d0d", paddingTop: 10 },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#1a1a1a",
-    borderRadius: 12,
-    paddingHorizontal: 10,
+    borderRadius: 50,
+    paddingLeft: 10,
     borderWidth: 1,
     borderColor: "#2c2c2c",
-    marginBottom: 15,
+    marginHorizontal: 10,
+    marginBottom: 10,
   },
   input: { flex: 1, color: "#fff", paddingVertical: 10, fontSize: 15 },
   goButton: {
-    backgroundColor: "#8b3dff",
+    backgroundColor: "#e91e63",
     borderRadius: 50,
-    paddingVertical: 8,
+    paddingVertical: 12,
     paddingHorizontal: 12,
     marginLeft: 6,
   },
-  list: { paddingBottom: 40 },
-  card: {
-    flex: 1,
-    margin: 8,
-    borderRadius: 12,
-    backgroundColor: "#1a1a1a",
-    overflow: "hidden",
+  masonryContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 10,
   },
-  image: { width: "100%", borderRadius: 10 },
-  title: {
+  column: { flex: 1 },
+  card: {
+    margin: 6,
+    borderRadius: 14,
+    backgroundColor: "#1E1E1E",
+    overflow: "hidden",
+    elevation: 3,
+  },
+  image: { width: "100%", borderRadius: 12 },
+  cardOverlay: {
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
+    paddingVertical: 8,
+    backgroundColor: "rgba(0,0,0,0.55)",
+  },
+  cardTitle: {
     color: "white",
+    fontSize: 14,
     fontWeight: "600",
     textAlign: "center",
-    padding: 8,
   },
   loader: { flex: 1, justifyContent: "center", alignItems: "center" },
+  footerLoader: { paddingVertical: 20 },
   emptyContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
   emptyText: { color: "#888", fontSize: 16 },
 });

@@ -111,8 +111,8 @@ const UserScreen = () => {
 
             {[
               { name: "person", label: "Personal Info", color: "#9b59b6", route: "AccountDetail" },
-              { name: "credit-card", label: "Payment methods", color: "#00cec9", route: "AccountDetail" },
-              { name: "security", label: "Security", color: "#2ecc71", route: "AccountDetail" }
+              { name: "credit-card", label: "Payment methods", color: "#00cec9", route: "PaymentmethodsScreen" },
+              // { name: "security", label: "Security", color: "#2ecc71", route: "AccountDetail" }
             ].map((item, idx) => (
               <TouchableOpacity 
                 key={idx} 
@@ -127,14 +127,6 @@ const UserScreen = () => {
               </TouchableOpacity>
             ))}
 
-            {/* <View style={styles.section}>
-              <View style={styles.leftContent}>
-                <Icon name="brightness-6" size={24} color="#f39c12" />
-                <Text style={styles.sectionText}>Change Theme</Text>
-              </View>
-              <ThemeToggleButton />
-            </View> */}
-
             {/* About Section */}
             <View style={styles.sectionHeader}>
               <Text style={styles.heading}>About</Text>
@@ -142,9 +134,9 @@ const UserScreen = () => {
             </View>
 
             {[
-              { name: "info", label: "About CardiFy-AI", color: "#00bcd4", route: "about" },
+              { name: "info", label: "About CardiFy-AI", color: "#00bcd4", route: "AboutAppScreen" },
               { name: "support-agent", label: "Customer Support", color: "#ff6b81", route: "CustomerSupport" },
-              { name: "shield", label: "Privacy Policy", color: "#ff9f43", route: "CustomerSupport" },
+              { name: "shield", label: "Privacy Policy", color: "#ff9f43", route: "PrivacyPolicyScreen" },
               { name: "question-answer", label: "FAQs", color: "#1dd1a1", route: "faq" }
             ].map((item, idx) => (
               <TouchableOpacity 
@@ -190,6 +182,8 @@ const styles = StyleSheet.create({
     paddingBottom:100,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
+     borderWidth: 1,
+    borderColor: "#2c2c2e",
     backgroundColor: "#1a1a1a", // card background
   },
   loaderContainer: {
@@ -212,8 +206,8 @@ const styles = StyleSheet.create({
     borderRadius: 60,
     overflow: "hidden",
     borderWidth: 2,
-    borderColor: "#9b59b6", // purple neon
-    shadowColor: "#9b59b6",
+    borderColor: "#ff3d9b", // purple neon
+    // shadowColor: "#9b59b6",
     shadowOpacity: 0.9,
     shadowRadius: 10,
   },
@@ -225,8 +219,6 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 60,
-    borderWidth: 2,
-    borderColor: "#9b59b6",
     backgroundColor: "#2c2c2c",
   },
   headingsContainer: {
@@ -235,7 +227,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: "bold",
-    color: "#e056fd", // bright purple
+    color: "#ff3d9b", 
     // textShadowColor: "#ff00ff",
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 8,
@@ -268,13 +260,13 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#e056fd",
-    marginRight: 8,
+    color: "#ff3d9b",
+    marginRight: 8,marginBottom:10,
   },
   line: {
     flex: 1,
     height: 1.5,
-    backgroundColor: "#9b59b6",
+    backgroundColor: "#ff3d9b",
     shadowColor: "#ff00ff",
     shadowOpacity: 0.7,
     shadowRadius: 6,

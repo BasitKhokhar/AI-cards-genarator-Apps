@@ -193,23 +193,25 @@ import {
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
+  Dimensions,
+  FlatList,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import MasonryList from "@react-native-seoul/masonry-list";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { apiFetch } from "../../apiFetch";
 
 const PAGE_SIZE = 10;
+const { width } = Dimensions.get("window");
+const CARD_WIDTH = (width - 36) / 2; // two columns with padding
 
 const TrendingTemplates = () => {
   const [templates, setTemplates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const navigation = useNavigation();
 
-  // ✅ Fetch templates with page control
+  // ✅ Fetch templates
   const fetchTemplates = useCallback(
     async (pageNum = 1) => {
       try {
@@ -226,8 +228,8 @@ const TrendingTemplates = () => {
         const data = await res.json();
 
         const { templates: fetched, hasMore: moreAvailable } = data;
-        if (!Array.isArray(fetched)) return;
 
+        // ✅ Calculate image height proportionally
         const processed = await Promise.all(
           fetched.map(
             (item) =>
@@ -235,25 +237,23 @@ const TrendingTemplates = () => {
                 const uri = item.imageUrl || "https://via.placeholder.com/150";
                 Image.getSize(
                   uri,
-                  (w, h) => resolve({ ...item, width: w, height: h }),
-                  () => resolve({ ...item, width: 1, height: 1 })
+                  (w, h) => {
+                    const aspectRatio = w / h || 1;
+                    const imgHeight = CARD_WIDTH / aspectRatio;
+                    resolve({ ...item, aspectRatio, height: imgHeight });
+                  },
+                  () => resolve({ ...item, aspectRatio: 1, height: 180 })
                 );
               })
           )
         );
 
-        // ✅ Append new data correctly
         if (pageNum === 1) setTemplates(processed);
-        else
-          setTemplates((prev) => {
-            const ids = new Set(prev.map((t) => t.id));
-            const newOnes = processed.filter((t) => !ids.has(t.id));
-            return [...prev, ...newOnes];
-          });
+        else setTemplates((prev) => [...prev, ...processed]);
 
         setHasMore(moreAvailable);
       } catch (err) {
-        console.error("❌ Error fetching templates:", err);
+        console.error("❌ Fetch error:", err);
       } finally {
         setLoading(false);
         setLoadingMore(false);
@@ -266,48 +266,59 @@ const TrendingTemplates = () => {
     fetchTemplates(1);
   }, [fetchTemplates]);
 
-  // ✅ Properly load next page
+  // ✅ Infinite scroll
   const handleLoadMore = useCallback(() => {
-    if (!loadingMore && hasMore) {
-      const nextPage = page + 1;
-      setPage(nextPage);
-      fetchTemplates(nextPage);
-    }
-  }, [page, loadingMore, hasMore, fetchTemplates]);
+    if (loadingMore || !hasMore) return;
+    const nextPage = Math.floor(templates.length / PAGE_SIZE) + 1;
+    fetchTemplates(nextPage);
+  }, [loadingMore, hasMore, templates.length, fetchTemplates]);
 
-  // ✅ Avoid double-calls on fast scroll
-  const handleEndReached = useCallback(() => {
-    if (!loadingMore && hasMore) {
-      handleLoadMore();
-    }
-  }, [loadingMore, hasMore, handleLoadMore]);
-
-  const renderItem = ({ item }) => {
-    const aspectRatio = item.width / item.height || 1;
-    const isPortrait = aspectRatio < 1;
-    const cardHeight = isPortrait ? 280 : 180;
-
-    return (
-      <TouchableOpacity
-        activeOpacity={0.9}
-        style={[styles.card, { height: cardHeight }]}
-        onPress={() =>
-          navigation.navigate("templatefeatures", { templateId: item.id })
-        }
-      >
-        <Image
-          source={{ uri: item.imageUrl }}
-          style={[styles.image, { aspectRatio }]}
-          resizeMode="cover"
-        />
-        <View style={styles.cardOverlay}>
-          <Text style={styles.cardTitle} numberOfLines={1}>
-            {item.title}
-          </Text>
-        </View>
-      </TouchableOpacity>
-    );
+  // ✅ Split templates into 2 columns
+  const formatMasonry = (data) => {
+    const left = [];
+    const right = [];
+    data.forEach((item, index) => {
+      if (index % 2 === 0) left.push(item);
+      else right.push(item);
+    });
+    return [left, right];
   };
+
+  const [leftCol, rightCol] = formatMasonry(templates);
+
+  const renderMasonry = () => (
+    <View style={styles.masonryContainer}>
+      <View style={styles.column}>
+        {leftCol.map((item) => renderCard(item))}
+      </View>
+      <View style={styles.column}>
+        {rightCol.map((item) => renderCard(item))}
+      </View>
+    </View>
+  );
+
+  // ✅ Card renderer
+  const renderCard = (item) => (
+    <TouchableOpacity
+      key={item.id}
+      activeOpacity={0.9}
+      style={[styles.card, { height: item.height }]}
+      onPress={() =>
+        navigation.navigate("templatefeatures", { templateId: item.id })
+      }
+    >
+      <Image
+        source={{ uri: item.imageUrl }}
+        style={[styles.image, { height: item.height }]}
+        resizeMode="cover"
+      />
+      <View style={styles.cardOverlay}>
+        <Text style={styles.cardTitle} numberOfLines={1}>
+          {item.title}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  );
 
   if (loading) {
     return (
@@ -324,21 +335,19 @@ const TrendingTemplates = () => {
         <Text style={styles.headerText}>Trending Templates</Text>
       </View>
 
-      <MasonryList
-        data={templates}
-        keyExtractor={(item, index) => `${item.id}-${index}`}
-        numColumns={2}
-        renderItem={renderItem}
+      <FlatList
+        data={[{}]} // single placeholder for masonry layout
+        renderItem={renderMasonry}
+        keyExtractor={() => "masonry"}
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.2}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.listContainer}
-        onEndReached={handleEndReached}
-        onEndReachedThreshold={0.5}
         ListFooterComponent={
-          loadingMore ? (
-            <View style={{ paddingVertical: 20 }}>
+          loadingMore && (
+            <View style={styles.footerLoader}>
               <ActivityIndicator size="small" color="#8b3dff" />
             </View>
-          ) : null
+          )
         }
       />
     </View>
@@ -352,7 +361,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 16,
     paddingTop: 20,
-    marginBottom: 6,
+    marginBottom: 8,
   },
   headerText: {
     marginLeft: 8,
@@ -360,16 +369,25 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "white",
   },
-  listContainer: { paddingHorizontal: 10, paddingBottom: 20 },
-  card: {
+  masonryContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 10,
+  },
+  column: {
     flex: 1,
+  },
+  card: {
     margin: 6,
     borderRadius: 14,
     backgroundColor: "#1E1E1E",
     overflow: "hidden",
     elevation: 3,
   },
-  image: { width: "100%", height: undefined, borderRadius: 12 },
+  image: {
+    width: "100%",
+    borderRadius: 12,
+  },
   cardOverlay: {
     position: "absolute",
     bottom: 0,
@@ -389,6 +407,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#121212",
   },
+  footerLoader: { paddingVertical: 20 },
 });
 
 export default TrendingTemplates;

@@ -27,22 +27,19 @@ import TemplateDetail from "./src/Screens/HomeScreen/CardsTemplates";
 
 import CategoriesScreen from "./src/Screens/HomeScreen/CardsCategories";
 import SearchResultsScreen from "./src/Screens/HomeScreen/SearchResultsScreen";
-import EnhancedImageGallery from "./src/Screens/HomeScreen/EnhancedImagesGallery";
 import AssetsMainScreen from "./src/Screens/AssetsScreen/AssetsMain";
 
-import CardsCategoriesScreen from "./src/Screens/HomeScreen/CardsCategories";
-import CardCategoryTemplatesScreen from "./src/Screens/HomeScreen/CardsTemplates";
-
 import AllNotifications from "./src/Screens/NotificationsScreen/AllNotifications";
-import AIPicsFeatureList from "./src/Screens/AI_PicsFeatures_Screen/AIPics_Features";
-import PicFeatureDetailScreen from "./src/Screens/AI_PicsFeatures_Screen/AIPics_Featuredetail";
+
+import PaymentSelectionScreen from "./src/Screens/PaymentMethodsScreen/PaymentMethods";
+import EasypaisaPaymentScreen from "./src/Screens/PaymentMethodsScreen/EasyPaisaScreen";
+import JazzCashPaymentScreen from "./src/Screens/PaymentMethodsScreen/JazzCashScreen";
 
 import SimpleImageEditor from "./src/Screens/HomeScreen/SimpleEditing";
 
-import Videoscreen from "./src/Screens/VideosScreen/Videoscreen";
-
 import UserScreen from "./src/Screens/UserScreen/UserScreen";
 import AccountDetailScreen from "./src/Screens/UserScreen/AccountDetailScreen";
+import AboutApp from "./src/Screens/UserScreen/About";
 import CustomerSupportScreen from "./src/Screens/UserScreen/CustomerSupportScreen";
 import FAQ from "./src/Screens/UserScreen/FAQ";
 // import StripePayment from "./Components/Cart/StripePayment";
@@ -50,6 +47,7 @@ import LogoutScreen from "./src/Screens/UserScreen/LogoutScreen";
 import 'react-native-gesture-handler';
 import * as SecureStore from 'expo-secure-store';
 import Constants from 'expo-constants';
+import PrivacyPolicy from "./src/Screens/UserScreen/PrivacyPolicy";
 const API_BASE_URL = Constants.expoConfig.extra.API_BASE_URL;
 const stripeKey = Constants.expoConfig.extra.stripePublishableKey;
 const Stack = createStackNavigator();
@@ -281,26 +279,27 @@ const App = () => {
               </Stack.Screen>
               <Stack.Screen name="AllNotifications" component={AllNotifications} options={{ title: "All Notifications", ...commonHeaderOptions, }} />
               <Stack.Screen name="templatefeatures" component={TemplateDetail} options={{
-                title: "Template Features Detail", ...commonHeaderOptions, // 👈 apply shared header style
+                title: "Template Features Detail", ...commonHeaderOptions, 
               }} />
               <Stack.Screen name="SearchResultsScreen" component={SearchResultsScreen} options={{ title: "Search Anything",...commonHeaderOptions, }} />
 
-
-              <Stack.Screen name="AIpicsfeaturedetail" component={PicFeatureDetailScreen} options={{ title: "AI Pics Features Detail" }} />
-
               <Stack.Screen name="SimpleImageEditor" component={SimpleImageEditor} options={{ title: "Image Editor" }} />
-
-              <Stack.Screen name="VideoGenerateScreen" component={VideoGenerateScreen} options={{ title: "Videos Features" }} />
 
               <Stack.Screen name="SplashScreen" component={SplashScreen} options={{ headerShown: false }} />
               <Stack.Screen name="Profile" component={UserScreen} options={{ title: "Profile" }} />
+
+               <Stack.Screen name="PaymentmethodsScreen" component={PaymentSelectionScreen} options={{ title: "Payment Methods", ...commonHeaderOptions, }} />
+              <Stack.Screen name="jazzcashscreenScreen" component={JazzCashPaymentScreen} options={{ title: "JazzCash",...commonHeaderOptions, }} />
+              <Stack.Screen name="easypaisaScreen" component={EasypaisaPaymentScreen} options={{ title: "EasyPaisa",...commonHeaderOptions, }} />
               {/* <Stack.Screen name="UserDetailsScreen" component={UserDetailsScreen} /> */}
               <Stack.Screen name="User" component={UserScreen} />
-              <Stack.Screen name="AccountDetail" component={AccountDetailScreen} />
-              <Stack.Screen name="CustomerSupport" component={CustomerSupportScreen} />
-              <Stack.Screen name="faq" component={FAQ} />
+              <Stack.Screen name="AccountDetail" component={AccountDetailScreen} options={{title: "Account Details", ...commonHeaderOptions,}} />
+              <Stack.Screen name="AboutAppScreen" component={AboutApp} options={{title: "About CardiFy-AI", ...commonHeaderOptions,}}/>
+              <Stack.Screen name="CustomerSupport" component={CustomerSupportScreen} options={{title: "Customer Support", ...commonHeaderOptions,}}/>
+               <Stack.Screen name="PrivacyPolicyScreen" component={PrivacyPolicy} options={{title: "Privacy Policies", ...commonHeaderOptions,}}/>
+              <Stack.Screen name="faq" component={FAQ} options={{title: "All FAQs", ...commonHeaderOptions,}} />
               {/* <Stack.Screen name="StripePayment" component={StripePayment} /> */}
-              <Stack.Screen name="Logout" component={LogoutScreen} />
+              <Stack.Screen name="Logout" component={LogoutScreen} options={{title: "Logout", ...commonHeaderOptions,}} />
             </Stack.Navigator>
           </NavigationContainer>
         </StripeProvider>

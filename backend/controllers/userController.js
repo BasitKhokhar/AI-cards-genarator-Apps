@@ -38,28 +38,48 @@ exports.getUserImage = async (req, res) => {
   }
 };
 
+// controllers/userController.js
 exports.PostProfileImage = async (req, res) => {
-  const { user_id, image_url } = req.body;
-
   try {
+    let { user_id, image_url } = req.body;
+
+    // 🧩 Convert user_id to integer safely (even if undefined or string)
+    const userIdInt = Number(user_id);
+    if (isNaN(userIdInt)) {
+      return res.status(400).json({ message: "Invalid user_id provided" });
+    }
+
+    console.log("🧠 Parsed user_id:", userIdInt);
+    console.log("🖼️ Image URL:", image_url);
+
+    // ✅ Check if a record exists for this user
     const existingImage = await prisma.userimages.findUnique({
-      where: { user_id },
+      where: { user_id: userIdInt },
     });
 
+    let result;
     if (existingImage) {
-      await prisma.userimages.update({
-        where: { user_id },
+      console.log("🔁 Updating existing profile image...");
+      result = await prisma.userimages.update({
+        where: { user_id: userIdInt },
         data: { image_url },
       });
     } else {
-      await prisma.userimages.create({
-        data: { user_id, image_url },
+      console.log("🆕 Creating new profile image record...");
+      result = await prisma.userimages.create({
+        data: { user_id: userIdInt, image_url },
       });
     }
 
-    res.status(200).json({ message: 'Profile image updated successfully' });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Failed to update profile image' });
+    return res.status(200).json({
+      message: "✅ Profile image saved successfully",
+      data: result,
+    });
+  } catch (error) {
+    console.error("❌ Error in PostProfileImage:", error);
+    return res.status(500).json({
+      message: "Server error while saving profile image",
+      error: error.message,
+    });
   }
 };

@@ -2,22 +2,26 @@ const express = require("express");
 const router = express.Router();
 const { verifyToken } = require("../middleware/authMiddleware");
 const {
-  getCategoriesWithTemplates,
+  getCategories,
+  getTemplatesByCategory,
   getTemplateById,
   getTrendingTemplates,
   searchTemplates,
 } = require("../controllers/CardsController");
 
-// ✅ Get all categories with templates
-router.get("/categories", verifyToken, getCategoriesWithTemplates);
+// ✅ Get all categories
+router.get("/categories", verifyToken, getCategories);
+
+// ✅ Get templates for a specific category (paginated)
+router.get("/categories/:id/templates", verifyToken, getTemplatesByCategory);
 
 // ✅ Search templates
 router.get("/templates/search", verifyToken, searchTemplates);
 
-// ✅ Get single template
+// ✅ Get a single template
 router.get("/templates/:id", verifyToken, getTemplateById);
 
-// ✅ Get trending templates with pagination (for home screen)
+// ✅ Get trending templates (for infinite scroll)
 router.get("/trendingtemplates/home", verifyToken, getTrendingTemplates);
 
 module.exports = router;

@@ -75,7 +75,7 @@ model UserFavouriteTemplate {
 
 model userimages {
   id         Int      @id @default(autoincrement())
-  user_id    Int
+  user_id    Int      @unique
   image_url  String   @db.VarChar(512)
   created_at DateTime @default(now()) @db.Timestamp(0)
   users      users    @relation(fields: [user_id], references: [user_id], onDelete: Cascade, map: "userimage_ibfk_1")
@@ -112,7 +112,7 @@ model MissionVision {
 
 model PrivacyPolicy {
   id        Int      @id @default(autoincrement())
-  title     String   @db.VarChar(255) // Optional: "Privacy Policy"
+  title     String   @db.VarChar(255) 
   content   String   @db.Text         // Long text with full policy
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -120,7 +120,14 @@ model PrivacyPolicy {
 
 model AboutApp {
   id        Int      @id @default(autoincrement())
-  title     String   @db.VarChar(255) // Optional: "About the Game"
+  title     String   @db.VarChar(255) 
+  content   String   @db.Text         // Long text description of the game
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model security {
+  id        Int      @id @default(autoincrement())
   content   String   @db.Text         // Long text description of the game
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

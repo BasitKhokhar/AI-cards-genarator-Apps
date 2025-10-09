@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
     padding: 25,
     borderRadius: 20,
     borderWidth: 2,
-    borderColor: neonPurple,
+    borderColor: "#ff3d9b",
     shadowColor: neonPink,
     shadowOpacity: 0.5,
     shadowRadius: 18,

@@ -1,127 +1,121 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
-import * as Animatable from 'react-native-animatable';
-import { useNavigation } from "@react-navigation/native";
-import Loader from '../Loader/Loader';
-
-import Constants from 'expo-constants';
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { apiFetch } from "../../apiFetch";
+import Constants from "expo-constants";
 const API_BASE_URL = Constants.expoConfig.extra.API_BASE_URL;
-export default function About() {
-     const navigation = useNavigation();
-  const [aboutData, setAboutData] = useState({
-    aboutMsgsData: [],
-    aboutImageData: [],
-    aboutUsData: [],
-    aboutMissionData: [],
-  });
 
+export default function AboutApp() {
+  const [about, setAbout] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    setLoading(true);
-    const apiEndpoints = [
-      { key: 'aboutMsgsData', url: `${API_BASE_URL}/about` },
-      { key: 'aboutImageData', url: `${API_BASE_URL}/about_image` },
-      { key: 'aboutUsData', url: `${API_BASE_URL}/aboutus` },
-      { key: 'aboutMissionData', url: `${API_BASE_URL}/about_mission` }
-    ];
+    const fetchAbout = async () => {
+      try {
+        setLoading(true);
+        const res = await apiFetch(`/content/about-App`);
+        if (!res.ok) throw new Error("Failed to fetch About App");
 
-    Promise.all(
-      apiEndpoints.map(endpoint =>
-        fetch(endpoint.url)
-          .then(response => response.json())
-          .then(data => ({ key: endpoint.key, data }))
-          .catch(() => ({ key: endpoint.key, data: [] }))
-      )
-    ).then(results => {
-      const updatedData = results.reduce((acc, result) => {
-        acc[result.key] = result.data;
-        return acc;
-      }, {});
-      setAboutData(prevData => ({ ...prevData, ...updatedData }));
-      setLoading(false);
-    });
+        const data = await res.json();
+        setAbout(data);
+      } catch (err) {
+        console.error(err);
+        setError("Unable to load app details. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAbout();
   }, []);
 
-  if (loading) {
-    return <View style={styles.loaderContainer}>
-      <Loader />
-    </View>
-  }
-
   return (
-    <ScrollView style={styles.container}>
-      <Animatable.Text animation="fadeInUp" style={styles.title}>About Us</Animatable.Text>
-
-      {/* About Us Section */}
-      <View style={styles.section}>
-        <Animatable.View animation="zoomIn" style={styles.imageContainer}>
-          {aboutData.aboutImageData.map(item => (
-            <Image key={item.id} source={{ uri: item.image_url }} style={styles.image} />
-          ))}
-        </Animatable.View>
-
-        <Animatable.View animation="fadeInUp" style={styles.textContainer}>
-          {aboutData.aboutUsData.map(items => (
-            <Text key={items.id} style={styles.text}>{items.about_us}</Text>
-          ))}
-        </Animatable.View>
-      </View>
-
-      {/* Mission & Vision Section */}
-      <Text style={styles.sectionTitle}>Mission & Vision</Text>
-      <View style={styles.section}>
-        {aboutData.aboutMissionData.map(items => (
-          <Animatable.View key={items.id} animation="zoomIn" style={styles.missionContainer}>
-            <Text style={styles.missionText}>{items.aboutmission}</Text>
-          </Animatable.View>
-        ))}
-      </View>
-
-      {/* Owners List */}
-      {aboutData.aboutMsgsData.map(items => (
-        <View key={items.id} style={styles.ownerContainer}>
-          <Animatable.Text animation="fadeInUp" style={styles.position}>{items.Position}</Animatable.Text>
-          <View style={styles.ownerDetails}>
-            <Animatable.Image animation="zoomIn" source={{ uri: items.image_url }} style={styles.ownerImage} />
-            <View>
-              <Text style={styles.ownerName}>{items.name}</Text>
-              <Text style={styles.text}>{items.description}</Text>
-              <Text style={styles.contact}><Text style={styles.bold}>Contact:</Text> {items.contact}</Text>
-            </View>
+    <ScrollView
+      style={styles.container}
+      showsVerticalScrollIndicator={false}
+    >
+      {loading ? (
+        <ActivityIndicator size="large" color="#ff3d9b" style={{ marginTop: 50 }} />
+      ) : error ? (
+        <Text style={styles.error}>{error}</Text>
+      ) : about ? (
+        <View style={styles.textContainer}>
+          {/* 🔮 Neon Gradient Title */}
+        
+          {/* 🌌 Content Box */}
+          <View style={styles.contentBox}>
+            <Text style={styles.content}>{about.content}</Text>
           </View>
         </View>
-      ))}
+      ) : (
+        <Text style={styles.error}>No data found.</Text>
+      )}
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { paddingHorizontal: 20,paddingTop:20,paddingBottom:55, backgroundColor: '#FFF' },
-   loaderContainer: {
+  container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    height: '100%',
-    borderRadius: 10,
-    backgroundColor: '#fff',
+    backgroundColor: "#0D0D0D",
+    paddingVertical: 16,
+    paddingHorizontal: 18,
   },
-  title: { fontSize: 26, fontWeight: 'bold', marginBottom: 20, color: '#000', alignSelf:'center'},
-  section: { flexDirection: 'column', gap: 10, marginBottom: 20 },
-  imageContainer: { alignItems: 'center' },
-  image: { width: '100%', height: 350, borderRadius: 10 },
-  textContainer: { paddingHorizontal: 10 },
-  text: { fontSize: 16, color: '#333',textAlign:'justify' },
-  sectionTitle: { fontSize: 22, fontWeight: 'bold', marginBottom: 10, color: '#000' , alignSelf:'center'},
-  missionContainer: { backgroundColor: '#282828', padding: 15, borderRadius: 8 },
-  missionText: { color: 'white', fontSize: 16 ,textAlign:'justify'},
-  ownerContainer: { marginBottom: 100 },
-  position: { backgroundColor: '#AA6231', color: 'white',textAlign:'center',paddingVertical:10, borderRadius: 5, fontSize: 18, fontWeight: 'bold' },
-  ownerDetails: { flexDirection: 'column', gap: 10, alignItems: 'center', marginTop: 10 },
-  ownerImage: { width: 150, height: 150, borderRadius: 10, borderWidth: 1, borderColor: '#ccc' },
-  ownerName: { fontSize: 18, fontWeight: 'bold' },
-  contact: { fontSize: 16, marginTop: 5 },
-  bold: { fontWeight: 'bold' },
-  loader: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  textContainer: {
+    paddingBottom: 60,
+  },
+  gradientTitle: {
+    borderRadius: 14,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    alignSelf: "center",
+    marginBottom: 16,
+    shadowColor: "#8b3dff",
+    shadowOpacity: 0.7,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "900",
+    textAlign: "center",
+    color: "#fff",
+    letterSpacing: 1,
+    textTransform: "uppercase",
+    textShadowColor: "#ff3d9b",
+    textShadowRadius: 10,
+    textShadowOffset: { width: 0, height: 0 },
+  },
+  contentBox: {
+    // backgroundColor: "#141414",
+    // borderRadius: 14,
+    // padding: 16,
+    // borderWidth: 1,
+    // borderColor: "rgba(139,61,255,0.3)",
+    // shadowColor: "#8b3dff",
+    // shadowOpacity: 0.5,
+    // shadowRadius: 10,
+    // elevation: 5,
+  },
+  content: {
+    fontSize: 15.5,
+    color: "#dcdcdc",
+    lineHeight: 25,
+    textAlign: "justify",
+    letterSpacing: 0.3,
+  },
+  error: {
+    fontSize: 16,
+    color: "#ff3d9b",
+    marginTop: 30,
+    textAlign: "center",
+    textShadowColor: "#8b3dff",
+    textShadowRadius: 8,
+  },
 });
