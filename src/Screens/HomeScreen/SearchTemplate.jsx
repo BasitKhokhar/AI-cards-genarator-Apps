@@ -39,7 +39,7 @@ const SearchTemplates = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {  marginTop: 10 },
+  container: {  marginTop: 10,marginBottom:20 },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",

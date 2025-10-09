@@ -5,11 +5,8 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-// import EnhancedImageGallery from "./EnhancedImageGallery"; // ✅ import your gallery
-// import FavouriteTemplates from "./FavouriteTemplates"; // ✅ import favourite templates
-
-import EnhancedImageGallery from "../HomeScreen/EnhancedImagesGallery";
-import FavouriteTemplates from "../FavouriteTemplatesScreen/FavouriteTemplates";
+import EnhancedImageGallery from "./EnhancedImagesGallery";
+import FavouriteTemplates from "./FavouriteTemplates";
 const AssetsMainScreen = () => {
   const [activeTab, setActiveTab] = useState("gallery"); // default: gallery
 

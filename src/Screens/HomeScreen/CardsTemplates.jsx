@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Icon from "react-native-vector-icons/MaterialIcons"; // ✅ heart icon
+import Icon from "react-native-vector-icons/MaterialIcons";
 import {
   View,
   Text,
@@ -22,8 +22,10 @@ const TemplateDetail = ({ route }) => {
   const [resolution, setResolution] = useState("512x512");
   const [aspect, setAspect] = useState(1);
 
-  const [isFavourite, setIsFavourite] = useState(false); // ✅ favourite state
+  const [isFavourite, setIsFavourite] = useState(false);
   const [loadingFav, setLoadingFav] = useState(false);
+  const [favouriteCount, setFavouriteCount] = useState(0);
+  const [usageCount, setUsageCount] = useState(0);
 
   const navigation = useNavigation();
 
@@ -36,9 +38,9 @@ const TemplateDetail = ({ route }) => {
           setTemplate(data);
           setPrompt(data.prompt || "");
           setAspectRatio(data.aspectRatio || "1:1");
-
-          // ✅ if backend sends "isFavourite"
           setIsFavourite(data.isFavourite || false);
+          setFavouriteCount(data.favouriteCount || 0);
+          setUsageCount(data.usageCount || 0);
         } else {
           console.log("❌ Failed to load template", res.status);
         }
@@ -50,7 +52,6 @@ const TemplateDetail = ({ route }) => {
     loadTemplate();
   }, [templateId]);
 
-  // ✅ aspect ratio from image
   useEffect(() => {
     if (template?.imageUrl) {
       Image.getSize(template.imageUrl, (w, h) => {
@@ -101,6 +102,7 @@ const TemplateDetail = ({ route }) => {
 
       if (res.ok) {
         setIsFavourite(!isFavourite);
+        setFavouriteCount((prev) => (isFavourite ? prev - 1 : prev + 1));
       } else {
         console.log("❌ Failed to update favourite");
       }
@@ -111,6 +113,12 @@ const TemplateDetail = ({ route }) => {
     }
   };
 
+  const formatNumber = (num) => {
+    if (num >= 1000000) return (num / 1000000).toFixed(1).replace(/\.0$/, "") + "M";
+    if (num >= 1000) return (num / 1000).toFixed(1).replace(/\.0$/, "") + "K";
+    return num.toString();
+  };
+
   if (!template) return <Text style={{ color: "white" }}>Loading...</Text>;
 
   return (
@@ -119,6 +127,12 @@ const TemplateDetail = ({ route }) => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
+         {/* <View style={styles.usageRow}>
+          <View style={styles.usageContainer}>
+            <Icon name="flash-on" size={18} color="#8b3dff" />
+            <Text style={styles.usageText}>{formatNumber(usageCount)} Uses</Text>
+          </View>
+        </View> */}
         {/* Gradient Border Image */}
         <LinearGradient
           colors={["#8b3dff", "#ff3d9b"]}
@@ -131,16 +145,23 @@ const TemplateDetail = ({ route }) => {
             style={[styles.templateImage, { aspectRatio: aspect }]}
           />
 
-          {/* ❤️ Heart Icon */}
+          {/* ❤️ Heart Icon with Count */}
           <TouchableOpacity style={styles.heartIcon} onPress={toggleFavourite}>
-            <Icon
-              name={isFavourite ? "favorite" : "favorite-border"}
-              size={30}
-              color={isFavourite ? "#ff3d9b" : "#fff"}
-            />
+            <View style={styles.heartContainer}>
+              <Icon
+                name={isFavourite ? "favorite" : "favorite-border"}
+                size={28}
+                color={isFavourite ? "#ff3d9b" : "#fff"}
+              />
+              <Text style={styles.favCountText}>{formatNumber(favouriteCount)}</Text>
+            </View>
           </TouchableOpacity>
         </LinearGradient>
 
+        {/* ⚡ Usage Count (Right Side) */}
+       
+
+        {/* 📝 Template Info */}
         <Text style={styles.title}>{template.title}</Text>
 
         <Text style={styles.label}>Edit Prompt:</Text>
@@ -202,21 +223,51 @@ const styles = StyleSheet.create({
   gradientBorder: {
     borderRadius: 14,
     padding: 2,
-    marginBottom: 15,
+    marginBottom: 10,
     position: "relative",
   },
-
   templateImage: {
     width: "100%",
     borderRadius: 12,
     backgroundColor: "#222",
   },
 
+  // ❤️ Heart and count
   heartIcon: {
     position: "absolute",
     top: 10,
     right: 10,
-    padding: 5,
+    padding: 4,
+    alignItems: "center",
+  },
+  heartContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.4)",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 20,
+  },
+  favCountText: {
+    color: "#fff",
+    marginLeft: 4,
+    fontWeight: "600",
+  },
+
+  // ⚡ Usage Count (below image)
+  usageRow: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginBottom: 10,
+  },
+  usageContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  usageText: {
+    color: "white",
+    marginLeft: 5,
+    fontWeight: "500",
   },
 
   title: {
@@ -226,6 +277,12 @@ const styles = StyleSheet.create({
     color: "#8b3dff",
   },
 
+  label: {
+    color: "#ff3d9b",
+    marginTop: 12,
+    marginBottom: 6,
+    fontWeight: "600",
+  },
   input: {
     borderWidth: 1,
     borderColor: "#fff",
@@ -236,29 +293,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#1a1a1a",
     minHeight: 100,
   },
-
-  label: {
-    color: "#ff3d9b",
-    marginTop: 12,
-    marginBottom: 6,
-    fontWeight: "600",
-  },
-
   picker: {
     color: "white",
     backgroundColor: "#1a1a1a",
     borderRadius: 8,
     marginBottom: 10,
   },
-
   button: { marginTop: 20, borderRadius: 8, overflow: "hidden" },
-
   gradientButton: {
     paddingVertical: 12,
     borderRadius: 8,
     alignItems: "center",
   },
-
   buttonText: { color: "white", fontWeight: "bold", fontSize: 16 },
 });
 

@@ -86,6 +86,52 @@ exports.getTemplatesByCategory = async (req, res) => {
 
 
 // ✅ Get a single template by ID with full details
+// exports.getTemplateById = async (req, res) => {
+//   console.log("📥 [API] /cards/templates/:id called", req.params);
+
+//   try {
+//     const { id } = req.params;
+//     const templateId = parseInt(id);
+
+//     if (isNaN(templateId)) {
+//       return res.status(400).json({ message: "Invalid template ID" });
+//     }
+
+//     const template = await prisma.cardTemplate.findUnique({
+//       where: { id: templateId },
+//       include: { category: true },
+//     });
+
+//     if (!template) {
+//       console.warn("⚠️ Template not found for ID:", templateId);
+//       return res.status(404).json({ message: "Template not found" });
+//     }
+
+//     let isFavourite = false;
+
+//     // ✅ if user is logged in (verifyToken middleware must add req.user)
+//     if (req.user?.id) {
+//       const fav = await prisma.userFavouriteTemplate.findFirst({
+//         where: {
+//           userId: req.user.id,
+//           templateId: templateId,
+//         },
+//       });
+//       isFavourite = !!fav;
+//     }
+
+//     console.log("✅ Template fetched:", template.title, " | Favourite:", isFavourite);
+
+//     res.json({
+//       ...template,
+//       isFavourite, // ✅ send favourite status
+//     });
+//   } catch (err) {
+//     console.error("❌ Error in getTemplateById:", err.message);
+//     res.status(500).json({ message: "Server error", error: err.message });
+//   }
+// };
+
 exports.getTemplateById = async (req, res) => {
   console.log("📥 [API] /cards/templates/:id called", req.params);
 
@@ -103,13 +149,12 @@ exports.getTemplateById = async (req, res) => {
     });
 
     if (!template) {
-      console.warn("⚠️ Template not found for ID:", templateId);
       return res.status(404).json({ message: "Template not found" });
     }
 
     let isFavourite = false;
 
-    // ✅ if user is logged in (verifyToken middleware must add req.user)
+    // ✅ If user is logged in, check if they favorited this
     if (req.user?.id) {
       const fav = await prisma.userFavouriteTemplate.findFirst({
         where: {
@@ -120,11 +165,16 @@ exports.getTemplateById = async (req, res) => {
       isFavourite = !!fav;
     }
 
-    console.log("✅ Template fetched:", template.title, " | Favourite:", isFavourite);
+    // ✅ Count how many users favorited this template
+    const favouriteCount = await prisma.userFavouriteTemplate.count({
+      where: { templateId },
+    });
 
     res.json({
       ...template,
-      isFavourite, // ✅ send favourite status
+      isFavourite,
+      favouriteCount,
+      usageCount: template.uses || 0, // ✅ use column directly
     });
   } catch (err) {
     console.error("❌ Error in getTemplateById:", err.message);
@@ -168,44 +218,6 @@ exports.getTrendingTemplates = async (req, res) => {
   }
 };
 
-// ✅ Search results templates by title or description (Prisma 6+ compatible)
-// exports.searchTemplates = async (req, res) => {
-//   try {
-//     const { q } = req.query;
-//     console.log("🔍 Incoming search query:", q);
-
-//     if (!q || q.trim() === "") {
-//       return res.status(400).json({ message: "Search query is required" });
-//     }
-
-//     // ✅ Lowercase search (universal compatible fix)
-//     const templates = await prisma.$queryRawUnsafe(
-//       `
-//       SELECT id, title, description, imageUrl, aspectRatio, uses, categoryId, createdAt
-//       FROM cardTemplate
-//       WHERE LOWER(title) LIKE LOWER(?) OR LOWER(description) LIKE LOWER(?)
-//       ORDER BY createdAt DESC
-//       `,
-//       `%${q}%`,
-//       `%${q}%`
-//     );
-
-//     if (!templates || templates.length === 0) {
-//       console.log("⚠️ No templates found for:", q);
-//       return res.status(200).json([]);
-//     }
-
-//     console.log(`✅ ${templates.length} templates found for query "${q}"`);
-//     res.status(200).json(templates);
-//   } catch (err) {
-//     console.error("❌ Error in searchTemplates:", err);
-//     res.status(500).json({
-//       message: "Server error while searching templates",
-//       error: err.message,
-//     });
-//   }
-// };
-// controllers/CardsController.js
 // ✅ src/controllers/CardsController.js
 exports.searchTemplates = async (req, res) => {
   try {

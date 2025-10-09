@@ -86,8 +86,8 @@ const MainLayout = ({ navigation, children, currentScreen }) => {
         >
           {[
             { name: "Home", icon: "home" },
-            { name: "Designs", icon: "photo-camera" },
-            { name: "Assets", icon: "video-library" },
+            { name: "Designs", icon: "auto-awesome" },
+            { name: "Assets", icon: "collections" },
             { name: "Profile", icon: "person" },
           ].map(({ name, icon }) => {
             const isActive = currentScreen === name;
@@ -279,27 +279,27 @@ const App = () => {
               </Stack.Screen>
               <Stack.Screen name="AllNotifications" component={AllNotifications} options={{ title: "All Notifications", ...commonHeaderOptions, }} />
               <Stack.Screen name="templatefeatures" component={TemplateDetail} options={{
-                title: "Template Features Detail", ...commonHeaderOptions, 
+                title: "Template Features Detail", ...commonHeaderOptions,
               }} />
-              <Stack.Screen name="SearchResultsScreen" component={SearchResultsScreen} options={{ title: "Search Anything",...commonHeaderOptions, }} />
+              <Stack.Screen name="SearchResultsScreen" component={SearchResultsScreen} options={{ title: "Search Anything", ...commonHeaderOptions, }} />
 
               <Stack.Screen name="SimpleImageEditor" component={SimpleImageEditor} options={{ title: "Image Editor" }} />
 
               <Stack.Screen name="SplashScreen" component={SplashScreen} options={{ headerShown: false }} />
               <Stack.Screen name="Profile" component={UserScreen} options={{ title: "Profile" }} />
 
-               <Stack.Screen name="PaymentmethodsScreen" component={PaymentSelectionScreen} options={{ title: "Payment Methods", ...commonHeaderOptions, }} />
-              <Stack.Screen name="jazzcashscreenScreen" component={JazzCashPaymentScreen} options={{ title: "JazzCash",...commonHeaderOptions, }} />
-              <Stack.Screen name="easypaisaScreen" component={EasypaisaPaymentScreen} options={{ title: "EasyPaisa",...commonHeaderOptions, }} />
+              <Stack.Screen name="PaymentmethodsScreen" component={PaymentSelectionScreen} options={{ title: "Payment Methods", ...commonHeaderOptions, }} />
+              <Stack.Screen name="jazzcashscreenScreen" component={JazzCashPaymentScreen} options={{ title: "JazzCash", ...commonHeaderOptions, }} />
+              <Stack.Screen name="easypaisaScreen" component={EasypaisaPaymentScreen} options={{ title: "EasyPaisa", ...commonHeaderOptions, }} />
               {/* <Stack.Screen name="UserDetailsScreen" component={UserDetailsScreen} /> */}
               <Stack.Screen name="User" component={UserScreen} />
-              <Stack.Screen name="AccountDetail" component={AccountDetailScreen} options={{title: "Account Details", ...commonHeaderOptions,}} />
-              <Stack.Screen name="AboutAppScreen" component={AboutApp} options={{title: "About CardiFy-AI", ...commonHeaderOptions,}}/>
-              <Stack.Screen name="CustomerSupport" component={CustomerSupportScreen} options={{title: "Customer Support", ...commonHeaderOptions,}}/>
-               <Stack.Screen name="PrivacyPolicyScreen" component={PrivacyPolicy} options={{title: "Privacy Policies", ...commonHeaderOptions,}}/>
-              <Stack.Screen name="faq" component={FAQ} options={{title: "All FAQs", ...commonHeaderOptions,}} />
+              <Stack.Screen name="AccountDetail" component={AccountDetailScreen} options={{ title: "Account Details", ...commonHeaderOptions, }} />
+              <Stack.Screen name="AboutAppScreen" component={AboutApp} options={{ title: "About CardiFy-AI", ...commonHeaderOptions, }} />
+              <Stack.Screen name="CustomerSupport" component={CustomerSupportScreen} options={{ title: "Customer Support", ...commonHeaderOptions, }} />
+              <Stack.Screen name="PrivacyPolicyScreen" component={PrivacyPolicy} options={{ title: "Privacy Policies", ...commonHeaderOptions, }} />
+              <Stack.Screen name="faq" component={FAQ} options={{ title: "All FAQs", ...commonHeaderOptions, }} />
               {/* <Stack.Screen name="StripePayment" component={StripePayment} /> */}
-              <Stack.Screen name="Logout" component={LogoutScreen} options={{title: "Logout", ...commonHeaderOptions,}} />
+              <Stack.Screen name="Logout" component={LogoutScreen} options={{ title: "Logout", ...commonHeaderOptions, }} />
             </Stack.Navigator>
           </NavigationContainer>
         </StripeProvider>
@@ -321,8 +321,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    // borderBottomWidth: 1,
-    // borderColor: "#222",
+    borderBottomWidth: 1,
+    borderColor: "#2c2c2e",
     backgroundColor: "#141414",
     shadowColor: "#8b3dff",
     shadowOpacity: 0.6,
@@ -332,13 +332,13 @@ const styles = StyleSheet.create({
   },
   headerItem: {
     flexDirection: "row",
-    alignItems: "center",
+    // alignItems: "center",
   },
   logo: {
     width: 70,
     height: 70,
     borderRadius: 12,
-    borderWidth: 2,
+    // borderWidth: 2,
     // borderColor: "#8b3dff",
     // shadowColor: "#8b3dff",
     // shadowOpacity: 0.8,
