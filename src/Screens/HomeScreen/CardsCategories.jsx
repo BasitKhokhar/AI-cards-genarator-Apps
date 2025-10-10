@@ -203,6 +203,8 @@ const styles = StyleSheet.create({
   categoryBlock: {
     marginBottom: 25,
     backgroundColor: "#1a1a1a",
+     borderWidth: 1,
+    borderColor: "#4d4d4d",
     padding: 10,
     borderRadius: 12,
   },

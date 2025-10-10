@@ -31,7 +31,7 @@ const SearchTemplates = () => {
           onSubmitEditing={handleSearch}
         />
         <TouchableOpacity style={styles.goButton} onPress={handleSearch}>
-          <Ionicons name="arrow-forward" size={18} color="#fff" />
+          <Ionicons name="arrow-forward" size={18} color="black" />
         </TouchableOpacity>
       </View>
     </View>
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     paddingLeft: 10,
     borderWidth: 1,
-    borderColor: "#2c2c2c",
+    borderColor: "#4d4d4d",
   },
   input: {
     flex: 1,
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   goButton: {
-    backgroundColor: "#e91e63",
+    backgroundColor: "white",
     borderRadius: 50,
     paddingVertical: 12,
     paddingHorizontal: 12,

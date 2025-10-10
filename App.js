@@ -163,7 +163,7 @@ const BottomTabs = () => {
 // 💫 Common header style for all screens
 export const commonHeaderOptions = {
   headerStyle: {
-    backgroundColor: "#141414",
+    backgroundColor: "#1a1a1a",
   },
   headerTintColor: "#ff3d9b",
   headerTitleStyle: {
@@ -311,7 +311,7 @@ const App = () => {
 export default App;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#0d0d0d" },
+  container: { flex: 1, backgroundColor: "#1a1a1a" },
 
   // 🔥 Neon Header
   header: {
@@ -322,13 +322,15 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     borderBottomWidth: 1,
-    borderColor: "#2c2c2e",
-    backgroundColor: "#141414",
-    shadowColor: "#8b3dff",
-    shadowOpacity: 0.6,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 8,
-    elevation: 6,
+    borderColor: "#4d4d4d",
+    // backgroundColor: "#141414",
+    backgroundColor:' #1a1a1a',
+   
+    // shadowColor: "#8b3dff",
+    // shadowOpacity: 0.6,
+    // shadowOffset: { width: 0, height: 4 },
+    // shadowRadius: 8,
+    // elevation: 6,
   },
   headerItem: {
     flexDirection: "row",

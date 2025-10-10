@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     borderWidth: 1,
     borderColor: "rgba(139,61,255,0.3)",
-    shadowColor: "#8b3dff",
+    shadowColor: "#ff3d9b",
     shadowOpacity: 0.5,
     shadowRadius: 8,
     elevation: 4,

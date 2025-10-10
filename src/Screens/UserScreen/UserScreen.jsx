@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { 
-  View, Text, StyleSheet, TouchableOpacity, Image, 
-  ScrollView, RefreshControl 
+import {
+  View, Text, StyleSheet, TouchableOpacity, Image,
+  ScrollView, RefreshControl
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -76,7 +76,7 @@ const UserScreen = () => {
           </View>
         ) : userData ? (
           <View style={styles.profileContainer}>
-            
+
             {/* Profile Header */}
             <View style={styles.header}>
               <View style={styles.imageContainer}>
@@ -99,56 +99,56 @@ const UserScreen = () => {
                 onPress={() => navigation.navigate("AccountDetail", { userData })}
                 activeOpacity={0.8}
               >
-                 <Image source={require('../../../assets/paymentpic.png')} style={styles.profileImage} />
+                <Image source={require('../../../assets/paymentpic.png')} style={styles.profileImage} />
               </TouchableOpacity>
             )}
 
             {/* General Section */}
             <View style={styles.sectionHeader}>
               <Text style={styles.heading}>General</Text>
-              <View style={styles.line} />
+              {/* <View style={styles.line} /> */}
             </View>
 
             {[
-              { name: "person", label: "Personal Info", color: "#9b59b6", route: "AccountDetail" },
-              { name: "credit-card", label: "Payment methods", color: "#00cec9", route: "PaymentmethodsScreen" },
+              { name: "person", label: "Personal Info", color: "white", route: "AccountDetail" },
+              { name: "credit-card", label: "Payment methods", color: "white", route: "PaymentmethodsScreen" },
               // { name: "security", label: "Security", color: "#2ecc71", route: "AccountDetail" }
             ].map((item, idx) => (
-              <TouchableOpacity 
-                key={idx} 
-                style={styles.section} 
+              <TouchableOpacity
+                key={idx}
+                style={styles.section}
                 onPress={() => navigation.navigate(item.route, { userData })}
               >
                 <View style={styles.leftContent}>
                   <Icon name={item.name} size={24} color={item.color} style={styles.icon} />
                   <Text style={styles.sectionText}>{item.label}</Text>
                 </View>
-                <Icon name="chevron-right" size={24} color="#8b3dff" />
+                <Icon name="chevron-right" size={24} color="white" />
               </TouchableOpacity>
             ))}
 
             {/* About Section */}
             <View style={styles.sectionHeader}>
               <Text style={styles.heading}>About</Text>
-              <View style={styles.line} />
+              {/* <View style={styles.line} /> */}
             </View>
 
             {[
-              { name: "info", label: "About CardiFy-AI", color: "#00bcd4", route: "AboutAppScreen" },
-              { name: "support-agent", label: "Customer Support", color: "#ff6b81", route: "CustomerSupport" },
-              { name: "shield", label: "Privacy Policy", color: "#ff9f43", route: "PrivacyPolicyScreen" },
-              { name: "question-answer", label: "FAQs", color: "#1dd1a1", route: "faq" }
+              { name: "info", label: "About CardiFy-AI", color: "white", route: "AboutAppScreen" },
+              { name: "support-agent", label: "Customer Support", color: "white", route: "CustomerSupport" },
+              { name: "shield", label: "Privacy Policy", color: "white", route: "PrivacyPolicyScreen" },
+              { name: "question-answer", label: "FAQs", color: "white", route: "faq" }
             ].map((item, idx) => (
-              <TouchableOpacity 
-                key={idx} 
-                style={styles.section} 
+              <TouchableOpacity
+                key={idx}
+                style={styles.section}
                 onPress={() => navigation.navigate(item.route, { userData })}
               >
                 <View style={styles.leftContent}>
                   <Icon name={item.name} size={24} color={item.color} />
                   <Text style={styles.sectionText}>{item.label}</Text>
                 </View>
-                <Icon name="chevron-right" size={24} color="#8b3dff" />
+                <Icon name="chevron-right" size={24} color="white" />
               </TouchableOpacity>
             ))}
 
@@ -179,11 +179,11 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 16,
-    paddingBottom:100,
+    paddingBottom: 100,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-     borderWidth: 1,
-    borderColor: "#2c2c2e",
+    borderWidth: 1,
+    borderColor: "#4d4d4d",
     backgroundColor: "#1a1a1a", // card background
   },
   loaderContainer: {
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: "bold",
-    color: "#ff3d9b", 
+    color: "white",
     // textShadowColor: "#ff00ff",
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 8,
@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     color: "#ff3d9b",
-    marginRight: 8,marginBottom:10,
+    marginRight: 8, marginBottom: 10,
   },
   line: {
     flex: 1,

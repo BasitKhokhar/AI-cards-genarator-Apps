@@ -144,7 +144,7 @@ const TrendingTemplates = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Icon name="trending-up" size={24} color="#8b3dff" />
+        <Icon name="trending-up" size={24} color="#ff3d9b" />
         <Text style={styles.headerText}>Trending Templates</Text>
       </View>
 
@@ -168,7 +168,7 @@ const TrendingTemplates = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#121212" },
+  container: { flex: 1, },
   header: {
     flexDirection: "row",
     alignItems: "center",

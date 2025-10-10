@@ -27,7 +27,7 @@ const SplashScreen1 = () => {
     
 
      <View style={styles.bottomTextContainer}>
-        <Text style={styles.bottomText}>Made With <FontAwesome name="heart" size={24} color="#121212" /></Text>
+        <Text style={styles.bottomText}>Made With <FontAwesome name="heart" size={24} color="red" /></Text>
         <Text style={styles.bottomText}>By Basit khokhar</Text>
       </View>
     </LinearGradient>
@@ -41,8 +41,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   image: {
-    width: 140,
-    height: 140,
+    width: 120,
+    height: 120,
     borderRadius: 10,
     resizeMode: "contain",
     shadowColor: "#8b3dff",

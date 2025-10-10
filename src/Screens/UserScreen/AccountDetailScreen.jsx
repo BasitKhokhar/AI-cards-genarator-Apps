@@ -64,7 +64,7 @@ const AccountDetailScreen = ({ route, navigation }) => {
   // --- Save image URL to backend ---
   const saveImageUrlToDatabase = async (userId, imageUrl) => {
     try {
-      console.log('imageurl in api payload',imageUrl,userId)
+      console.log('imageurl in api payload', imageUrl, userId)
       const response = await apiFetch(
         `/users/upload-profile-image`,
         {
@@ -126,37 +126,44 @@ const AccountDetailScreen = ({ route, navigation }) => {
       contentContainerStyle={{ paddingBottom: 50 }}
       showsVerticalScrollIndicator={false}
     >
-      {/* <Text style={styles.header}>Account Details</Text> */}
       <Text style={styles.subtitle}>
         Manage and update your CardiFy-AI profile
       </Text>
 
       <View style={styles.formCard}>
-        <TextInput
-          value={name}
-          onChangeText={setName}
-          placeholder="Name"
-          placeholderTextColor="#999"
-          style={styles.input}
-        />
+        <View style={{ flexDirection: 'column', gap: 5 }}>
+          <Text style={{ fontSize: 14, color: 'white',fontWeight:'500' }}>Name </Text>
+          <TextInput
+            value={name}
+            onChangeText={setName}
+            placeholder="Name"
+            placeholderTextColor="#999"
+            style={styles.input}
+          />
+        </View>
 
-        <TextInput
-          value={email}
-          onChangeText={setEmail}
-          placeholder="Email"
-          keyboardType="email-address"
-          placeholderTextColor="#999"
-          style={styles.input}
-        />
-
-        <TextInput
-          value={phone}
-          onChangeText={setPhone}
-          placeholder="Phone"
-          keyboardType="phone-pad"
-          placeholderTextColor="#999"
-          style={styles.input}
-        />
+        <View style={{ flexDirection: 'column', gap: 5 }}>
+          <Text style={{ fontSize: 14, color: 'white',fontWeight:'500' }}>Email </Text>
+          <TextInput
+            value={email}
+            onChangeText={setEmail}
+            placeholder="Email"
+            keyboardType="email-address"
+            placeholderTextColor="#999"
+            style={styles.input}
+          />
+        </View>
+        <View style={{ flexDirection: 'column', gap: 5 }}>
+          <Text style={{ fontSize: 14, color: 'white',fontWeight:'500' }}>Password </Text>
+          <TextInput
+            value={phone}
+            onChangeText={setPhone}
+            placeholder="Phone"
+            keyboardType="phone-pad"
+            placeholderTextColor="#999"
+            style={styles.input}
+          />
+        </View>
         <TouchableOpacity
           onPress={pickImage}
           style={[styles.button, { backgroundColor: "#8b3dff" }]}

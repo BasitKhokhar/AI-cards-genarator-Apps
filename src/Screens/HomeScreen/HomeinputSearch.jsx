@@ -23,10 +23,10 @@ const aspectRatios = [
 ];
 
 const resolutions = [
-  { label: "HD (720p)", value: "720p" },
-  { label: "Full HD (1080p)", value: "1080p" },
-  { label: "High (2K)", value: "2k" },
-  { label: "Ultra (4K)", value: "4k" },
+  { label: "720p", value: "720p" },
+  { label: "1080p", value: "1080p" },
+  { label: "2K", value: "2k" },
+  { label: "4K", value: "4k" },
 ];
 
 const DEFAULT_WIDTH = "1296";
@@ -125,10 +125,16 @@ const SearchHeader = () => {
               placeholderTextColor="#aaa"
               value={search}
               onChangeText={setSearch}
+              multiline={true}
+              numberOfLines={3}
+              textAlignVertical="top"
             />
-            <TouchableOpacity style={styles.goButton} onPress={handleSearch}>
-              <Ionicons name="arrow-forward" size={18} color="#fff" />
-            </TouchableOpacity>
+            <View>
+              <TouchableOpacity style={styles.goButton} onPress={handleSearch}>
+                <Ionicons name="arrow-forward" size={18} color="black" />
+              </TouchableOpacity>
+            </View>
+
           </View>
 
           {/* 🧩 Toolbar */}
@@ -264,37 +270,37 @@ export default SearchHeader;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#2b2b2b",
+    backgroundColor: "#1a1a1a",
     paddingVertical: 16,
     paddingHorizontal: 10,
     borderRadius: 14,
     marginTop: 15,
     borderWidth: 1,
-    borderColor: "#2c2c2e",
+    borderColor: "#4d4d4d",
   },
   headerRow: { flexDirection: "row", alignItems: "center", marginTop: 15 },
   newBadge: {
-    backgroundColor: "#e91e63",
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 20,
+    borderRadius: 50, borderWidth: 1, borderColor: '#ff3d9b',
     marginRight: 8,
   },
   newText: { color: "white", fontSize: 12, fontWeight: "bold" },
   title: { fontSize: 18, fontWeight: "600", color: "white" },
   searchBar: {
+
     flexDirection: "row",
-    backgroundColor: "#2a2b2f",
-    borderRadius: 50,
-    paddingHorizontal: 12,
+    backgroundColor: "#1a1a1a",
+    // borderRadius: 50,
+    // paddingHorizontal: 0,
     marginBottom: 10,
-    alignItems: "center",
+    // alignItems: "start",
   },
-  input: { flex: 1, padding: 10, color: "#fff", fontSize: 15 },
+  input: { flex: 1, padding: 10,paddingLeft:0, color: "#fff", fontSize: 15, height: 80 },
   goButton: {
-    backgroundColor: "#e91e63",
+    backgroundColor: "white",
     borderRadius: 50,
-    padding: 10,
+    padding: 8,
     justifyContent: "center",
     alignItems: "center",
   },

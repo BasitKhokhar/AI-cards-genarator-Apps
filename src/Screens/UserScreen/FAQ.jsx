@@ -77,7 +77,7 @@ const FAQ = () => {
                       : "chevron-down-outline"
                   }
                   size={22}
-                  color="#ff3d9b"
+                  color="white"
                 />
               </TouchableOpacity>
 
@@ -100,17 +100,7 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 50,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginVertical: 20,
-    color: "#ff3d9b", // Neon cyan
-    textShadowColor: "rgba(0, 255, 255, 0.5)",
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 10,
-    letterSpacing: 1,
-  },
+ 
   loaderContainer: {
     flex: 1,
     justifyContent: "center",
@@ -126,8 +116,8 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     backgroundColor: "#151520",
     borderWidth: 1,
-    borderColor: "rgba(0,255,255,0.1)",
-    shadowColor: "#ff3d9b",
+    borderColor: "rgba(139,61,255,0.3)",
+    shadowColor: "#8b3dff",
     shadowOpacity: 0.3,
     shadowRadius: 10,
     elevation: 6,
