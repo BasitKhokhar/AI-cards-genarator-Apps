@@ -11,7 +11,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import VideoGenerateScreen from "./src/Screens/VideosScreen/VideosgenerateScreen";
+
 // splashscreens //
 import SplashScreen from "./src/Screens/SplashScreens/SplashScreen";
 import SplashScreen1 from "./src/Screens/SplashScreens/SplashScreen1";
@@ -163,7 +163,7 @@ const BottomTabs = () => {
 // 💫 Common header style for all screens
 export const commonHeaderOptions = {
   headerStyle: {
-    backgroundColor: "#1a1a1a",
+    backgroundColor: "#1a1a1a",borderBottomWidth:1,borderColor:'#4d4d4d'
   },
   headerTintColor: "#ff3d9b",
   headerTitleStyle: {

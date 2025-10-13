@@ -8,7 +8,7 @@ import {
 import EnhancedImageGallery from "./EnhancedImagesGallery";
 import FavouriteTemplates from "./FavouriteTemplates";
 const AssetsMainScreen = () => {
-  const [activeTab, setActiveTab] = useState("gallery"); // default: gallery
+  const [activeTab, setActiveTab] = useState("gallery"); 
 
   return (
     <View style={styles.container}>
@@ -56,32 +56,33 @@ const AssetsMainScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#0d0d0d" },
+  container: { flex: 1 },
 
   tabBar: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    backgroundColor: "#1a1a1a",
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#333",
+    flexDirection: "row",gap:10,paddingHorizontal:16,
+    // justifyContent: "space-around",
+    // backgroundColor: "#1a1a1a",
+    paddingTop: 16,
+    // borderBottomWidth: 1,
+    // borderBottomColor: "#333",
   },
   tab: {
-    flex: 1,
-    alignItems: "center",
-    paddingVertical: 8,
+    // flex: 1,
+    // alignItems: "center",
+    paddingVertical: 8,paddingHorizontal:12,borderRadius:50,
+    borderWidth:1,borderColor:'#aaa'
   },
   activeTab: {
-    borderBottomWidth: 2,
-    borderBottomColor: "#ff3d9b",
+    // borderBottomWidth: 2,
+    // borderBottomColor: "#ff3d9b",
   },
   tabText: {
     color: "#aaa",
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "600",
   },
   activeTabText: {
-    color: "#ff3d9b",
+    color: "#ffff",
   },
 
   content: {

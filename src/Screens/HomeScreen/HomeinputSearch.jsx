@@ -14,12 +14,12 @@ import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { apiFetch } from "../../apiFetch";
 
 const aspectRatios = [
-  { label: "Auto", ratio: "auto", icon: "✨", w: "", h: "" },
-  { label: "1:1", ratio: "1:1", icon: "⬛", w: 1024, h: 1024 },
-  { label: "16:9", ratio: "16:9", icon: "🖥️", w: 1920, h: 1080 },
-  { label: "9:16", ratio: "9:16", icon: "📱", w: 1080, h: 1920 },
-  { label: "3:2", ratio: "3:2", icon: "🖼️", w: 1536, h: 1024 },
-  { label: "2:3", ratio: "2:3", icon: "📸", w: 1024, h: 1536 },
+  { label: "Auto", w: "", h: "" },
+  { label: "1:1", w: 1024, h: 1024, icon: "square-outline" },
+  { label: "16:9", w: 1920, h: 1080, icon: "rectangle-outline" },
+  { label: "9:16", w: 1080, h: 1920, icon: "cellphone" },
+  { label: "3:2", w: 1536, h: 1024, icon: "rectangle" },
+  { label: "2:3", w: 1024, h: 1536, icon: "tablet-cellphone" },
 ];
 
 const resolutions = [
@@ -108,6 +108,7 @@ const SearchHeader = () => {
   return (
     <TouchableWithoutFeedback onPress={() => setActiveFilter(null)}>
       <View style={{ paddingHorizontal: 16 }}>
+        {/* 🔹 Header */}
         <View style={styles.headerRow}>
           <View style={styles.newBadge}>
             <Text style={styles.newText}>New</Text>
@@ -115,8 +116,8 @@ const SearchHeader = () => {
           <Text style={styles.title}>Design cards with AI magic</Text>
         </View>
 
+        {/* 🔹 Input + Toolbar */}
         <View style={styles.container}>
-          {/* 🔍 Prompt Input */}
           <View style={styles.searchBar}>
             <TextInput
               ref={inputField}
@@ -137,7 +138,6 @@ const SearchHeader = () => {
 
           </View>
 
-          {/* 🧩 Toolbar */}
           <View style={styles.toolbar}>
             <TouchableOpacity style={styles.iconBtn} onPress={pickImage}>
               <Ionicons name="image-outline" size={18} color="#fff" />
@@ -152,9 +152,7 @@ const SearchHeader = () => {
                 size={18}
                 color="#fff"
               />
-              <Text style={styles.btnLabel}>
-                {aspectRatio.icon} {aspectRatio.label}
-              </Text>
+              <Text style={styles.btnLabel}>{aspectRatio.label}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -185,28 +183,43 @@ const SearchHeader = () => {
             )}
           </View>
 
-          {/* Aspect Ratio Dropdown */}
+          {/* 🔹 Aspect Ratio Dropdown */}
           {activeFilter === "aspect" && (
             <TouchableWithoutFeedback>
               <View style={styles.dropdown}>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                  {aspectRatios.map((item) => (
-                    <TouchableOpacity
-                      key={item.label}
-                      style={[
-                        styles.optionBtn,
-                        aspectRatio.label === item.label && styles.optionSelected,
-                      ]}
-                      onPress={() => handleAspectSelect(item)}
-                    >
-                      <Text style={styles.optionText}>
-                        {item.icon} {item.label}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </ScrollView>
+                <Text style={styles.dropdownHeading}>Image Dimensions</Text>
 
-                {/* 🧮 Custom Width/Height */}
+                <View style={styles.row}>
+                  {aspectRatios.map((item) => {
+                    const isSelected = aspectRatio.label === item.label;
+                    return (
+                      <TouchableOpacity
+                        key={item.label}
+                        onPress={() => handleAspectSelect(item)}
+                        style={[
+                          styles.optionBtn,
+                          isSelected && styles.optionSelected,
+                        ]}
+                      >
+                        <MaterialCommunityIcons
+                          name={item.icon}
+                          size={18}
+                          color={isSelected ? "#fff" : "#bbb"}
+                          style={{ marginRight: 6 }}
+                        />
+                        <Text
+                          style={[
+                            styles.optionText,
+                            { color: isSelected ? "#fff" : "#bbb" },
+                          ]}
+                        >
+                          {item.label}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+
                 <View style={styles.sizeBox}>
                   <Text style={styles.sizeLabel}>Custom Size (px):</Text>
                   <View style={styles.sizeRow}>
@@ -241,10 +254,11 @@ const SearchHeader = () => {
             </TouchableWithoutFeedback>
           )}
 
-          {/* Resolution Dropdown */}
+          {/* 🔹 Resolution Dropdown */}
           {activeFilter === "resolution" && (
             <TouchableWithoutFeedback>
               <View style={styles.dropdown}>
+                <Text style={styles.dropdownHeading}>Resolutions</Text>
                 {resolutions.map((r) => (
                   <TouchableOpacity
                     key={r.value}
@@ -271,7 +285,7 @@ export default SearchHeader;
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#1a1a1a",
-    paddingVertical: 16,
+    paddingTop: 16,
     paddingHorizontal: 10,
     borderRadius: 14,
     marginTop: 15,
@@ -282,23 +296,28 @@ const styles = StyleSheet.create({
   newBadge: {
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 50, borderWidth: 1, borderColor: '#ff3d9b',
+    borderRadius: 50,
+    borderWidth: 1,
+    borderColor: "#ff3d9b",
     marginRight: 8,
   },
   newText: { color: "white", fontSize: 12, fontWeight: "bold" },
-  title: { fontSize: 18, fontWeight: "600", color: "white" },
+  title: { fontSize: 18, fontWeight: "600", color: "#FFFFFF" },
   searchBar: {
-
     flexDirection: "row",
     backgroundColor: "#1a1a1a",
-    // borderRadius: 50,
-    // paddingHorizontal: 0,
     marginBottom: 10,
-    // alignItems: "start",
   },
-  input: { flex: 1, padding: 10,paddingLeft:0, color: "#fff", fontSize: 15, height: 80 },
+  input: {
+    flex: 1,
+    padding: 10,
+    paddingLeft: 0,
+    color: "#fff",
+    fontSize: 15,
+    height: 80,
+  },
   goButton: {
-    backgroundColor: "white",
+    backgroundColor: "#FFFFFF",
     borderRadius: 50,
     padding: 8,
     justifyContent: "center",
@@ -332,14 +351,26 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#3a3a3a",
   },
+  dropdownHeading: {
+    color: "#fff",
+    fontWeight: "600",
+    fontSize: 15,
+    marginBottom: 10,
+  },
+  row: { flexDirection: "row", flexWrap: "wrap" },
   optionBtn: {
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 8,
     marginRight: 6,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: "#3a3a3a",
     backgroundColor: "#333",
+    flexDirection: "row",
+    alignItems: "center",
   },
-  optionSelected: { backgroundColor: "#8b3dff" },
+  optionSelected: { borderColor: "#fff" },
   optionText: { color: "#fff", fontSize: 14 },
   sizeBox: {
     marginTop: 12,

@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import MasonryList from "@react-native-seoul/masonry-list";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { apiFetch } from "../../apiFetch";
 
 const FavouriteTemplates = () => {
@@ -98,7 +99,16 @@ const FavouriteTemplates = () => {
   if (imagesWithSize.length === 0) {
     return (
       <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>No favourite templates yet.</Text>
+        <MaterialCommunityIcons
+          name="view-grid-outline"
+          size={50}
+          color="#666"
+          style={{ marginBottom: 12 }}
+        />
+        <Text style={styles.emptyTitle}>No Favourite Templates Yet</Text>
+        <Text style={styles.emptySubtitle}>
+          Your enhanced images will appear here once generated.
+        </Text>
       </View>
     );
   }
@@ -136,8 +146,24 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   loader: { flex: 1, justifyContent: "center", alignItems: "center" },
-  emptyContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
-  emptyText: { color: "#888", fontSize: 16 },
+  // Empty State Styles
+  emptyContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 120,
+  },
+  emptyTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#fff",
+    marginBottom: 6,
+  },
+  emptySubtitle: {
+    fontSize: 14,
+    color: "#aaa",
+    textAlign: "center",
+    width: "80%",
+  },
 });
 
 export default FavouriteTemplates;
