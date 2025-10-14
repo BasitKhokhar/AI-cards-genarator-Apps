@@ -15,7 +15,7 @@ import { apiFetch } from "../../apiFetch";
 
 const PAGE_SIZE = 10;
 const { width } = Dimensions.get("window");
-const CARD_WIDTH = (width - 36) / 2; // two columns with padding
+const CARD_WIDTH = (width - 36) / 2; 
 
 const TrendingTemplates = () => {
   const [templates, setTemplates] = useState([]);
@@ -168,7 +168,7 @@ const TrendingTemplates = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, },
+  container: { flex: 1,zIndex:1 },
   header: {
     flexDirection: "row",
     alignItems: "center",

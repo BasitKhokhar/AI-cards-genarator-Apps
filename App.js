@@ -77,13 +77,14 @@ const MainLayout = ({ navigation, children, currentScreen }) => {
       </View>
 
       <View style={styles.body}>{children}</View>
-      <View >
-        <LinearGradient
+      <View 
+       style={styles.footer}>
+        {/* <LinearGradient
           colors={["#8b3dff", "#ff3d9b"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.footer}
-        >
+        > */}
           {[
             { name: "Home", icon: "home" },
             { name: "Designs", icon: "auto-awesome" },
@@ -113,7 +114,7 @@ const MainLayout = ({ navigation, children, currentScreen }) => {
             );
           })}
 
-        </LinearGradient>
+        {/* </LinearGradient> */}
 
       </View>
     </View>
@@ -387,10 +388,10 @@ const styles = StyleSheet.create({
     width: "92%",
     alignSelf: "center",
     borderRadius: 40,
-    backgroundColor: "rgba(20,20,20,0.95)",
+    backgroundColor: "#1a1a1a",
     borderWidth: 1,
-    borderColor: "rgba(139,61,255,0.3)",
-    shadowColor: "#8b3dff",
+    borderColor: "#4d4d4d",
+    shadowColor: "#ff3d9b",
     shadowOpacity: 0.5,
     shadowRadius: 10,
     elevation: 8,
@@ -414,13 +415,13 @@ const styles = StyleSheet.create({
     padding: 6,
   },
 
-  activeCircle: {
-    backgroundColor: "#292929ff",  // neon purple
-    shadowColor: "#ff3d9b",      // pink glow
-    shadowOpacity: 0.6,
-    shadowRadius: 8,
-    elevation: 6,
-  },
+  // activeCircle: {
+  //   backgroundColor: "#292929ff",  // neon purple
+  //   shadowColor: "#ff3d9b",      // pink glow
+  //   shadowOpacity: 0.6,
+  //   shadowRadius: 8,
+  //   elevation: 6,
+  // },
 
   activeText: {
     fontSize: 12,

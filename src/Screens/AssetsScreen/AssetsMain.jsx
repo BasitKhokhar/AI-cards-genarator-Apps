@@ -24,7 +24,7 @@ const AssetsMainScreen = () => {
               activeTab === "gallery" && styles.activeTabText,
             ]}
           >
-            Your Gallery
+            Gallery
           </Text>
         </TouchableOpacity>
 
@@ -73,12 +73,13 @@ const styles = StyleSheet.create({
     borderWidth:1,borderColor:'#aaa'
   },
   activeTab: {
+    backgroundColor:'#2b2b2b'
     // borderBottomWidth: 2,
     // borderBottomColor: "#ff3d9b",
   },
   tabText: {
     color: "#aaa",
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: "600",
   },
   activeTabText: {

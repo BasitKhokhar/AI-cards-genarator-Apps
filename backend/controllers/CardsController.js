@@ -221,7 +221,7 @@ exports.getTrendingTemplates = async (req, res) => {
 // ✅ src/controllers/CardsController.js
 exports.searchTemplates = async (req, res) => {
   try {
-    const { q, page = 1, limit = 20 } = req.query;
+    const { q, page = 1, limit = 10 } = req.query;
     console.log("🔍 Incoming search query:", q);
 
     if (!q || q.trim() === "") {

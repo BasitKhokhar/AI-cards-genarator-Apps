@@ -164,7 +164,7 @@ const SearchResultsScreen = () => {
           onSubmitEditing={handleSearch}
         />
         <TouchableOpacity style={styles.goButton} onPress={handleSearch}>
-          <Ionicons name="arrow-forward" size={18} color="#fff" />
+          <Ionicons name="arrow-forward" size={18} color="blacl" />
         </TouchableOpacity>
       </View>
 
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
   },
   input: { flex: 1, color: "#fff", paddingVertical: 10, fontSize: 15 },
   goButton: {
-    backgroundColor: "#e91e63",
+    backgroundColor: "#ffff",
     borderRadius: 50,
     paddingVertical: 12,
     paddingHorizontal: 12,

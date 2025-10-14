@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   TextInput,
@@ -6,7 +6,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 
 const SearchTemplates = () => {
   const [query, setQuery] = useState("");
@@ -15,11 +15,18 @@ const SearchTemplates = () => {
   const handleSearch = () => {
     if (!query.trim()) return;
     navigation.navigate("SearchResultsScreen", { query });
+    setQuery(""); // ✅ clear input immediately after navigating
   };
+
+  // ✅ Optional: also clear input when returning to this screen
+  useFocusEffect(
+    React.useCallback(() => {
+      setQuery("");
+    }, [])
+  );
 
   return (
     <View style={styles.container}>
-      {/* 🔍 Search Bar Only */}
       <View style={styles.searchContainer}>
         <Ionicons name="search" size={20} color="#bbb" style={{ marginRight: 8 }} />
         <TextInput
@@ -29,6 +36,7 @@ const SearchTemplates = () => {
           value={query}
           onChangeText={setQuery}
           onSubmitEditing={handleSearch}
+          returnKeyType="search"
         />
         <TouchableOpacity style={styles.goButton} onPress={handleSearch}>
           <Ionicons name="arrow-forward" size={18} color="black" />
@@ -39,7 +47,7 @@ const SearchTemplates = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {  marginTop: 10,marginBottom:20 },
+  container: { marginTop: 10, marginBottom: 20 },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",

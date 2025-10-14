@@ -47,6 +47,7 @@
     "react-native": "0.79.2",
     "react-native-animatable": "^1.4.0",
     "react-native-circular-slider": "^1.0.1",
+    "react-native-copilot": "^3.3.3",
     "react-native-credit-card-form-ui": "^1.2.5",
     "react-native-credit-card-input-plus": "^0.4.8",
     "react-native-dotenv": "^3.4.11",
