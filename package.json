@@ -46,8 +46,8 @@
     "react": "19.0.0",
     "react-native": "0.79.2",
     "react-native-animatable": "^1.4.0",
+    "react-native-app-tour": "^1.0.5",
     "react-native-circular-slider": "^1.0.1",
-    "react-native-copilot": "^3.3.3",
     "react-native-credit-card-form-ui": "^1.2.5",
     "react-native-credit-card-input-plus": "^0.4.8",
     "react-native-dotenv": "^3.4.11",
@@ -70,6 +70,7 @@
     "react-navigation": "^5.0.0",
     "react-redux": "^9.2.0",
     "replicate": "^1.0.1",
+    "rn-tourguide": "^3.3.2",
     "stripe": "^17.7.0",
     "tinycolor2": "^1.6.0"
   },

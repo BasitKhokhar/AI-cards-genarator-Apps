@@ -6,6 +6,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from "@react-navigation/native";
+import PaymentModal from "../PaymentMethodsScreen/PaymentModel";
 import ThemeToggleButton from "../../Components/Buttons/ThemeToggleButton";
 import { useTheme } from "../../Context/ThemeContext";
 import Loader from "../../Components/Loader/Loader";
@@ -21,6 +22,8 @@ const UserScreen = () => {
   const [userImage, setUserImage] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   const navigation = useNavigation();
 
@@ -91,12 +94,18 @@ const UserScreen = () => {
                 <Text style={styles.email}>{userData.email}</Text>
               </View>
             </View>
-
+            <PaymentModal
+              visible={showPaymentModal}
+              onClose={() => setShowPaymentModal(false)}
+              onContinue={(planData) => console.log("Selected plan:", planData)}
+              navigation={navigation}
+            />
             {/* Payment Card Image */}
             {paymnetImgBtndata && (
               <TouchableOpacity
                 style={styles.cardButton}
-                onPress={() => navigation.navigate("AccountDetail", { userData })}
+                // onPress={() => navigation.navigate("AccountDetail", { userData })}
+                onPress={() => setShowPaymentModal(true)}
                 activeOpacity={0.8}
               >
                 <Image source={require('../../../assets/paymentpic.png')} style={styles.profileImage} />
@@ -155,10 +164,10 @@ const UserScreen = () => {
             {/* Logout */}
             <TouchableOpacity style={styles.section} onPress={() => navigation.navigate("Logout", { userData })}>
               <View style={styles.leftContent}>
-                <Icon name="logout" size={24} color="#ff4757" />
+                <Icon name="logout" size={24} color="#ffff" />
                 <Text style={styles.logoutText}>Logout</Text>
               </View>
-              <Icon name="chevron-right" size={24} color="#ff4757" />
+              <Icon name="chevron-right" size={24} color="#ffff" />
             </TouchableOpacity>
           </View>
         ) : (
@@ -299,7 +308,7 @@ const styles = StyleSheet.create({
   logoutText: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#ff4757", // red neon
+    color: "#ff3d9b", // red neon
   },
   text: {
     fontSize: 18,

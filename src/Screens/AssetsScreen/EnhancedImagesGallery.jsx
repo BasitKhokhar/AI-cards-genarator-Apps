@@ -223,7 +223,7 @@ import {
   FlatList,
   Dimensions,
 } from "react-native";
-import { useTheme } from "../../Context/ThemeContext";
+
 import * as FileSystem from "expo-file-system";
 import * as MediaLibrary from "expo-media-library";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -232,10 +232,10 @@ import { apiFetch } from "../../apiFetch";
 
 const PAGE_SIZE = 10;
 const { width } = Dimensions.get("window");
-const CARD_WIDTH = (width - 36) / 2; // two columns
+const CARD_WIDTH = (width - 36) / 2;
 
 const EnhancedImageGallery = ({ navigation }) => {
-  const { theme } = useTheme();
+
   const [images, setImages] = useState([]);
   const [selectedImageId, setSelectedImageId] = useState(null);
   const [downloading, setDownloading] = useState(false);

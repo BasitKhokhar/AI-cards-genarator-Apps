@@ -84,7 +84,7 @@ const HomeScreen = ({ navigation }) => {
     { key: "slider", render: () => <ImageSlider sliderData={homeData.sliderData} /> },
     { key: "search", render: () => <SearchHeader onToggle={(open) => setFilterExpanded(open)} /> },
     // { key: "categories", render: () => <CategoriesScreen /> },
-    // { key: "trending", render: () => <TrendingTemplates /> },
+    { key: "trending", render: () => <TrendingTemplates /> },
   ];
 
   if (loading) {
