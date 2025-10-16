@@ -23,47 +23,32 @@ const CustomerSupportScreen = () => {
 
       <View style={styles.supportSection}>
         {/* ✉️ Email Support */}
-        <LinearGradient
-          colors={["#8b3dff", "#ff3d9b"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.gradientBox}
-        >
+        <View style={styles.gradientBox}>
           <View style={styles.infoBox}>
             <Text style={styles.heading}>📧  Email Support</Text>
             <Text style={styles.infoText}>1. basitsanitaryapp@gmail.com</Text>
             <Text style={styles.infoText}>2. support.cardifyai@gmail.com</Text>
           </View>
-        </LinearGradient>
+        </View>
 
         {/* 📞 Phone Support */}
-        <LinearGradient
-          colors={["#ff3d9b", "#8b3dff"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.gradientBox}
-        >
+        <View style={styles.gradientBox}>
           <View style={styles.infoBox}>
             <Text style={styles.heading}>📞  Phone Numbers</Text>
             <Text style={styles.infoText}>1. +92 306-0760549</Text>
             <Text style={styles.infoText}>2. +92 315-4949862</Text>
             <Text style={styles.infoText}>3. +92 306-0760549</Text>
           </View>
-        </LinearGradient>
+        </View>
 
         {/* 🕒 Availability */}
-        <LinearGradient
-          colors={["#00FFFF", "#8b3dff"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.gradientBox}
-        >
+        <View style={styles.gradientBox}>
           <View style={styles.infoBox}>
             <Text style={styles.heading}>🕒  Available Hours</Text>
             <Text style={styles.infoText}>Monday – Sunday</Text>
             <Text style={styles.infoText}>24 Hours Support</Text>
           </View>
-        </LinearGradient>
+        </View>
       </View>
     </ScrollView>
   );
@@ -104,18 +89,25 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     gap: 20,
   },
-  gradientBox: {
-    borderRadius: 14,
-    padding: 2,
-    shadowColor: "#8b3dff",
-    shadowOpacity: 0.5,
-    shadowRadius: 10,
-    elevation: 6,
-  },
+  // gradientBox: {
+  //   backgroundColor: "#1a1a1a",
+  //    borderRadius: 16,
+  //   padding: 15,
+  //   padding: 2,
+  //   shadowColor: "#8b3dff",
+  //   shadowOpacity: 0.5,
+  //   shadowRadius: 10,
+  //   elevation: 6,
+  // },
   infoBox: {
-    backgroundColor: "#141414",
+    backgroundColor: "#1a1a1a",
+    borderWidth: 1,
+    borderColor: "#4d4d4d",
     borderRadius: 12,
-    padding: 18,
+    padding: 15,
+    shadowOpacity: 0.5,
+    shadowRadius: 8,
+    elevation: 4,
   },
   heading: {
     fontSize: 18,

@@ -27,7 +27,7 @@ const SplashScreen = ({ navigation }) => {
 
   return (
     <LinearGradient
-      colors={["#1a1a1a", "#1f1f1f",]}
+      colors={["#0d0d0d", "#0d0d0d"]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.container}

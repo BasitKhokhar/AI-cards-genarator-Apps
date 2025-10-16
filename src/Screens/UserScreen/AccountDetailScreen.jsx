@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   TextInput,
-  Alert,
   ScrollView,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
@@ -14,9 +13,14 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../../firebase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
+import { LinearGradient } from "expo-linear-gradient";
 import { apiFetch } from "../../apiFetch";
+import { Ionicons } from "@expo/vector-icons";
+import { MotiView, AnimatePresence } from "moti";
 
 const API_BASE_URL = Constants.expoConfig.extra.API_BASE_URL;
+const neonPurple = "#8b3dff";
+const neonPink = "#ff3d9b";
 
 const AccountDetailScreen = ({ route, navigation }) => {
   const { userData } = route.params;
@@ -26,6 +30,9 @@ const AccountDetailScreen = ({ route, navigation }) => {
   const [phone, setPhone] = useState(userData.phone || "");
   const [uploading, setUploading] = useState(false);
   const [updating, setUpdating] = useState(false);
+  const [showLoader, setShowLoader] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
   // --- Image Picker ---
   const pickImage = async () => {
@@ -43,8 +50,8 @@ const AccountDetailScreen = ({ route, navigation }) => {
 
   // --- Upload to Firebase Storage ---
   const uploadImageToFirebase = async (uri) => {
-    setUploading(true);
     try {
+      setShowLoader(true);
       const response = await fetch(uri);
       const blob = await response.blob();
       const userId = await AsyncStorage.getItem("userId");
@@ -52,47 +59,39 @@ const AccountDetailScreen = ({ route, navigation }) => {
 
       await uploadBytes(fileRef, blob);
       const imageUrl = await getDownloadURL(fileRef);
-      console.log("✅ Image uploaded successfully:", imageUrl);
+
       await saveImageUrlToDatabase(userId, imageUrl);
+
+      setShowLoader(false);
+      setToastMessage("Profile image uploaded successfully!");
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2500);
     } catch (error) {
-      console.error("❌ Image upload error:", error);
-      Alert.alert("Error", "Failed to upload image");
+      console.error("❌ Upload Error:", error);
+      setShowLoader(false);
+      setToastMessage("Failed to upload image.");
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2500);
     }
-    setUploading(false);
   };
 
   // --- Save image URL to backend ---
   const saveImageUrlToDatabase = async (userId, imageUrl) => {
-    try {
-      console.log('imageurl in api payload', imageUrl, userId)
-      const response = await apiFetch(
-        `/users/upload-profile-image`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user_id: userId, image_url: imageUrl }),
-        },
-        navigation
-      );
-
-      const data = await response.json();
-      console.log("🖼️ Image upload response:", data);
-
-      if (response.ok) {
-        Alert.alert("Success", "Profile image uploaded successfully!");
-      } else {
-        Alert.alert("Error", data.message || "Failed to upload image.");
-      }
-    } catch (error) {
-      console.error("❌ Error saving image URL:", error);
-      Alert.alert("Error", "Something went wrong while saving image URL.");
-    }
+    await apiFetch(
+      `/users/upload-profile-image`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: userId, image_url: imageUrl }),
+      },
+      navigation
+    );
   };
 
   // --- Update user details ---
   const updateUserDetails = async () => {
-    setUpdating(true);
     try {
+      setShowLoader(true);
       const userId = await AsyncStorage.getItem("userId");
 
       const response = await apiFetch(
@@ -105,149 +104,320 @@ const AccountDetailScreen = ({ route, navigation }) => {
         navigation
       );
 
-      const result = await response.json();
-      console.log("📝 Update Response:", result);
+      setShowLoader(false);
 
       if (response.ok) {
-        Alert.alert("Success", "Profile updated successfully!");
+        setToastMessage("Profile updated successfully!");
       } else {
-        Alert.alert("Error", result.message || "Failed to update profile.");
+        const result = await response.json();
+        setToastMessage(result.message || "Failed to update profile.");
       }
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2500);
     } catch (error) {
-      console.error("❌ Error updating details:", error);
-      Alert.alert("Error", "Something went wrong while updating profile.");
+      console.error("❌ Update Error:", error);
+      setShowLoader(false);
+      setToastMessage("Something went wrong while updating profile.");
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2500);
     }
-    setUpdating(false);
   };
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={{ paddingBottom: 50 }}
-      showsVerticalScrollIndicator={false}
-    >
-      <Text style={styles.subtitle}>
-        Manage and update your CardiFy-AI profile
-      </Text>
+    <LinearGradient colors={["#0d0d0d", "#0d0d0d"]} style={styles.gradient}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={{ paddingBottom: 70 }}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.formContainer}>
+          <Text style={styles.title}>Profile Settings</Text>
+          <Text style={styles.subtitle}>
+            Manage and update your Cardify-AI profile
+          </Text>
 
-      <View style={styles.formCard}>
-        <View style={{ flexDirection: 'column', gap: 5 }}>
-          <Text style={{ fontSize: 14, color: 'white',fontWeight:'500' }}>Name </Text>
-          <TextInput
-            value={name}
-            onChangeText={setName}
-            placeholder="Name"
-            placeholderTextColor="#999"
-            style={styles.input}
-          />
+          {/* Name */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Name</Text>
+            <TextInput
+              value={name}
+              onChangeText={setName}
+              placeholder="Name"
+              placeholderTextColor="#999"
+              style={styles.input}
+            />
+          </View>
+
+          {/* Email */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Email</Text>
+            <TextInput
+              value={email}
+              onChangeText={setEmail}
+              placeholder="Email"
+              keyboardType="email-address"
+              placeholderTextColor="#999"
+              style={styles.input}
+            />
+          </View>
+
+          {/* Phone */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Phone</Text>
+            <TextInput
+              value={phone}
+              onChangeText={setPhone}
+              placeholder="Phone"
+              keyboardType="phone-pad"
+              placeholderTextColor="#999"
+              style={styles.input}
+            />
+          </View>
+
+          {/* Upload Button */}
+          <TouchableOpacity
+            onPress={pickImage}
+            activeOpacity={0.8}
+            style={[styles.simpleButton, uploading && { opacity: 0.7 }]}
+            disabled={uploading}
+          >
+            <Text style={styles.simpleButtonText}>
+              {uploading ? "Uploading..." : "Upload Profile Image"}
+            </Text>
+          </TouchableOpacity>
+
+          {/* Update Button */}
+          <TouchableOpacity
+            onPress={updateUserDetails}
+            activeOpacity={0.9}
+            style={[styles.buttonWrapper, { marginTop: 15 }]}
+            disabled={updating}
+          >
+            <LinearGradient
+              colors={[neonPink, neonPurple]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.button}
+            >
+              {updating ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <Text style={styles.buttonText}>Update Details</Text>
+              )}
+            </LinearGradient>
+          </TouchableOpacity>
         </View>
+      </ScrollView>
 
-        <View style={{ flexDirection: 'column', gap: 5 }}>
-          <Text style={{ fontSize: 14, color: 'white',fontWeight:'500' }}>Email </Text>
-          <TextInput
-            value={email}
-            onChangeText={setEmail}
-            placeholder="Email"
-            keyboardType="email-address"
-            placeholderTextColor="#999"
-            style={styles.input}
-          />
-        </View>
-        <View style={{ flexDirection: 'column', gap: 5 }}>
-          <Text style={{ fontSize: 14, color: 'white',fontWeight:'500' }}>Password </Text>
-          <TextInput
-            value={phone}
-            onChangeText={setPhone}
-            placeholder="Phone"
-            keyboardType="phone-pad"
-            placeholderTextColor="#999"
-            style={styles.input}
-          />
-        </View>
-        <TouchableOpacity
-          onPress={pickImage}
-          style={[styles.button, { backgroundColor: "#8b3dff" }]}
-          disabled={uploading}
-        >
-          {uploading ? (
-            <ActivityIndicator size="small" color="#fff" />
-          ) : (
-            <Text style={styles.buttonText}>Upload Profile Image</Text>
-          )}
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={updateUserDetails}
-          style={[styles.button, { backgroundColor: "#ff3d9b" }]}
-          disabled={updating}
-        >
-          {updating ? (
-            <ActivityIndicator size="small" color="#fff" />
-          ) : (
-            <Text style={styles.buttonText}>Update Details</Text>
-          )}
-        </TouchableOpacity>
+      {/* 🔄 Loader Modal */}
+      <AnimatePresence>
+        {showLoader && (
+          <MotiView
+            from={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ type: "timing", duration: 300 }}
+            style={styles.confirmationOverlay}
+          >
+            <MotiView
+              from={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ type: "timing", duration: 400 }}
+              style={styles.loaderBox}
+            >
+              <MotiView
+                from={{ rotate: "0deg" }}
+                animate={{ rotate: "360deg" }}
+                transition={{ loop: true, type: "timing", duration: 1200 }}
+                style={styles.loaderRing}
+              />
+              <Text style={styles.loaderText}>Please wait...</Text>
+            </MotiView>
+          </MotiView>
+        )}
+      </AnimatePresence>
 
-
-      </View>
-    </ScrollView>
+      {/* ✅ Success / Error Modal */}
+      <AnimatePresence>
+        {showToast && (
+          <MotiView
+            from={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ type: "timing", duration: 400 }}
+            style={styles.confirmationOverlay}
+          >
+            <MotiView
+              from={{ opacity: 0, translateY: 20 }}
+              animate={{ opacity: 1, translateY: 0 }}
+              transition={{ type: "timing", duration: 400, delay: 150 }}
+              style={styles.confirmationBox}
+            >
+              <View style={styles.iconWrapper}>
+                <Ionicons
+                  name={
+                    toastMessage.includes("fail") || toastMessage.includes("wrong")
+                      ? "close-circle"
+                      : "checkmark-circle"
+                  }
+                  size={60}
+                  color="#ff3d9b"
+                />
+              </View>
+              <Text style={styles.confirmationTitle}>Done</Text>
+              <Text style={styles.confirmationText}>{toastMessage}</Text>
+            </MotiView>
+          </MotiView>
+        )}
+      </AnimatePresence>
+    </LinearGradient>
   );
 };
 
 export default AccountDetailScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#0d0d0d",
-    padding: 20,
+  gradient: { flex: 1 },
+  container: { flex: 1, padding: 20 },
+  formContainer: {
+    backgroundColor: "rgba(13, 13, 26, 0.9)",
+    padding: 25,
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: "#4d4d4d",
+    shadowColor: neonPink,
+    shadowOpacity: 0.5,
+    shadowOffset: { width: 0, height: 0 },
+    shadowRadius: 15,
+    elevation: 10,
   },
-  header: {
-    fontSize: 24,
-    fontWeight: "900",
-    color: "#ff3d9b",
+  title: {
+    fontSize: 26,
+    fontWeight: "bold",
+    color: "#fff",
     textAlign: "center",
-    textTransform: "uppercase",
+    textShadowColor: neonPurple,
+    textShadowRadius: 12,
     marginBottom: 8,
-    textShadowColor: "#8b3dff",
-    textShadowRadius: 10,
   },
   subtitle: {
-    color: "#d4d4d4",
-    fontSize: 15,
+    color: "#c9c9e8",
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: 25,
+    fontSize: 14,
   },
-  formCard: {
-    backgroundColor: "#141414",
-    borderRadius: 16,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: "rgba(139,61,255,0.3)",
-    shadowColor: "#8b3dff",
-    shadowOpacity: 0.5,
-    shadowRadius: 10,
-    elevation: 5,
+  inputGroup: { marginBottom: 15 },
+  label: {
+    fontSize: 14,
+    color: "#fff",
+    fontWeight: "500",
+    marginBottom: 5,
   },
   input: {
     borderWidth: 1,
-    borderColor: "rgba(139,61,255,0.4)",
+    borderColor: "#444",
     borderRadius: 10,
     padding: 12,
     fontSize: 16,
-    marginBottom: 12,
     color: "#fff",
     backgroundColor: "#1a1a1a",
   },
-  button: {
+  simpleButton: {
+    width: "100%",
     paddingVertical: 14,
-    borderRadius: 10,
-    marginTop: 10,
+    borderRadius: 12,
+    backgroundColor: "#2a2a2a",
+    borderWidth: 1,
+    borderColor: "#4d4d4d",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 5,
+  },
+  simpleButtonText: {
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  buttonWrapper: {
+    width: "100%",
+    borderRadius: 40,
+    shadowColor: "#ff66c4",
+    shadowOpacity: 0.8,
+    shadowRadius: 20,
+    elevation: 8,
+  },
+  button: {
+    paddingVertical: 15,
+    borderRadius: 12,
+    alignItems: "center",
   },
   buttonText: {
+    color: "#ffffff",
+    fontSize: 17,
+    fontWeight: "600",
+  },
+  confirmationOverlay: {
+    position: "absolute",
+    top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 9999,
+  },
+  loaderBox: {
+    width: 140,
+    height: 140,
+    backgroundColor: "#1E1E1E",
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1.5,
+    borderColor: "#4d4d4d",
+  },
+  loaderRing: {
+    width: 55,
+    height: 55,
+    borderRadius: 30,
+    borderWidth: 4,
+    borderColor: "rgba(139,61,255,0.2)",
+    borderTopColor: "#ff3d9b",
+    marginBottom: 12,
+  },
+  loaderText: {
     color: "#fff",
+    fontSize: 15,
+    fontWeight: "600",
+  },
+  confirmationBox: {
+    width: "75%",
+    backgroundColor: "#1E1E1E",
+    borderRadius: 18,
+    alignItems: "center",
+    paddingVertical: 24,
+    paddingHorizontal: 16,
+    borderWidth: 1.5,
+    borderColor: "#4d4d4d",
+  },
+  iconWrapper: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: "rgba(139,61,255,0.15)",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 12,
+  },
+  confirmationTitle: {
+    color: "#fff",
+    fontSize: 20,
     fontWeight: "700",
-    fontSize: 16,
+    marginBottom: 6,
+  },
+  confirmationText: {
+    color: "#bbb",
+    fontSize: 14,
     textAlign: "center",
-    letterSpacing: 0.5,
+    lineHeight: 20,
   },
 });

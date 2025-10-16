@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
   title: {  
     fontSize: 28,
     fontWeight: "bold",
-    color: "#FF3366",
+    color: "#ff3d9b",
     textShadowColor: "rgba(255, 51, 102, 0.9)",
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 15,
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: "#1A1A1A",
     borderWidth: 1,
-    borderColor: "#FF3366",
+    borderColor: "#ff3d9b",
     shadowColor: "#FF3366",
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
   logoutText: { 
     fontSize: 18, 
     fontWeight: "bold",
-    color: "#FF3366",
+    color: "#ff3d9b",
     textShadowColor: "rgba(255, 51, 102, 0.8)",
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 10,

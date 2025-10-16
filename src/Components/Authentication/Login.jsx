@@ -60,7 +60,7 @@ const LoginScreen = ({ navigation }) => {
   };
 
   return (
-    <LinearGradient colors={["#0d0d1a", "#1a0033"]} style={styles.gradient}>
+    <LinearGradient colors={["#0d0d0d", "#0d0d0d"]} style={styles.gradient}>
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     padding: 30,
     borderRadius: 20,
     borderWidth: 2,
-    borderColor: "#ff3d9b",
+    borderColor: "#4d4d4d",
     shadowColor: neonPink,
     shadowOpacity: 0.5,
     shadowOffset: { width: 0, height: 0 },
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
     padding: 12,
     marginVertical: 8,
     borderRadius: 12,
-    backgroundColor: "#1a1a2e",
+    backgroundColor: "#1a1a1a",
     color: "#fff",
   },
   errorInput: {
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   socialButton: {
-    backgroundColor: "#1a1a2e",
+    backgroundColor: "#1a1a1a",
     padding: 14,
     borderRadius: 50,
     alignItems: "center",

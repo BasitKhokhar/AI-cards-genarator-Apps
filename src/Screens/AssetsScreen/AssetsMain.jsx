@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     // flex: 1,
     // alignItems: "center",
     paddingVertical: 8,paddingHorizontal:12,borderRadius:50,
-    borderWidth:1,borderColor:'#aaa'
+    borderWidth:1,borderColor:'#4d4d4d'
   },
   activeTab: {
     backgroundColor:'#2b2b2b'

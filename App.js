@@ -22,6 +22,7 @@ import SplashScreen4 from "./src/Screens/SplashScreens/SplashScreen4";
 import SignupScreen from "./src/Components/Authentication/Signup";
 import LoginScreen from "./src/Components/Authentication/Login";
 
+import PaymentModal from "./src/Screens/PaymentMethodsScreen/PaymentModel";
 import HomeScreen from "./src/Screens/HomeScreen/HomeScreen";
 import TemplateDetail from "./src/Screens/HomeScreen/CardsTemplates";
 
@@ -55,67 +56,90 @@ const Tab = createBottomTabNavigator();
 
 const MainLayout = ({ navigation, children, currentScreen }) => {
   const { theme } = useTheme();
+  const [showPaymentModal, setShowPaymentModal] = useState(false); // ✅ state for modal
   return (
     <View style={styles.container}>
+      {/* 🔥 Header */}
       <View style={styles.header}>
         <View style={styles.headerItem}>
           <Image source={require("./assets/logo.png")} style={styles.logo} />
         </View>
 
-        <View style={styles.headerItem}>
+        {/* <View style={styles.headerItem}>
           <Text style={styles.appTitle}>CardiFy-AI</Text>
-        </View>
+        </View> */}
 
-        <View style={styles.headerItem}>
-          <TouchableOpacity onPress={() => navigation.navigate("AllNotifications")} style={styles.belliconmaincontainer}>
-            <View style={styles.belliconContainer}>
-              <Icon name="notifications" size={20} color="white" />
+        <View style={styles.headerRight}>
+          {/* 💎 Pro Button */}
+          <TouchableOpacity
+            onPress={() => setShowPaymentModal(true)}
+            style={styles.circularButton}
+            activeOpacity={0.8}
+          >
+            <LinearGradient
+              colors={["#ff3d9b", "#8b3dff"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.circularGradient}
+            >
+              <Text style={styles.proText}>PRO</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+
+          {/* 🔔 Notification Icon */}
+          <TouchableOpacity
+            onPress={() => navigation.navigate("AllNotifications")}
+            style={[styles.circularButton, { borderWidth: 2, borderColor: '#ff3d9b' }]}
+            activeOpacity={0.8}
+          >
+            <View style={[styles.circularGradient, { backgroundColor: "#1f1f1f" }]}>
+              <Icon name="notifications" size={22} color="#fff" />
             </View>
-
           </TouchableOpacity>
         </View>
       </View>
 
+      {/* 💫 Payment Modal */}
+      <PaymentModal
+        visible={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        onContinue={(planData) => console.log("Selected plan:", planData)}
+        navigation={navigation}
+      />
+
+      {/* Body */}
       <View style={styles.body}>{children}</View>
-      <View 
-       style={styles.footer}>
-        {/* <LinearGradient
-          colors={["#8b3dff", "#ff3d9b"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.footer}
-        > */}
-          {[
-            { name: "Home", icon: "home" },
-            { name: "Designs", icon: "auto-awesome" },
-            { name: "Assets", icon: "collections" },
-            { name: "Profile", icon: "person" },
-          ].map(({ name, icon }) => {
-            const isActive = currentScreen === name;
 
-            return (
-              <TouchableOpacity
-                key={name}
-                style={styles.footerButton}
-                onPress={() => navigation.navigate(name)}
-              >
-                {isActive ? (
-                  <View style={[styles.iconWrapper, styles.activeCircle]}>
-                    <Icon name={icon} size={20} color="#ff3d9b" />
-                    <Text style={styles.activeText}>{name}</Text>
-                  </View>
-                ) : (
-                  <>
-                    <Icon name={icon} size={22} color="white" />
-                    <Text style={styles.inactiveText}>{name}</Text>
-                  </>
-                )}
-              </TouchableOpacity>
-            );
-          })}
+      {/* Footer */}
+      <View style={styles.footer}>
+        {[
+          { name: "Home", icon: "home" },
+          { name: "Designs", icon: "auto-awesome" },
+          { name: "Assets", icon: "collections" },
+          { name: "Profile", icon: "person" },
+        ].map(({ name, icon }) => {
+          const isActive = currentScreen === name;
 
-        {/* </LinearGradient> */}
-
+          return (
+            <TouchableOpacity
+              key={name}
+              style={styles.footerButton}
+              onPress={() => navigation.navigate(name)}
+            >
+              {isActive ? (
+                <View style={[styles.iconWrapper, styles.activeCircle]}>
+                  <Icon name={icon} size={20} color="#ff3d9b" />
+                  <Text style={styles.activeText}>{name}</Text>
+                </View>
+              ) : (
+                <>
+                  <Icon name={icon} size={22} color="white" />
+                  <Text style={styles.inactiveText}>{name}</Text>
+                </>
+              )}
+            </TouchableOpacity>
+          );
+        })}
       </View>
     </View>
   );
@@ -164,7 +188,7 @@ const BottomTabs = () => {
 // 💫 Common header style for all screens
 export const commonHeaderOptions = {
   headerStyle: {
-    backgroundColor: "#1a1a1a",borderBottomWidth:1,borderColor:'#4d4d4d'
+    backgroundColor: "#1a1a1a", borderBottomWidth: 1, borderColor: '#4d4d4d'
   },
   headerTintColor: "#ff3d9b",
   headerTitleStyle: {
@@ -324,9 +348,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderBottomWidth: 1,
     borderColor: "#4d4d4d",
-    // backgroundColor: "#141414",
-    backgroundColor:' #1a1a1a',
-   
+    backgroundColor: ' #1a1a1a',
+
     // shadowColor: "#8b3dff",
     // shadowOpacity: 0.6,
     // shadowOffset: { width: 0, height: 4 },
@@ -337,6 +360,47 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     // alignItems: "center",
   },
+  headerRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+
+  // 🔘 Shared circular button for both icons
+  circularButton: {
+    width: 45,
+    height: 45,
+    borderRadius: 24,
+    overflow: "hidden",
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 8,
+    shadowColor: "#ff3d9b",
+    shadowOpacity: 0.6,
+    shadowRadius: 6,
+  },
+
+  // 🌈 Gradient background (used by PRO + Notification)
+  circularGradient: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 24,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  // 💎 PRO text styling
+  proText: {
+    color: "white",
+    fontWeight: "800",
+    fontSize: 12,
+    letterSpacing: 0.5,
+    textShadowColor: "#8b3dff",
+    textShadowRadius: 4,
+  },
+
+
+
   logo: {
     width: 70,
     height: 70,

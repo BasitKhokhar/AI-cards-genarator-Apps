@@ -119,8 +119,8 @@ const UserScreen = () => {
             </View>
 
             {[
-              { name: "person", label: "Personal Info", color: "white", route: "AccountDetail" },
-              { name: "credit-card", label: "Payment methods", color: "white", route: "PaymentmethodsScreen" },
+              { name: "person-outline", label: "Personal Info", color: "white", route: "AccountDetail" },
+              { name: "credit-card", label: "Payment Methods", color: "white", route: "PaymentmethodsScreen" },
               // { name: "security", label: "Security", color: "#2ecc71", route: "AccountDetail" }
             ].map((item, idx) => (
               <TouchableOpacity
@@ -143,10 +143,10 @@ const UserScreen = () => {
             </View>
 
             {[
-              { name: "info", label: "About CardiFy-AI", color: "white", route: "AboutAppScreen" },
-              { name: "support-agent", label: "Customer Support", color: "white", route: "CustomerSupport" },
-              { name: "shield", label: "Privacy Policy", color: "white", route: "PrivacyPolicyScreen" },
-              { name: "question-answer", label: "FAQs", color: "white", route: "faq" }
+              { name: "info-outline", label: "About CardiFy-AI", color: "white", route: "AboutAppScreen" },
+              { name: "headset-mic", label: "Customer Support", color: "white", route: "CustomerSupport" },
+              { name: "security", label: "Privacy Policy", color: "white", route: "PrivacyPolicyScreen" },
+              { name: "help-outline", label: "FAQs", color: "white", route: "faq" },
             ].map((item, idx) => (
               <TouchableOpacity
                 key={idx}
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
     borderRadius: 60,
     overflow: "hidden",
     borderWidth: 2,
-    borderColor: "#ff3d9b", // purple neon
+    borderColor: "#3a3a3a",
     // shadowColor: "#9b59b6",
     shadowOpacity: 0.9,
     shadowRadius: 10,
@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     marginBottom: 20,
     borderWidth: 2,
-    borderColor: "#9b59b6",
+    borderColor: "#4d4d4d",
     shadowColor: "#9b59b6",
     shadowOpacity: 0.6,
     shadowRadius: 8,
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#ff3d9b",
+    color: "#ffff",
     marginRight: 8, marginBottom: 10,
   },
   line: {
@@ -286,11 +286,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: 12,
     paddingHorizontal: 10,
-    backgroundColor: "#111",
+    backgroundColor: "#0d0d0d",
     borderRadius: 10,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: "#333",
+    borderColor: "#4d4d4d",
     shadowColor: "#9b59b6",
     shadowOpacity: 0.3,
     shadowRadius: 6,

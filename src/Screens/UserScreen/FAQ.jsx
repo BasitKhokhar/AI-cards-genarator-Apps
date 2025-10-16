@@ -10,13 +10,12 @@ import { Ionicons } from "@expo/vector-icons";
 import Loader from "../../Components/Loader/Loader";
 import { useNavigation } from "@react-navigation/native";
 import Constants from "expo-constants";
-import { useTheme } from "../../Context/ThemeContext";
 import { apiFetch } from "../../apiFetch";
 import * as SecureStore from "expo-secure-store";
 const API_BASE_URL = Constants.expoConfig.extra.API_BASE_URL;
 
 const FAQ = () => {
-  const { theme } = useTheme();
+ 
   const navigation = useNavigation();
   const [faqs, setFaqs] = useState([]);
   const [expandedIndex, setExpandedIndex] = useState(null);
@@ -114,10 +113,9 @@ const styles = StyleSheet.create({
     marginBottom: 14,
     borderRadius: 12,
     overflow: "hidden",
-    backgroundColor: "#151520",
-    borderWidth: 1,
-    borderColor: "rgba(139,61,255,0.3)",
-    shadowColor: "#8b3dff",
+    backgroundColor: "#1a1a1a",
+     borderWidth: 1,
+    borderColor: "#4d4d4d",
     shadowOpacity: 0.3,
     shadowRadius: 10,
     elevation: 6,
