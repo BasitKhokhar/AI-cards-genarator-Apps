@@ -1,3 +1,4 @@
+// src/screens/Home/HomeScreen.js
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -14,6 +15,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Loader from "../../Components/Loader/Loader";
 import Constants from "expo-constants";
 import { apiFetch } from "../../apiFetch";
+import { colors } from "../../Themes/colors";
 
 const API_BASE_URL = Constants.expoConfig.extra.API_BASE_URL;
 
@@ -27,14 +29,14 @@ const HomeScreen = ({ navigation }) => {
     sliderData: [],
   });
 
-  // ✅ Hide header
+  // Hide header
   useEffect(() => {
     if (navigation) {
       navigation.setOptions({ headerShown: false });
     }
   }, [navigation]);
 
-  // ✅ Fetch homepage data (slider, etc.)
+  // Fetch homepage data (slider, etc.)
   const fetchData = async () => {
     try {
       const storedUserId = await AsyncStorage.getItem("userId");
@@ -79,7 +81,7 @@ const HomeScreen = ({ navigation }) => {
     fetchData().finally(() => setRefreshing(false));
   };
 
-  // ✅ Render FlatList sections
+  // Render FlatList sections
   const sections = [
     { key: "slider", render: () => <ImageSlider sliderData={homeData.sliderData} /> },
     { key: "search", render: () => <SearchHeader onToggle={(open) => setFilterExpanded(open)} /> },
@@ -103,7 +105,12 @@ const HomeScreen = ({ navigation }) => {
       contentContainerStyle={styles.listContainer}
       showsVerticalScrollIndicator={false}
       refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
+          colors={[colors.primary]} // Android loader color
+          tintColor={colors.primary} // iOS loader color
+        />
       }
     />
   );
@@ -115,11 +122,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 16,
-    backgroundColor: "#0d0d0d",
+    backgroundColor: colors.bodybackground,
   },
   listContainer: {
     paddingBottom: 120,
-    backgroundColor: "#0d0d0d",
+    backgroundColor: colors.bodybackground,
   },
 });
 

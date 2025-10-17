@@ -9,13 +9,12 @@
 //   StyleSheet,
 //   RefreshControl,
 // } from "react-native";
-// import { LinearGradient } from "expo-linear-gradient";
 // import { useNavigation } from "@react-navigation/native";
 // import { apiFetch } from "../../apiFetch";
 // import SearchTemplates from "./SearchTemplate";
 
 // const FIXED_HEIGHT = 160;
-// const PAGE_SIZE = 5; 
+// const PAGE_SIZE = 5;
 
 // const CategoriesScreen = () => {
 //   const [categories, setCategories] = useState([]);
@@ -68,7 +67,7 @@
 //       let fetched = data.templates || [];
 //       const hasMore = data.hasMore;
 
-//       // ✅ Calculate natural width based on image aspect ratio
+//       // ✅ Calculate dynamic width based on image ratio
 //       const processed = await Promise.all(
 //         fetched.map(async (t) => {
 //           if (!t.imageUrl) return { ...t, calcWidth: FIXED_HEIGHT };
@@ -97,9 +96,12 @@
 //                 templates:
 //                   pageNum === 1
 //                     ? processed
-//                     : [...cat.templates, ...processed.filter(
-//                         (t) => !cat.templates.find((x) => x.id === t.id)
-//                       )],
+//                     : [
+//                         ...cat.templates,
+//                         ...processed.filter(
+//                           (t) => !cat.templates.find((x) => x.id === t.id)
+//                         ),
+//                       ],
 //                 page: pageNum,
 //                 hasMore,
 //                 loadingMore: false,
@@ -128,29 +130,25 @@
 //     loadCategories();
 //   }, []);
 
-//   // ✅ Template item (uses dynamic width)
+//   // ✅ Template item (just image, dynamic width)
 //   const renderTemplate = ({ item }) => (
 //     <TouchableOpacity
 //       onPress={() =>
 //         navigation.navigate("templatefeatures", { templateId: item.id })
 //       }
 //     >
-//       <LinearGradient
-//         colors={["#8b3dff", "#ff3d9b"]}
-//         start={{ x: 0, y: 0 }}
-//         end={{ x: 1, y: 1 }}
-//         style={[styles.cardGradient, { width: item.calcWidth, height: FIXED_HEIGHT }]}
-//       >
-//         <Image
-//           source={{ uri: item.imageUrl || "https://via.placeholder.com/150" }}
-//           style={styles.cardImage}
-//           resizeMode="cover"
-//         />
-//       </LinearGradient>
+//       <Image
+//         source={{ uri: item.imageUrl || "https://via.placeholder.com/150" }}
+//         style={[
+//           styles.cardImage,
+//           { width: item.calcWidth, height: FIXED_HEIGHT },
+//         ]}
+//         resizeMode="cover"
+//       />
 //     </TouchableOpacity>
 //   );
 
-//   // ✅ Category block with horizontal list
+//   // ✅ Category block
 //   const renderCategory = (cat) => (
 //     <View key={cat.id} style={styles.categoryBlock}>
 //       <Text style={styles.categoryTitle}>{cat.name}</Text>
@@ -185,7 +183,11 @@
 //         keyExtractor={(item) => item.id.toString()}
 //         renderItem={({ item }) => renderCategory(item)}
 //         refreshControl={
-//           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#8b3dff" />
+//           <RefreshControl
+//             refreshing={refreshing}
+//             onRefresh={onRefresh}
+//             tintColor="#8b3dff"
+//           />
 //         }
 //         showsVerticalScrollIndicator={false}
 //       />
@@ -203,7 +205,7 @@
 //   categoryBlock: {
 //     marginBottom: 25,
 //     backgroundColor: "#1a1a1a",
-//      borderWidth: 1,
+//     borderWidth: 1,
 //     borderColor: "#4d4d4d",
 //     padding: 10,
 //     borderRadius: 12,
@@ -214,18 +216,10 @@
 //     marginBottom: 10,
 //     color: "white",
 //   },
-//   cardGradient: {
-//     borderRadius: 14,
-//     padding: 2,
+//   cardImage: {
+//     borderRadius: 12,
 //     marginRight: 15,
 //     marginBottom: 15,
-//     justifyContent: "center",
-//     alignItems: "center",
-//   },
-//   cardImage: {
-//     width: "100%",
-//     height: "100%",
-//     borderRadius: 12,
 //   },
 //   loader: {
 //     justifyContent: "center",
@@ -248,6 +242,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { apiFetch } from "../../apiFetch";
 import SearchTemplates from "./SearchTemplate";
+import { colors } from "../../Themes/colors"; // ✅ imported colors
 
 const FIXED_HEIGHT = 160;
 const PAGE_SIZE = 5;
@@ -257,7 +252,6 @@ const CategoriesScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
 
-  // ✅ Load categories (without templates first)
   const loadCategories = async () => {
     try {
       const res = await apiFetch("/cards/categories", {}, navigation);
@@ -274,7 +268,6 @@ const CategoriesScreen = () => {
 
       setCategories(formatted);
 
-      // Load first page for each category
       for (const cat of formatted) {
         fetchMoreTemplates(cat.id, 1);
       }
@@ -283,7 +276,6 @@ const CategoriesScreen = () => {
     }
   };
 
-  // ✅ Fetch paginated templates + calculate dynamic width
   const fetchMoreTemplates = async (categoryId, pageNum) => {
     try {
       setCategories((prev) =>
@@ -303,7 +295,6 @@ const CategoriesScreen = () => {
       let fetched = data.templates || [];
       const hasMore = data.hasMore;
 
-      // ✅ Calculate dynamic width based on image ratio
       const processed = await Promise.all(
         fetched.map(async (t) => {
           if (!t.imageUrl) return { ...t, calcWidth: FIXED_HEIGHT };
@@ -323,7 +314,6 @@ const CategoriesScreen = () => {
         })
       );
 
-      // ✅ Update category state
       setCategories((prev) =>
         prev.map((cat) =>
           cat.id === categoryId
@@ -355,7 +345,6 @@ const CategoriesScreen = () => {
     }
   };
 
-  // ✅ Pull to refresh
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await loadCategories();
@@ -366,7 +355,6 @@ const CategoriesScreen = () => {
     loadCategories();
   }, []);
 
-  // ✅ Template item (just image, dynamic width)
   const renderTemplate = ({ item }) => (
     <TouchableOpacity
       onPress={() =>
@@ -384,7 +372,6 @@ const CategoriesScreen = () => {
     </TouchableOpacity>
   );
 
-  // ✅ Category block
   const renderCategory = (cat) => (
     <View key={cat.id} style={styles.categoryBlock}>
       <Text style={styles.categoryTitle}>{cat.name}</Text>
@@ -403,7 +390,7 @@ const CategoriesScreen = () => {
         ListFooterComponent={
           cat.loadingMore ? (
             <View style={styles.loader}>
-              <Text style={{ color: "#8b3dff" }}>Loading...</Text>
+              <Text style={{ color: colors.primary }}>Loading...</Text>
             </View>
           ) : null
         }
@@ -422,7 +409,7 @@ const CategoriesScreen = () => {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor="#8b3dff"
+            tintColor={colors.primary}
           />
         }
         showsVerticalScrollIndicator={false}
@@ -434,15 +421,15 @@ const CategoriesScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0d0d0d",
+    backgroundColor: colors.bodybackground, // ✅ from colors
     padding: 10,
     paddingLeft: 16,
   },
   categoryBlock: {
     marginBottom: 25,
-    backgroundColor: "#1a1a1a",
+    backgroundColor: colors.cardsbackground, // ✅ from colors
     borderWidth: 1,
-    borderColor: "#4d4d4d",
+    borderColor: colors.border, // ✅ from colors
     padding: 10,
     borderRadius: 12,
   },
@@ -450,7 +437,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 10,
-    color: "white",
+    color: colors.text, // ✅ from colors
   },
   cardImage: {
     borderRadius: 12,

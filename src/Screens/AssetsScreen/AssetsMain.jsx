@@ -1,3 +1,4 @@
+import { colors } from "../../Themes/colors";
 import React, { useState } from "react";
 import {
   View,
@@ -13,6 +14,7 @@ const AssetsMainScreen = () => {
   return (
     <View style={styles.container}>
       {/* 🔹 Tabs */}
+    
       <View style={styles.tabBar}>
         <TouchableOpacity
           style={[styles.tab, activeTab === "gallery" && styles.activeTab]}
@@ -60,32 +62,23 @@ const styles = StyleSheet.create({
 
   tabBar: {
     flexDirection: "row",gap:10,paddingHorizontal:16,
-    // justifyContent: "space-around",
-    // backgroundColor: "#1a1a1a",
     paddingTop: 16,
-    // borderBottomWidth: 1,
-    // borderBottomColor: "#333",
   },
   tab: {
-    // flex: 1,
-    // alignItems: "center",
     paddingVertical: 8,paddingHorizontal:12,borderRadius:50,
-    borderWidth:1,borderColor:'#4d4d4d'
+    borderWidth:1,borderColor:colors.border
   },
   activeTab: {
-    backgroundColor:'#2b2b2b'
-    // borderBottomWidth: 2,
-    // borderBottomColor: "#ff3d9b",
+    backgroundColor:colors.cardsbackground
   },
   tabText: {
-    color: "#aaa",
+    color: colors.mutedText,
     fontSize: 12,
     fontWeight: "600",
   },
   activeTabText: {
-    color: "#ffff",
+    color: colors.text,
   },
-
   content: {
     flex: 1,
   },

@@ -144,7 +144,7 @@ const TrendingTemplates = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Icon name="trending-up" size={24} color="#ff3d9b" />
+        <Icon name="trending-up" size={24} color="#06b6d4" />
         <Text style={styles.headerText}>Trending Templates</Text>
       </View>
 

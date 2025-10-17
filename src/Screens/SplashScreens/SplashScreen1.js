@@ -1,91 +1,157 @@
-// import React, { useEffect, useState } from "react";
+// // import React, { useEffect, useState } from "react";
+// // import { View, Text, StyleSheet } from "react-native";
+// // import { FontAwesome } from "@expo/vector-icons";
+// // import * as Animatable from "react-native-animatable";
+// // import tinycolor from "tinycolor2";
+// // import { LinearGradient } from "expo-linear-gradient";
+// // import Constants from "expo-constants";
+
+// // const API_BASE_URL = Constants.expoConfig.extra.API_BASE_URL;
+
+// // const SplashScreen1 = () => {
+
+// //   return (
+// //     <LinearGradient
+// //       colors={["#8b3dff", "#ff3d9b"]}
+// //       start={{ x: 0, y: 0 }}
+// //       end={{ x: 1, y: 1 }}
+// //       style={styles.container}
+// //     >
+     
+// //         <Animatable.Image
+// //           animation="zoomIn"
+// //           duration={1500}
+// //           source={require("../../../assets/logo.png")}
+// //           style={styles.image}
+// //         />
+    
+
+// //      <View style={styles.bottomTextContainer}>
+// //         <Text style={styles.bottomText}>Made With <FontAwesome name="heart" size={24} color="red" /></Text>
+// //         <Text style={styles.bottomText}>By Basit khokhar</Text>
+// //       </View>
+// //     </LinearGradient>
+// //   );
+// // };
+
+// // const styles = StyleSheet.create({
+// //   container: {
+// //     flex: 1,
+// //     justifyContent: "center",
+// //     alignItems: "center",
+// //   },
+// //   image: {
+// //     width: 120,
+// //     height: 120,
+// //     borderRadius: 10,
+// //     resizeMode: "contain",
+// //     shadowColor: "#8b3dff",
+// //     shadowOpacity: 0.5,
+// //     shadowRadius: 20,
+// //     elevation: 10,
+// //   },
+// //   // bottomTextContainer: {
+// //   //   position: "absolute",
+// //   //   bottom: 70,
+// //   //   alignItems: "center",
+// //   // },
+// //   // bottomText: {
+// //   //   color: "white",
+// //   //   fontSize: 18,
+// //   //   fontWeight: "600",
+// //   //   fontStyle: "italic",
+// //   //   textAlign: "center",
+// //   //   textShadowColor: "#8b3dff",
+// //   //   textShadowRadius: 8,
+// //   // },
+// // bottomTextContainer: {
+// //     position: "absolute",
+// //     bottom: 80,
+// //   },
+// //   bottomText: {
+// //     color: 'white',
+// //     fontSize: 24,
+// //     fontWeight: 'bold',
+// //     fontStyle: 'italic',
+// //     textAlign: "center",
+// //      textShadowColor: "rgba(0,0,0,0.6)",
+// //           textShadowOffset: { width: 2, height: 2 }, borderTopColor: "rgba(0,0,0,0.3)",
+// //           textShadowRadius: 4,
+// //   },
+// // });
+
+
+// // export default SplashScreen1;
+// import React from "react";
 // import { View, Text, StyleSheet } from "react-native";
 // import { FontAwesome } from "@expo/vector-icons";
 // import * as Animatable from "react-native-animatable";
-// import tinycolor from "tinycolor2";
-// import { LinearGradient } from "expo-linear-gradient";
 // import Constants from "expo-constants";
 
 // const API_BASE_URL = Constants.expoConfig.extra.API_BASE_URL;
 
 // const SplashScreen1 = () => {
-
 //   return (
-//     <LinearGradient
-//       colors={["#8b3dff", "#ff3d9b"]}
-//       start={{ x: 0, y: 0 }}
-//       end={{ x: 1, y: 1 }}
-//       style={styles.container}
-//     >
-     
-//         <Animatable.Image
-//           animation="zoomIn"
-//           duration={1500}
-//           source={require("../../../assets/logo.png")}
-//           style={styles.image}
-//         />
-    
+//     <View style={styles.container}>
+//       {/* Animated Logo */}
+//       <Animatable.Image
+//         animation="zoomIn"
+//         duration={1500}
+//         source={require("../../../assets/logo.png")}
+//         style={styles.image}
+//       />
 
-//      <View style={styles.bottomTextContainer}>
-//         <Text style={styles.bottomText}>Made With <FontAwesome name="heart" size={24} color="red" /></Text>
-//         <Text style={styles.bottomText}>By Basit khokhar</Text>
+//       {/* Bottom credits */}
+//       <View style={styles.bottomTextContainer}>
+//         <Text style={styles.bottomText}>
+//           Made With <FontAwesome name="heart" size={20} color="#ff3d9b" />
+//         </Text>
+//         <Text style={[styles.bottomText, { fontSize: 18 }]}>By Basit Khokhar</Text>
 //       </View>
-//     </LinearGradient>
+//     </View>
 //   );
 // };
 
 // const styles = StyleSheet.create({
 //   container: {
 //     flex: 1,
+//     backgroundColor: "#1a1a1a", // main dark background
 //     justifyContent: "center",
 //     alignItems: "center",
 //   },
 //   image: {
-//     width: 120,
-//     height: 120,
-//     borderRadius: 10,
+//     width: 110,
+//     height: 110,
 //     resizeMode: "contain",
+//     // Removed tintColor to preserve original colors
 //     shadowColor: "#8b3dff",
-//     shadowOpacity: 0.5,
+//     shadowOpacity: 0.4,
 //     shadowRadius: 20,
-//     elevation: 10,
+//     borderWidth:2,borderColor:'#ffff',
+//     elevation: 15,borderRadius:8
 //   },
-//   // bottomTextContainer: {
-//   //   position: "absolute",
-//   //   bottom: 70,
-//   //   alignItems: "center",
-//   // },
-//   // bottomText: {
-//   //   color: "white",
-//   //   fontSize: 18,
-//   //   fontWeight: "600",
-//   //   fontStyle: "italic",
-//   //   textAlign: "center",
-//   //   textShadowColor: "#8b3dff",
-//   //   textShadowRadius: 8,
-//   // },
-// bottomTextContainer: {
+//   bottomTextContainer: {
 //     position: "absolute",
-//     bottom: 80,
+//     bottom: 70,
+//     alignItems: "center",
 //   },
 //   bottomText: {
-//     color: 'white',
-//     fontSize: 24,
-//     fontWeight: 'bold',
-//     fontStyle: 'italic',
+//     color: "#e6e6e6",
+//     fontSize: 20,
+//     fontWeight: "600",
+//     fontStyle: "italic",
 //     textAlign: "center",
-//      textShadowColor: "rgba(0,0,0,0.6)",
-//           textShadowOffset: { width: 2, height: 2 }, borderTopColor: "rgba(0,0,0,0.3)",
-//           textShadowRadius: 4,
+//     textShadowColor: "#8b3dff",
+//     textShadowRadius: 8,
 //   },
 // });
-
 
 // export default SplashScreen1;
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import * as Animatable from "react-native-animatable";
+import { colors } from "../../Themes/colors"; // updated import
 import Constants from "expo-constants";
 
 const API_BASE_URL = Constants.expoConfig.extra.API_BASE_URL;
@@ -104,7 +170,7 @@ const SplashScreen1 = () => {
       {/* Bottom credits */}
       <View style={styles.bottomTextContainer}>
         <Text style={styles.bottomText}>
-          Made With <FontAwesome name="heart" size={20} color="#ff3d9b" />
+          Made With <FontAwesome name="heart" size={20} color={colors.primary} />
         </Text>
         <Text style={[styles.bottomText, { fontSize: 18 }]}>By Basit Khokhar</Text>
       </View>
@@ -115,7 +181,7 @@ const SplashScreen1 = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#1a1a1a", // main dark background
+    backgroundColor: colors.cardsbackground, // use colors file
     justifyContent: "center",
     alignItems: "center",
   },
@@ -123,12 +189,13 @@ const styles = StyleSheet.create({
     width: 110,
     height: 110,
     resizeMode: "contain",
-    // Removed tintColor to preserve original colors
-    shadowColor: "#8b3dff",
-    shadowOpacity: 0.4,
+    shadowColor: colors.primary,
+    shadowOpacity: 0.5,
     shadowRadius: 20,
-    borderWidth:2,borderColor:'#ffff',
-    elevation: 15,borderRadius:8
+    elevation: 15,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: colors.text,
   },
   bottomTextContainer: {
     position: "absolute",
@@ -136,13 +203,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   bottomText: {
-    color: "#e6e6e6",
+    color: colors.text,
     fontSize: 20,
     fontWeight: "600",
     fontStyle: "italic",
     textAlign: "center",
-    textShadowColor: "#8b3dff",
-    textShadowRadius: 8,
+    textShadowColor: colors.primary,
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 6,
   },
 });
 

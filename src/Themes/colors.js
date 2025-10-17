@@ -1,9 +1,17 @@
 export const colors = {
-  background: '#f5f5f5',
-  primary: '#8b3dff',
+  bodybackground: '#0d0d0d',
+  cardsbackground: '#1a1a1a',
+  primary: '#06b6d4',
+  accent: '#1a2980',
   secondary: '#3D3D3D',
-  text: '#FFFFFF',
+  text: '#ffff',
   mutedText: '#B3B3B3',
-  accent: '#FF5E5E',
-  border: '#2A2A2A',
+  border: '#4d4d4d',
+
+   gradients: {
+    ocean: ["#1a2980", "#26d0ce"],   // bluish-cyan
+    mintGlow: ['#00ffa3', '#00b3ff'], // greenish-blue
+    aquaPulse: ['#00F5A0', '#00D9F5'], // light neon
+    deepTech: ["#0d0d1a", "#141427"], // background gradient
+  },
 };

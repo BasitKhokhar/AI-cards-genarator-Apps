@@ -1,5 +1,6 @@
 // import { ThemeProvider } from "./Components/context/ThemeContext";
 // import { useTheme } from "./Components/context/ThemeContext";
+import { colors } from "./src/Themes/colors";
 import { ThemeProvider, useTheme } from "./src/Context/ThemeContext";
 import React, { useState, useEffect } from "react";
 import { StripeProvider } from "@stripe/stripe-react-native";
@@ -12,6 +13,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from "react-native-vector-icons/MaterialIcons";
 
+
+import GradientIcon from "./src/Screens/AssetsScreen/samplegradient";
 // splashscreens //
 import SplashScreen from "./src/Screens/SplashScreens/SplashScreen";
 import SplashScreen1 from "./src/Screens/SplashScreens/SplashScreen1";
@@ -64,11 +67,6 @@ const MainLayout = ({ navigation, children, currentScreen }) => {
         <View style={styles.headerItem}>
           <Image source={require("./assets/logo.png")} style={styles.logo} />
         </View>
-
-        {/* <View style={styles.headerItem}>
-          <Text style={styles.appTitle}>CardiFy-AI</Text>
-        </View> */}
-
         <View style={styles.headerRight}>
           {/* 💎 Pro Button */}
           <TouchableOpacity
@@ -77,7 +75,7 @@ const MainLayout = ({ navigation, children, currentScreen }) => {
             activeOpacity={0.8}
           >
             <LinearGradient
-              colors={["#ff3d9b", "#8b3dff"]}
+              colors={colors.gradients.ocean}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.circularGradient}
@@ -89,7 +87,7 @@ const MainLayout = ({ navigation, children, currentScreen }) => {
           {/* 🔔 Notification Icon */}
           <TouchableOpacity
             onPress={() => navigation.navigate("AllNotifications")}
-            style={[styles.circularButton, { borderWidth: 2, borderColor: '#ff3d9b' }]}
+            style={[styles.circularButton, { borderWidth: 2, borderColor:colors.primary }]}
             activeOpacity={0.8}
           >
             <View style={[styles.circularGradient, { backgroundColor: "#1f1f1f" }]}>
@@ -111,36 +109,36 @@ const MainLayout = ({ navigation, children, currentScreen }) => {
       <View style={styles.body}>{children}</View>
 
       {/* Footer */}
-      <View style={styles.footer}>
-        {[
-          { name: "Home", icon: "home" },
-          { name: "Designs", icon: "auto-awesome" },
-          { name: "Assets", icon: "collections" },
-          { name: "Profile", icon: "person" },
-        ].map(({ name, icon }) => {
-          const isActive = currentScreen === name;
+     <View style={styles.footer}>
+  {[
+    { name: "Home", icon: "home" },
+    { name: "Designs", icon: "auto-awesome" },
+    { name: "Assets", icon: "collections" },
+    { name: "Profile", icon: "person" },
+  ].map(({ name, icon }) => {
+    const isActive = currentScreen === name;
 
-          return (
-            <TouchableOpacity
-              key={name}
-              style={styles.footerButton}
-              onPress={() => navigation.navigate(name)}
-            >
-              {isActive ? (
-                <View style={[styles.iconWrapper, styles.activeCircle]}>
-                  <Icon name={icon} size={20} color="#ff3d9b" />
-                  <Text style={styles.activeText}>{name}</Text>
-                </View>
-              ) : (
-                <>
-                  <Icon name={icon} size={22} color="white" />
-                  <Text style={styles.inactiveText}>{name}</Text>
-                </>
-              )}
-            </TouchableOpacity>
-          );
-        })}
-      </View>
+    return (
+      <TouchableOpacity
+        key={name}
+        style={styles.footerButton}
+        onPress={() => navigation.navigate(name)}
+      >
+        {isActive ? (
+          <View style={[styles.iconWrapper, styles.activeCircle]}>
+            <GradientIcon iconName={icon} iconSize={22} />
+            <Text style={styles.activeText}>{name}</Text>
+          </View>
+        ) : (
+          <>
+            <Icon name={icon} size={22} color="white" />
+            <Text style={styles.inactiveText}>{name}</Text>
+          </>
+        )}
+      </TouchableOpacity>
+    );
+  })}
+</View>
     </View>
   );
 };
@@ -188,9 +186,9 @@ const BottomTabs = () => {
 // 💫 Common header style for all screens
 export const commonHeaderOptions = {
   headerStyle: {
-    backgroundColor: "#1a1a1a", borderBottomWidth: 1, borderColor: '#4d4d4d'
+    backgroundColor: colors.cardsbackground, borderBottomWidth: 1, borderColor:colors.border
   },
-  headerTintColor: "#ff3d9b",
+  headerTintColor: colors.text,
   headerTitleStyle: {
     fontWeight: "bold",
   },
@@ -336,9 +334,9 @@ const App = () => {
 export default App;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#1a1a1a" },
+ container: { flex: 1, backgroundColor: colors.cardsbackground },
 
-  // 🔥 Neon Header
+  // 🔥 Header
   header: {
     paddingTop: 25,
     paddingBottom: 15,
@@ -347,26 +345,21 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     borderBottomWidth: 1,
-    borderColor: "#4d4d4d",
-    backgroundColor: ' #1a1a1a',
-
-    // shadowColor: "#8b3dff",
-    // shadowOpacity: 0.6,
-    // shadowOffset: { width: 0, height: 4 },
-    // shadowRadius: 8,
-    // elevation: 6,
+    borderColor: colors.border,
+    backgroundColor: colors.cardsbackground,
   },
+
   headerItem: {
     flexDirection: "row",
-    // alignItems: "center",
   },
+
   headerRight: {
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
   },
 
-  // 🔘 Shared circular button for both icons
+  // 🔘 Shared circular button
   circularButton: {
     width: 45,
     height: 45,
@@ -375,12 +368,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     elevation: 8,
-    shadowColor: "#ff3d9b",
+    shadowColor: colors.primary,
     shadowOpacity: 0.6,
     shadowRadius: 6,
   },
 
-  // 🌈 Gradient background (used by PRO + Notification)
+  // 🌈 Gradient background (for PRO + Notification)
   circularGradient: {
     width: "100%",
     height: "100%",
@@ -391,58 +384,55 @@ const styles = StyleSheet.create({
 
   // 💎 PRO text styling
   proText: {
-    color: "white",
+    color: colors.text,
     fontWeight: "800",
     fontSize: 12,
     letterSpacing: 0.5,
-    textShadowColor: "#8b3dff",
+    textShadowColor: colors.primary,
     textShadowRadius: 4,
   },
 
-
-
   logo: {
-    width: 70,
+    width: 90,
     height: 70,
     borderRadius: 12,
-    // borderWidth: 2,
-    // borderColor: "#8b3dff",
-    // shadowColor: "#8b3dff",
-    // shadowOpacity: 0.8,
-    // shadowRadius: 12,
   },
+
+  // ⚡ App Title
   appTitle: {
     fontSize: 26,
     fontWeight: "900",
     letterSpacing: 1.5,
     marginLeft: 10,
     textTransform: "uppercase",
-    color: "#ff3d9b", // base white text
-    textShadowColor: "#8b3dff",
+    color: colors.primary,
+    textShadowColor: colors.accent,
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 12,
-    // Extra layered glow
-    shadowColor: "#ff3d9b",
+    shadowColor: colors.primary,
     shadowOpacity: 0.8,
     shadowRadius: 16,
   },
+
   belliconmaincontainer: { paddingRight: 5 },
+
+  // 🔔 Notification Icon
   belliconContainer: {
     padding: 8,
-    backgroundColor: "#1f1f1f",
+    backgroundColor: colors.secondary,
     borderRadius: 50,
     borderWidth: 2,
-    borderColor: "#ff3d9b",
-    shadowColor: "#8b3dff",
+    borderColor: colors.primary,
+    shadowColor: colors.accent,
     shadowOpacity: 0.8,
     shadowRadius: 10,
     elevation: 6,
   },
 
   // 🔥 Body
-  body: { flex: 1, backgroundColor: "#0d0d0d" },
+  body: { flex: 1, backgroundColor: colors.bodybackground },
 
-  // 🔥 Neon Footer
+  // 🌌 Footer
   footer: {
     flexDirection: "row",
     justifyContent: "space-around",
@@ -452,10 +442,10 @@ const styles = StyleSheet.create({
     width: "92%",
     alignSelf: "center",
     borderRadius: 40,
-    backgroundColor: "#1a1a1a",
+    backgroundColor: colors.cardsbackground,
     borderWidth: 1,
-    borderColor: "#4d4d4d",
-    shadowColor: "#ff3d9b",
+    borderColor: colors.border,
+    shadowColor: colors.primary,
     shadowOpacity: 0.5,
     shadowRadius: 10,
     elevation: 8,
@@ -475,30 +465,21 @@ const styles = StyleSheet.create({
     borderRadius: 35,
     justifyContent: "center",
     alignItems: "center",
-    flexDirection: "column", // stack icon + text vertically
+    flexDirection: "column",
     padding: 6,
   },
-
-  // activeCircle: {
-  //   backgroundColor: "#292929ff",  // neon purple
-  //   shadowColor: "#ff3d9b",      // pink glow
-  //   shadowOpacity: 0.6,
-  //   shadowRadius: 8,
-  //   elevation: 6,
-  // },
 
   activeText: {
     fontSize: 12,
     marginTop: 4,
-    color: "#ff3d9b",
+    color: colors.text,
     fontWeight: "600",
   },
 
   inactiveText: {
     fontSize: 12,
     marginTop: 4,
-    color: "white",
+    color: colors.text,
   },
-
 });
 
