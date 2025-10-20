@@ -1,22 +1,33 @@
-import React, { useEffect, useState } from 'react';
-import { 
-  View, Text, TextInput, TouchableOpacity, 
-  StyleSheet, Alert, ActivityIndicator 
-} from 'react-native';
-import * as SecureStore from 'expo-secure-store';
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from "react-native";
+import * as SecureStore from "expo-secure-store";
+import { LinearGradient } from "expo-linear-gradient";
+import { colors } from "../../Themes/colors";
 
-export default function EasypaisaPaymentScreen({ route, navigation }) {
+export default function JazzCashPaymentScreen({ route, navigation }) {
   const { gameTypeId } = route.params;
   const [token, setToken] = useState(null);
-  const [amount, setAmount] = useState('');
-  const [phone, setPhone] = useState('');
+  const [amount, setAmount] = useState("");
+  const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // ✅ Load JWT token on mount
   useEffect(() => {
     const loadToken = async () => {
-      const storedToken = await SecureStore.getItemAsync('jwt_token');
+      const storedToken = await SecureStore.getItemAsync("jwt_token");
       if (!storedToken) {
-        Alert.alert('Error', 'User not logged in');
+        Alert.alert("Error", "User not logged in");
         navigation.goBack();
         return;
       }
@@ -25,19 +36,28 @@ export default function EasypaisaPaymentScreen({ route, navigation }) {
     loadToken();
   }, []);
 
+  // ✅ Handle payment logic
   const handlePayment = async () => {
     if (!amount || !phone) {
-      Alert.alert('Validation', 'Please enter amount and phone number');
+      Alert.alert("Validation", "Please enter amount and phone number");
+      return;
+    }
+    if (isNaN(amount) || Number(amount) <= 0) {
+      Alert.alert("Validation", "Please enter a valid amount");
+      return;
+    }
+    if (phone.length < 10) {
+      Alert.alert("Validation", "Please enter a valid phone number");
       return;
     }
 
     setLoading(true);
 
     try {
-      const response = await fetch('YOUR_BACKEND_API/easypaisa/payment', {
-        method: 'POST',
+      const response = await fetch("YOUR_BACKEND_API/jazzcash/payment", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ gameTypeId, amount, phone }),
@@ -46,12 +66,12 @@ export default function EasypaisaPaymentScreen({ route, navigation }) {
       const data = await response.json();
 
       if (response.ok) {
-        Alert.alert('✅ Success', 'Payment initiated successfully!');
+        Alert.alert("✅ Success", "Payment initiated successfully!");
       } else {
-        Alert.alert('❌ Error', data.message || 'Payment failed');
+        Alert.alert("❌ Error", data.message || "Payment failed");
       }
     } catch (error) {
-      Alert.alert('⚠️ Error', error.message);
+      Alert.alert("⚠️ Error", error.message);
     } finally {
       setLoading(false);
     }
@@ -60,106 +80,120 @@ export default function EasypaisaPaymentScreen({ route, navigation }) {
   if (!token) {
     return (
       <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="#ff3d9b" />
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.heading}>Easypaisa Payment</Text>
-
-      <TextInput
-        placeholder="Enter amount"
-        placeholderTextColor="#888"
-        keyboardType="numeric"
-        style={styles.input}
-        value={amount}
-        onChangeText={setAmount}
-      />
-
-      <TextInput
-        placeholder="Enter phone number"
-        placeholderTextColor="#888"
-        keyboardType="phone-pad"
-        style={styles.input}
-        value={phone}
-        onChangeText={setPhone}
-      />
-
-      <TouchableOpacity 
-        style={[styles.payButton, loading && { opacity: 0.7 }]} 
-        onPress={handlePayment} 
-        disabled={loading}
-        activeOpacity={0.85}
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    >
+      <View
+       
+        style={styles.container}
       >
-        <Text style={styles.payButtonText}>
-          {loading ? 'Processing...' : 'Pay Now'}
-        </Text>
-      </TouchableOpacity>
-    </View>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+          {/* <Text style={styles.heading}>JazzCash Payment</Text> */}
+
+          <TextInput
+            placeholder="Enter amount"
+            placeholderTextColor={colors.mutedText}
+            keyboardType="numeric"
+            style={styles.input}
+            value={amount}
+            onChangeText={setAmount}
+          />
+
+          <TextInput
+            placeholder="Enter phone number"
+            placeholderTextColor={colors.mutedText}
+            keyboardType="phone-pad"
+            style={styles.input}
+            value={phone}
+            onChangeText={setPhone}
+          />
+
+          <TouchableOpacity
+            style={[styles.payButton, loading && { opacity: 0.7 }]}
+            onPress={handlePayment}
+            disabled={loading}
+            activeOpacity={0.85}
+          >
+            <LinearGradient
+              colors={colors.gradients.mintGlow}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.payButtonInner}
+            >
+              {loading ? (
+                <ActivityIndicator color={colors.bodybackground} />
+              ) : (
+                <Text style={styles.payButtonText}>Pay Now</Text>
+              )}
+            </LinearGradient>
+          </TouchableOpacity>
+        </ScrollView>
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  loaderContainer: { 
-    flex: 1, 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    backgroundColor: '#0d0d0d' 
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.bodybackground,
   },
-
-  container: { 
-    flex: 1, 
-    padding: 24, 
-    backgroundColor: '#0d0d0d', 
-    justifyContent: 'center' 
+  container: {
+    flex: 1,
+    padding: 24,
+    justifyContent: "center", backgroundColor: colors.bodybackground,
   },
-
-  heading: { 
-    fontSize: 28, 
-    fontWeight: '900', 
-    color: '#ff3d9b', 
-    textAlign: 'center', 
+  heading: {
+    fontSize: 28,
+    fontWeight: "900",
+    color: colors.primary,
+    textAlign: "center",
     marginBottom: 40,
-    textShadowColor: '#8b3dff', 
+    textShadowColor: colors.accent,
     textShadowRadius: 12,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
   },
-
   input: {
-    backgroundColor: '#141414',
+    backgroundColor: colors.cardsbackground,
     borderWidth: 1,
-    borderColor: 'rgba(139,61,255,0.4)',
+    borderColor: colors.border,
     borderRadius: 14,
     padding: 14,
     fontSize: 16,
-    color: '#fff',
+    color: colors.text,
     marginBottom: 22,
-    shadowColor: '#8b3dff',
-    shadowOpacity: 0.5,
-    shadowRadius: 8,
-    elevation: 5,
+    shadowColor: colors.accent,
+    shadowOpacity: 0.4,
+    shadowRadius: 6,
+    elevation: 4,
   },
-
   payButton: {
-    backgroundColor: '#141414',
-    borderWidth: 1.2,
-    borderColor: 'rgba(255,61,155,0.6)',
+    borderRadius: 16,
+    overflow: "hidden",
+    elevation: 8,
+    shadowColor: colors.primary,
+    shadowOpacity: 0.6,
+    shadowRadius: 12,
+  },
+  payButtonInner: {
     paddingVertical: 18,
     borderRadius: 14,
-    alignItems: 'center',
-    shadowColor: '#ff3d9b',
-    shadowOpacity: 0.8,
-    shadowRadius: 12,
-    elevation: 8,
+    alignItems: "center",
   },
-
   payButtonText: {
-    color: '#fff',
+    color: colors.bodybackground,
     fontSize: 20,
-    fontWeight: '700',
-    textShadowColor: 'rgba(255,255,255,0.3)',
-    textShadowRadius: 4,
+    fontWeight: "700",
+    textShadowColor: "rgba(255,255,255,0.25)",
+    textShadowRadius: 3,
   },
 });

@@ -153,7 +153,7 @@ const SplashScreen3 = ({ onNext }) => {
         {/* Gradient Button */}
         <TouchableOpacity onPress={onNext} activeOpacity={0.9} style={styles.buttonWrapper}>
           <LinearGradient
-            colors={colors.gradients.mintGlow} // uses colors file
+            colors={colors.gradients.ocean} // uses colors file
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.button}

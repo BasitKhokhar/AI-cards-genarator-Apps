@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Animatable from "react-native-animatable";
+import { colors } from "../../Themes/colors"; // ✅ import your theme colors
 
 const SplashScreen = ({ navigation }) => {
   const fullText = "Welcome to CardiFy-AI — Your AI Designer for Every Occasion";
@@ -27,7 +28,7 @@ const SplashScreen = ({ navigation }) => {
 
   return (
     <LinearGradient
-      colors={["#0d0d0d", "#0d0d0d"]}
+      colors={colors.gradients.deepTech} // ✅ using app gradient background
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.container}
@@ -72,9 +73,6 @@ const SplashScreen = ({ navigation }) => {
   );
 };
 
-const neonPurple = "#8b3dff";
-const neonPink = "#ff3d9b";
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -88,36 +86,36 @@ const styles = StyleSheet.create({
     width: 250,
     height: 250,
     borderRadius: 125,
-    backgroundColor: neonPink,
+    backgroundColor: colors.primary, // ✅ soft cyan glow
     opacity: 0.15,
-    shadowColor: neonPink,
+    shadowColor: colors.accent, // ✅ deep bluish accent
     shadowOpacity: 0.8,
     shadowRadius: 40,
   },
   logo: {
-    width: 120,
-    height: 120,
+    width: 170,
+    height: 100,
     borderRadius: 28,
     marginBottom: 30,
-    borderWidth: 3,
-    borderColor: neonPink,
-    shadowColor: neonPurple,
+    borderWidth: 2,
+    borderColor: colors.primary, // ✅ primary highlight
+    shadowColor: colors.accent, // ✅ accent neon shadow
     shadowOpacity: 0.8,
     shadowRadius: 25,
   },
   welcomeText: {
     fontSize: 22,
     fontWeight: "bold",
-    color: "#fff",
+    color: colors.text,
     textAlign: "center",
-    textShadowColor: neonPurple,
+    textShadowColor: colors.primary, // ✅ subtle cyan glow on text
     textShadowRadius: 15,
     lineHeight: 34,
   },
   loadingText: {
     marginTop: 25,
     fontSize: 14,
-    color: "#b3b3b3",
+    color: colors.mutedText,
     fontStyle: "italic",
     letterSpacing: 1,
   },

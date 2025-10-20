@@ -181,21 +181,21 @@ const SplashScreen1 = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.cardsbackground, // use colors file
+    backgroundColor: colors.cardsbackground, 
     justifyContent: "center",
     alignItems: "center",
   },
   image: {
     width: 110,
-    height: 110,
+    height: 200,
     resizeMode: "contain",
     shadowColor: colors.primary,
     shadowOpacity: 0.5,
     shadowRadius: 20,
     elevation: 15,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: colors.text,
+    // borderRadius: 12,
+    // borderWidth: 2,
+    // borderColor: colors.text,
   },
   bottomTextContainer: {
     position: "absolute",

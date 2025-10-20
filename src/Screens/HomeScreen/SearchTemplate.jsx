@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   TextInput,
@@ -7,6 +7,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { colors } from "../../Themes/colors"; // ✅ import your color system
 
 const SearchTemplates = () => {
   const [query, setQuery] = useState("");
@@ -18,28 +19,44 @@ const SearchTemplates = () => {
     setQuery(""); // ✅ clear input immediately after navigating
   };
 
-  // ✅ Optional: also clear input when returning to this screen
+  // ✅ Optional: clear input when returning to this screen
   useFocusEffect(
     React.useCallback(() => {
       setQuery("");
     }, [])
   );
 
+  const isTyping = query.trim().length > 0;
+
   return (
     <View style={styles.container}>
       <View style={styles.searchContainer}>
-        <Ionicons name="search" size={20} color="#bbb" style={{ marginRight: 8 }} />
+        <Ionicons name="search" size={20} color={colors.mutedText} style={{ marginRight: 8 }} />
         <TextInput
-          style={styles.input}
+          style={[styles.input, { color: colors.text }]}
           placeholder="Search templates..."
-          placeholderTextColor="#777"
+          placeholderTextColor={colors.mutedText}
           value={query}
           onChangeText={setQuery}
           onSubmitEditing={handleSearch}
           returnKeyType="search"
         />
-        <TouchableOpacity style={styles.goButton} onPress={handleSearch}>
-          <Ionicons name="arrow-forward" size={18} color="black" />
+
+        {/* ✅ Dynamic button color change */}
+        <TouchableOpacity
+          style={[
+            styles.goButton,
+            isTyping
+              ? { backgroundColor: colors.text, borderColor: colors.text }
+              : { backgroundColor: colors.border, borderColor: colors.border },
+          ]}
+          onPress={handleSearch}
+        >
+          <Ionicons
+            name="arrow-forward"
+            size={18}
+            color={isTyping ? colors.bodybackground : colors.text}
+          />
         </TouchableOpacity>
       </View>
     </View>
@@ -51,21 +68,20 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#2b2b2b",
+    backgroundColor: colors.cardsbackground,
     borderRadius: 50,
     paddingLeft: 10,
     borderWidth: 1,
-    borderColor: "#4d4d4d",
+    borderColor: colors.border,
   },
   input: {
     flex: 1,
-    color: "#fff",
     paddingVertical: 10,
     fontSize: 15,
   },
   goButton: {
-    backgroundColor: "white",
-    borderRadius: 50,
+    borderWidth: 1,
+    borderRadius: 50,marginRight:3,marginVertical:2,
     paddingVertical: 12,
     paddingHorizontal: 12,
     marginLeft: 6,

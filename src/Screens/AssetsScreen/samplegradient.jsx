@@ -7,7 +7,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 const GradientIcon = ({
   iconName = "home",
   iconSize = 40,
-  gradientColors = ["#1a2980", "#26d0ce"],
+  gradientColors = ['#00ffa3', '#00b3ff'],
   style = {},
 }) => {
   return (

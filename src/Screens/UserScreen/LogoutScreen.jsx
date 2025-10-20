@@ -96,20 +96,21 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "@react-navigation/native";
+import { colors } from "../../Themes/colors"; // ✅ Import theme colors
 
 const LogoutScreen = () => {
   const navigation = useNavigation();
 
   const handleLogout = async () => {
     try {
-      // 🧹 Remove user-related AsyncStorage data
+      // 🧹 Clear AsyncStorage data
       await AsyncStorage.multiRemove(["userId", "email", "hasSeenGuide"]);
 
-      // 🧹 Remove tokens from SecureStore
+      // 🧹 Clear tokens from SecureStore
       await SecureStore.deleteItemAsync("accessToken");
       await SecureStore.deleteItemAsync("refreshToken");
 
-      // ✅ Reset navigation stack to prevent going back
+      // ✅ Reset navigation stack
       navigation.reset({
         index: 0,
         routes: [{ name: "Login" }],
@@ -123,8 +124,8 @@ const LogoutScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Logout</Text>
+    <View style={[styles.container, { backgroundColor: colors.bodybackground }]}>
+      {/* <Text style={styles.title}>Logout</Text> */}
       <Text style={styles.text}>Are you sure you want to log out?</Text>
 
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
@@ -141,46 +142,46 @@ const styles = StyleSheet.create({
     flex: 1, 
     justifyContent: "center", 
     alignItems: "center", 
-    backgroundColor: "#0A0A0A",
     padding: 20,
   },
   title: {  
     fontSize: 28,
     fontWeight: "bold",
-    color: "#ff3d9b",
-    textShadowColor: "rgba(255, 51, 102, 0.9)",
+    color: colors.primary,
+    textShadowColor: colors.accent,
     textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 15,
+    textShadowRadius: 12,
     marginBottom: 10,
   },
   text: { 
     fontSize: 18, 
-    color: "#E0E0E0", 
+    color: colors.mutedText, 
     textAlign: "center",
     marginBottom: 30,
-    textShadowColor: "rgba(255, 255, 255, 0.2)",
+    // textShadowColor: colors.text + "40",
     textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 5,
+    textShadowRadius: 6,
   },
   logoutButton: { 
     paddingVertical: 12,
     paddingHorizontal: 35,
-    borderRadius: 10,
-    backgroundColor: "#1A1A1A",
+    borderRadius: 12,
+    backgroundColor: colors.cardsbackground,
     borderWidth: 1,
-    borderColor: "#ff3d9b",
-    shadowColor: "#FF3366",
+    borderColor: colors.text,
+    shadowColor: colors.primary,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
-    shadowRadius: 15,
+    shadowRadius: 14,
     elevation: 8,
   },
   logoutText: { 
     fontSize: 18, 
     fontWeight: "bold",
-    color: "#ff3d9b",
-    textShadowColor: "rgba(255, 51, 102, 0.8)",
+    color: colors.error,
+    textShadowColor: colors.accent,
     textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 10,
+    textShadowRadius: 8,
   },
 });
+

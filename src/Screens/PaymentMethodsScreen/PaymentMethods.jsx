@@ -1,37 +1,77 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { colors } from "../../Themes/colors";
+import { useNavigation } from "@react-navigation/native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function PaymentSelectionScreen({ navigation, route }) {
   const { gameTypeId } = route.params;
   console.log("gametypeid in paymentscreen", gameTypeId);
 
   const handleSelectPayment = (paymentMethod) => {
-    navigation.navigate(
-      paymentMethod === 'jazzcash' ? 'jazzcashscreenScreen' : 'easypaisaScreen',
-      { gameTypeId }
-    );
+    if (paymentMethod === "jazzcash") {
+      navigation.navigate("jazzcashscreenScreen", { gameTypeId });
+    } else if (paymentMethod === "easypaisa") {
+      navigation.navigate("easypaisaScreen", { gameTypeId });
+    } else if (paymentMethod === "card") {
+      navigation.navigate("cardPaymentScreen", { gameTypeId });
+    }
   };
 
+  const paymentOptions = [
+    {
+      name: "JazzCash",
+      gradient: ["#ff3d9b", "#ff8fbf"],
+      icon: "cellphone-wireless",
+      key: "jazzcash",
+    },
+    {
+      name: "Easypaisa",
+      gradient: ["#8b3dff", "#c47dff"],
+      icon: "cash-multiple",
+      key: "easypaisa",
+    },
+    {
+      name: "Credit Card",
+      gradient: ["#00F5A0", "#00D9F5"],
+      icon: "credit-card-outline",
+      key: "card",
+    },
+  ];
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.heading}>Select Payment Method</Text>
+    <View
+      colors={colors.gradients.deepTech}
+      style={styles.container}
+    >
+      {/* <Text style={styles.heading}>Select Payment Method</Text> */}
 
-      <TouchableOpacity
-        style={[styles.button, styles.jazzcashButton]}
-        onPress={() => handleSelectPayment('jazzcash')}
-        activeOpacity={0.85}
-      >
-        <Text style={styles.buttonText}>JazzCash</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={[styles.button, styles.easypaisaButton]}
-        onPress={() => handleSelectPayment('easypaisa')}
-        activeOpacity={0.85}
-      >
-        <Text style={styles.buttonText}>Easypaisa</Text>
-      </TouchableOpacity>
+      {paymentOptions.map((option) => (
+        <TouchableOpacity
+          key={option.key}
+          activeOpacity={0.9}
+          onPress={() => handleSelectPayment(option.key)}
+          style={styles.buttonWrapper}
+        >
+          {/* <LinearGradient
+            colors={option.gradient}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.gradientBorder}
+          > */}
+            <View style={styles.buttonInner}>
+              <MaterialCommunityIcons
+                name={option.icon}
+                size={26}
+                color={colors.text}
+                style={{ marginRight: 12 }}
+              />
+              <Text style={styles.buttonText}>{option.name}</Text>
+            </View>
+          {/* </LinearGradient> */}
+        </TouchableOpacity>
+      ))}
     </View>
   );
 }
@@ -39,45 +79,48 @@ export default function PaymentSelectionScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 24,
-    justifyContent: 'center',
-    backgroundColor: '#0d0d0d', // same dark background as notifications
+    paddingHorizontal: 22,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.bodybackground,
   },
   heading: {
-    fontSize: 26,
-    fontWeight: '900',
-    color: '#ff3d9b',
-    textAlign: 'center',
-    marginBottom: 40,
-    textShadowColor: '#8b3dff',
-    textShadowRadius: 10,
-    textTransform: 'uppercase',
+    fontSize: 24,
+    fontWeight: "900",
+    color: colors.text,
+    textAlign: "center",
+    marginBottom: 50,
+    textTransform: "uppercase",
+    letterSpacing: 1.2,
+    textShadowColor: colors.accent,
+    textShadowRadius: 12,
   },
-  button: {
-    paddingVertical: 18,
-    borderRadius: 14,
+  buttonWrapper: {
+    width: "100%",
     marginBottom: 25,
-    alignItems: 'center',
-    borderWidth: 1,
-    shadowOpacity: 0.5,
+    borderRadius: 16,
+    borderWidth:1,borderColor:colors.border
+  },
+  gradientBorder: {
+    borderRadius: 16,
+    padding: 2,
+    // shadowColor: "#00F5A0",
+    shadowOpacity: 0.4,
     shadowRadius: 10,
-    elevation: 6,
   },
-  jazzcashButton: {
-    backgroundColor: '#141414',
-    borderColor: 'rgba(255, 61, 155, 0.5)',
-    shadowColor: '#ff3d9b',
-  },
-  easypaisaButton: {
-    backgroundColor: '#141414',
-    borderColor: 'rgba(139, 61, 255, 0.5)',
-    shadowColor: '#8b3dff',
+  buttonInner: {
+    backgroundColor: colors.cardsbackground,
+    borderRadius: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 16,
   },
   buttonText: {
     fontSize: 20,
-    fontWeight: '700',
-    color: '#fff',
-    textShadowColor: 'rgba(255,255,255,0.3)',
-    textShadowRadius: 4,
+    fontWeight: "700",
+    color: colors.text,
+    textShadowColor: "rgba(255,255,255,0.3)",
+    textShadowRadius: 6,
   },
 });

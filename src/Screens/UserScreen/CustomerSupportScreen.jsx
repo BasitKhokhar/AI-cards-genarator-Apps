@@ -4,13 +4,13 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from "../../Context/ThemeContext";
 import Constants from "expo-constants";
 const API_BASE_URL = Constants.expoConfig.extra.API_BASE_URL;
-
+import { colors } from "../../Themes/colors";
 const CustomerSupportScreen = () => {
   const { theme } = useTheme();
 
   return (
     <ScrollView
-      style={[styles.container, { backgroundColor: "#0D0D0D" }]}
+      style={[styles.container, { backgroundColor: colors.bodybackground }]}
       showsVerticalScrollIndicator={false}
     >
       {/* <Text style={styles.title}>💬 Customer Support</Text> */}
@@ -62,43 +62,21 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 50,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "900",
-    color: "#ff3d9b",
-    textAlign: "center",
-    marginBottom: 18,
-    textTransform: "uppercase",
-    textShadowColor: "#8b3dff",
-    textShadowRadius: 10,
-    textShadowOffset: { width: 0, height: 0 },
-    letterSpacing: 1,
-  },
   description: {
     fontSize: 15,
-    color: "#d4d4d4",
+    color: colors.mutedText,
     textAlign: "center",
     lineHeight: 22,
     marginBottom: 25,
   },
   highlight: {
-    color: "#00FFFF",
+    color:colors.primary,
     fontWeight: "700",
   },
   supportSection: {
     flexDirection: "column",
     gap: 20,
   },
-  // gradientBox: {
-  //   backgroundColor: "#1a1a1a",
-  //    borderRadius: 16,
-  //   padding: 15,
-  //   padding: 2,
-  //   shadowColor: "#8b3dff",
-  //   shadowOpacity: 0.5,
-  //   shadowRadius: 10,
-  //   elevation: 6,
-  // },
   infoBox: {
     backgroundColor: "#1a1a1a",
     borderWidth: 1,
@@ -112,14 +90,13 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#ff3d9b",
+   color: colors.text,
     marginBottom: 8,
-    textShadowColor: "rgba(255, 61, 155, 0.6)",
     textShadowRadius: 6,
   },
   infoText: {
     fontSize: 15,
-    color: "#dcdcdc",
+    color: colors.mutedText,
     marginTop: 4,
     letterSpacing: 0.3,
   },

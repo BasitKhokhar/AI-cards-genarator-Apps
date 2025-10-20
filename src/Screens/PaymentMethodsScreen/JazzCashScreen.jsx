@@ -12,6 +12,8 @@ import {
   ScrollView,
 } from "react-native";
 import * as SecureStore from "expo-secure-store";
+import { LinearGradient } from "expo-linear-gradient";
+import { colors } from "../../Themes/colors";
 
 export default function JazzCashPaymentScreen({ route, navigation }) {
   const { gameTypeId } = route.params;
@@ -75,11 +77,10 @@ export default function JazzCashPaymentScreen({ route, navigation }) {
     }
   };
 
-  // ✅ Loader
   if (!token) {
     return (
       <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="#e50914" />
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
@@ -89,13 +90,16 @@ export default function JazzCashPaymentScreen({ route, navigation }) {
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <View style={styles.container}>
-          <Text style={styles.heading}>JazzCash Payment</Text>
+      <View
+        // colors={colors.gradients.deepTech}
+        style={styles.container}
+      >
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+          {/* <Text style={styles.heading}>JazzCash Payment</Text> */}
 
           <TextInput
             placeholder="Enter amount"
-            placeholderTextColor="#888"
+            placeholderTextColor={colors.mutedText}
             keyboardType="numeric"
             style={styles.input}
             value={amount}
@@ -104,7 +108,7 @@ export default function JazzCashPaymentScreen({ route, navigation }) {
 
           <TextInput
             placeholder="Enter phone number"
-            placeholderTextColor="#888"
+            placeholderTextColor={colors.mutedText}
             keyboardType="phone-pad"
             style={styles.input}
             value={phone}
@@ -117,14 +121,21 @@ export default function JazzCashPaymentScreen({ route, navigation }) {
             disabled={loading}
             activeOpacity={0.85}
           >
-            {loading ? (
-              <ActivityIndicator color="#FFD700" />
-            ) : (
-              <Text style={styles.payButtonText}>Pay Now</Text>
-            )}
+            <LinearGradient
+              colors={colors.gradients.mintGlow}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.payButtonInner}
+            >
+              {loading ? (
+                <ActivityIndicator color={colors.bodybackground} />
+              ) : (
+                <Text style={styles.payButtonText}>Pay Now</Text>
+              )}
+            </LinearGradient>
           </TouchableOpacity>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </View>
     </KeyboardAvoidingView>
   );
 }
@@ -134,60 +145,55 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#0d0d0d",
+    backgroundColor: colors.bodybackground,
   },
-
   container: {
     flex: 1,
     padding: 24,
-    backgroundColor: "#0d0d0d",
-    justifyContent: "center",
+    justifyContent: "center", backgroundColor: colors.bodybackground,
   },
-
   heading: {
     fontSize: 28,
     fontWeight: "900",
-    color: '#ff3d9b', 
+    color: colors.primary,
     textAlign: "center",
     marginBottom: 40,
-    // textShadowColor: "#FFD700",
+    textShadowColor: colors.accent,
     textShadowRadius: 12,
     textTransform: "uppercase",
   },
-
-    input: {
-    backgroundColor: '#141414',
+  input: {
+    backgroundColor: colors.cardsbackground,
     borderWidth: 1,
-    borderColor: 'rgba(139,61,255,0.4)',
+    borderColor: colors.border,
     borderRadius: 14,
     padding: 14,
     fontSize: 16,
-    color: '#fff',
+    color: colors.text,
     marginBottom: 22,
-    shadowColor: '#8b3dff',
-    shadowOpacity: 0.5,
-    shadowRadius: 8,
-    elevation: 5,
+    shadowColor: colors.accent,
+    shadowOpacity: 0.4,
+    shadowRadius: 6,
+    elevation: 4,
   },
-
   payButton: {
-    backgroundColor: '#141414',
-    borderWidth: 1.2,
-    borderColor: 'rgba(255,61,155,0.6)',
+    borderRadius: 16,
+    overflow: "hidden",
+    elevation: 8,
+    shadowColor: colors.primary,
+    shadowOpacity: 0.6,
+    shadowRadius: 12,
+  },
+  payButtonInner: {
     paddingVertical: 18,
     borderRadius: 14,
-    alignItems: 'center',
-    shadowColor: '#ff3d9b',
-    shadowOpacity: 0.8,
-    shadowRadius: 12,
-    elevation: 8,
+    alignItems: "center",
   },
-
   payButtonText: {
-    color: '#fff',
+    color: colors.bodybackground,
     fontSize: 20,
-    fontWeight: '700',
-    textShadowColor: 'rgba(255,255,255,0.3)',
-    textShadowRadius: 4,
+    fontWeight: "700",
+    textShadowColor: "rgba(255,255,255,0.25)",
+    textShadowRadius: 3,
   },
 });

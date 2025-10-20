@@ -14,6 +14,7 @@ import * as FileSystem from "expo-file-system";
 import * as MediaLibrary from "expo-media-library";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { MotiView, AnimatePresence } from "moti";
+import Loader from "../../Components/Loader/Loader";
 import { LinearGradient } from "expo-linear-gradient";
 import { colors } from "../../Themes/colors";
 import { apiFetch } from "../../apiFetch";
@@ -193,7 +194,7 @@ const EnhancedImageGallery = ({ navigation }) => {
   if (loading && images.length === 0) {
     return (
       <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color={colors.primary} />
+        <Loader />
       </View>
     );
   }
@@ -276,6 +277,13 @@ const EnhancedImageGallery = ({ navigation }) => {
 export default EnhancedImageGallery;
 
 const styles = StyleSheet.create({
+  loaderContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      paddingHorizontal: 16,
+      backgroundColor: colors.bodybackground,
+    },
   container: {
     flex: 1,
     backgroundColor: colors.bodybackground,

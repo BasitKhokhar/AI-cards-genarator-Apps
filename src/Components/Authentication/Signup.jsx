@@ -13,6 +13,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import Icon from "react-native-vector-icons/FontAwesome";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
+import { colors } from "../../Themes/colors"; 
 
 const API_BASE_URL = Constants.expoConfig.extra.API_BASE_URL;
 
@@ -84,7 +85,10 @@ const SignupScreen = ({ navigation }) => {
   };
 
   return (
-    <LinearGradient colors={["#0d0d0d", "#0d0d0d"]} style={styles.gradient}>
+    <LinearGradient
+      colors={colors.gradients.deepTech}
+      style={styles.gradient}
+    >
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -97,14 +101,14 @@ const SignupScreen = ({ navigation }) => {
 
           <TextInput
             placeholder="Full Name"
-            placeholderTextColor="#aaa"
+            placeholderTextColor={colors.mutedText}
             value={name}
             onChangeText={setName}
             style={styles.input}
           />
           <TextInput
             placeholder="Email"
-            placeholderTextColor="#aaa"
+            placeholderTextColor={colors.mutedText}
             value={email}
             onChangeText={setEmail}
             style={styles.input}
@@ -115,7 +119,7 @@ const SignupScreen = ({ navigation }) => {
           <View style={styles.passwordContainer}>
             <TextInput
               placeholder="Password"
-              placeholderTextColor="#aaa"
+              placeholderTextColor={colors.mutedText}
               value={password}
               onChangeText={setPassword}
               style={[styles.input, styles.passwordInput]}
@@ -128,14 +132,14 @@ const SignupScreen = ({ navigation }) => {
               <Icon
                 name={passwordVisible ? "eye-slash" : "eye"}
                 size={20}
-                color="#ccc"
+                color={colors.mutedText}
               />
             </TouchableOpacity>
           </View>
 
           <TextInput
             placeholder="Phone (11 digits)"
-            placeholderTextColor="#aaa"
+            placeholderTextColor={colors.mutedText}
             value={phone}
             onChangeText={setPhone}
             style={styles.input}
@@ -143,23 +147,27 @@ const SignupScreen = ({ navigation }) => {
           />
           <TextInput
             placeholder="City"
-            placeholderTextColor="#aaa"
+            placeholderTextColor={colors.mutedText}
             value={city}
             onChangeText={setCity}
             style={styles.input}
           />
           <TextInput
             placeholder="Address"
-            placeholderTextColor="#aaa"
+            placeholderTextColor={colors.mutedText}
             value={address}
             onChangeText={setAddress}
             style={styles.input}
           />
 
           {/* Signup button */}
-          <TouchableOpacity onPress={handleSignup} activeOpacity={0.9} style={styles.buttonWrapper}>
+          <TouchableOpacity
+            onPress={handleSignup}
+            activeOpacity={0.9}
+            style={styles.buttonWrapper}
+          >
             <LinearGradient
-              colors={["#8b3dff", "#ff3d9b"]}
+              colors={colors.gradients.mintGlow}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.button}
@@ -181,9 +189,6 @@ const SignupScreen = ({ navigation }) => {
   );
 };
 
-const neonPurple = "#8b3dff";
-const neonPink = "#ff3d9b";
-
 const styles = StyleSheet.create({
   gradient: { flex: 1 },
   container: {
@@ -193,12 +198,12 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   formContainer: {
-    backgroundColor: "rgba(13, 13, 26, 0.9)",
+    backgroundColor: colors.cardsbackground,
     padding: 25,
     borderRadius: 20,
-    borderWidth: 2,
-    borderColor: "#4d4d4d",
-    shadowColor: neonPink,
+    borderWidth: 1.5,
+    borderColor: colors.border,
+    shadowColor: colors.primary,
     shadowOpacity: 0.5,
     shadowRadius: 18,
     elevation: 12,
@@ -208,26 +213,26 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#fff",
+    color: colors.text,
     textAlign: "center",
-    textShadowColor: neonPurple,
+    textShadowColor: colors.primary,
     textShadowRadius: 12,
     marginBottom: 5,
   },
   subtitle: {
-    color: "#c9c9e8",
+    color: colors.mutedText,
     textAlign: "center",
     marginBottom: 20,
     fontSize: 14,
   },
   input: {
     borderWidth: 1,
-    borderColor: "#444",
+    borderColor: colors.border,
     padding: 12,
     marginVertical: 8,
     borderRadius: 12,
-    backgroundColor: "#1a1a1a",
-    color: "#fff",
+    backgroundColor: colors.secondary,
+    color: colors.text,
   },
   passwordContainer: {
     position: "relative",
@@ -244,11 +249,11 @@ const styles = StyleSheet.create({
   buttonWrapper: {
     width: "100%",
     borderRadius: 40,
-    shadowColor: "#ff66c4",
+    shadowColor: colors.accent,
     shadowOpacity: 0.8,
     shadowRadius: 20,
     elevation: 8,
-    marginTop: 10,
+    marginTop: 15,
   },
   button: {
     paddingVertical: 16,
@@ -256,7 +261,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttonText: {
-    color: "#ffffff",
+    color: colors.text,
     fontSize: 18,
     fontWeight: "600",
     letterSpacing: 1,
@@ -267,11 +272,11 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   normalText: {
-    color: "#ccc",
+    color: colors.mutedText,
     fontSize: 14,
   },
   link: {
-    color: neonPink,
+    color: colors.primary,
     fontWeight: "bold",
     fontSize: 15,
   },

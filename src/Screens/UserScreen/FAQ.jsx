@@ -11,11 +11,12 @@ import Loader from "../../Components/Loader/Loader";
 import { useNavigation } from "@react-navigation/native";
 import Constants from "expo-constants";
 import { apiFetch } from "../../apiFetch";
+import { colors } from "../../Themes/colors"; // ✅ imported theme colors
 import * as SecureStore from "expo-secure-store";
+
 const API_BASE_URL = Constants.expoConfig.extra.API_BASE_URL;
 
 const FAQ = () => {
- 
   const navigation = useNavigation();
   const [faqs, setFaqs] = useState([]);
   const [expandedIndex, setExpandedIndex] = useState(null);
@@ -47,14 +48,9 @@ const FAQ = () => {
 
   return (
     <ScrollView
-      style={[
-        styles.container,
-        { backgroundColor: "#0B0B10" }, // Dark Cardify base
-      ]}
+      style={[styles.container, { backgroundColor: colors.bodybackground }]}
       showsVerticalScrollIndicator={false}
     >
-      {/* <Text style={styles.title}>💡 Frequently Asked Questions</Text> */}
-
       {loading ? (
         <View style={styles.loaderContainer}>
           <Loader />
@@ -76,7 +72,7 @@ const FAQ = () => {
                       : "chevron-down-outline"
                   }
                   size={22}
-                  color="white"
+                  color={colors.text}
                 />
               </TouchableOpacity>
 
@@ -93,13 +89,14 @@ const FAQ = () => {
   );
 };
 
+export default FAQ;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
     paddingBottom: 50,
   },
- 
   loaderContainer: {
     flex: 1,
     justifyContent: "center",
@@ -107,44 +104,43 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     borderRadius: 10,
-    backgroundColor: "#111",
+    backgroundColor: colors.cardsbackground,
   },
   card: {
     marginBottom: 14,
     borderRadius: 12,
     overflow: "hidden",
-    backgroundColor: "#1a1a1a",
-     borderWidth: 1,
-    borderColor: "#4d4d4d",
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 6,
+    backgroundColor: colors.cardsbackground,
+    borderWidth: 1,
+    borderColor: colors.border,
+    // shadowColor: colors.primary,
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 5,
   },
   questionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     padding: 15,
-    backgroundColor: "rgba(20,20,35,0.9)",
+    backgroundColor: colors.cardsbackground,
   },
   questionText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: colors.text,
     flex: 1,
     paddingRight: 10,
   },
   answerBox: {
-    backgroundColor: "#0F0F15",
+    backgroundColor: colors.secondary,
     padding: 15,
     borderTopWidth: 1,
-    borderTopColor: "rgba(0,255,255,0.15)",
+    borderTopColor: colors.primary + "33",
   },
   answerText: {
     fontSize: 14,
-    color: "#CFCFCF",
+    color: colors.mutedText,
     lineHeight: 20,
   },
 });
-
-export default FAQ;

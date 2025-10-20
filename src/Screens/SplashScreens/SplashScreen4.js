@@ -127,7 +127,7 @@ const SplashScreen4 = ({ onNext }) => {
       {/* Top Image with Gradient Overlay */}
       <View style={styles.topContainer}>
         <Image
-          source={require("../../../assets/splash33.jpg")}
+          source={require("../../../assets/splash3.jpg")}
           style={styles.image}
         />
         <LinearGradient
@@ -147,7 +147,7 @@ const SplashScreen4 = ({ onNext }) => {
 
         <TouchableOpacity onPress={onNext} activeOpacity={0.9} style={styles.buttonWrapper}>
           <LinearGradient
-            colors={colors.gradients.mintGlow} // using colors file gradient
+            colors={colors.gradients.ocean} // using colors file gradient
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.button}

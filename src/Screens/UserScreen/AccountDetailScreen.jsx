@@ -17,10 +17,9 @@ import { LinearGradient } from "expo-linear-gradient";
 import { apiFetch } from "../../apiFetch";
 import { Ionicons } from "@expo/vector-icons";
 import { MotiView, AnimatePresence } from "moti";
+import { colors } from "../../Themes/colors"; // ✅ Import theme colors
 
 const API_BASE_URL = Constants.expoConfig.extra.API_BASE_URL;
-const neonPurple = "#8b3dff";
-const neonPink = "#ff3d9b";
 
 const AccountDetailScreen = ({ route, navigation }) => {
   const { userData } = route.params;
@@ -42,10 +41,7 @@ const AccountDetailScreen = ({ route, navigation }) => {
       aspect: [1, 1],
       quality: 1,
     });
-
-    if (!result.canceled) {
-      uploadImageToFirebase(result.assets[0].uri);
-    }
+    if (!result.canceled) uploadImageToFirebase(result.assets[0].uri);
   };
 
   // --- Upload to Firebase Storage ---
@@ -56,22 +52,15 @@ const AccountDetailScreen = ({ route, navigation }) => {
       const blob = await response.blob();
       const userId = await AsyncStorage.getItem("userId");
       const fileRef = ref(storage, `CardifyProfileImages/${userId}.jpg`);
-
       await uploadBytes(fileRef, blob);
       const imageUrl = await getDownloadURL(fileRef);
-
       await saveImageUrlToDatabase(userId, imageUrl);
-
       setShowLoader(false);
-      setToastMessage("Profile image uploaded successfully!");
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 2500);
+      showToastMessage("Profile image uploaded successfully!");
     } catch (error) {
       console.error("❌ Upload Error:", error);
       setShowLoader(false);
-      setToastMessage("Failed to upload image.");
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 2500);
+      showToastMessage("Failed to upload image.");
     }
   };
 
@@ -93,7 +82,6 @@ const AccountDetailScreen = ({ route, navigation }) => {
     try {
       setShowLoader(true);
       const userId = await AsyncStorage.getItem("userId");
-
       const response = await apiFetch(
         `/users/${userId}`,
         {
@@ -103,34 +91,35 @@ const AccountDetailScreen = ({ route, navigation }) => {
         },
         navigation
       );
-
       setShowLoader(false);
-
       if (response.ok) {
-        setToastMessage("Profile updated successfully!");
+        showToastMessage("Profile updated successfully!");
       } else {
         const result = await response.json();
-        setToastMessage(result.message || "Failed to update profile.");
+        showToastMessage(result.message || "Failed to update profile.");
       }
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 2500);
     } catch (error) {
       console.error("❌ Update Error:", error);
       setShowLoader(false);
-      setToastMessage("Something went wrong while updating profile.");
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 2500);
+      showToastMessage("Something went wrong while updating profile.");
     }
   };
 
+  // --- Toast Handler ---
+  const showToastMessage = (msg) => {
+    setToastMessage(msg);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 2500);
+  };
+
   return (
-    <LinearGradient colors={["#0d0d0d", "#0d0d0d"]} style={styles.gradient}>
+    <View style={[styles.screen, { backgroundColor: colors.bodybackground }]}>
       <ScrollView
         style={styles.container}
         contentContainerStyle={{ paddingBottom: 70 }}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.formContainer}>
+        <View style={[styles.formContainer, { backgroundColor: colors.cardsbackground }]}>
           <Text style={styles.title}>Profile Settings</Text>
           <Text style={styles.subtitle}>
             Manage and update your Cardify-AI profile
@@ -143,7 +132,7 @@ const AccountDetailScreen = ({ route, navigation }) => {
               value={name}
               onChangeText={setName}
               placeholder="Name"
-              placeholderTextColor="#999"
+              placeholderTextColor={colors.mutedText}
               style={styles.input}
             />
           </View>
@@ -156,7 +145,7 @@ const AccountDetailScreen = ({ route, navigation }) => {
               onChangeText={setEmail}
               placeholder="Email"
               keyboardType="email-address"
-              placeholderTextColor="#999"
+              placeholderTextColor={colors.mutedText}
               style={styles.input}
             />
           </View>
@@ -169,7 +158,7 @@ const AccountDetailScreen = ({ route, navigation }) => {
               onChangeText={setPhone}
               placeholder="Phone"
               keyboardType="phone-pad"
-              placeholderTextColor="#999"
+              placeholderTextColor={colors.mutedText}
               style={styles.input}
             />
           </View>
@@ -190,17 +179,17 @@ const AccountDetailScreen = ({ route, navigation }) => {
           <TouchableOpacity
             onPress={updateUserDetails}
             activeOpacity={0.9}
-            style={[styles.buttonWrapper, { marginTop: 15 }]}
+            style={[styles.buttonWrapper, { marginTop: 45 }]}
             disabled={updating}
           >
             <LinearGradient
-              colors={[neonPink, neonPurple]}
+              colors={colors.gradients.ocean}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.button}
             >
               {updating ? (
-                <ActivityIndicator size="small" color="#fff" />
+                <ActivityIndicator size="small" color={colors.text} />
               ) : (
                 <Text style={styles.buttonText}>Update Details</Text>
               )}
@@ -224,13 +213,13 @@ const AccountDetailScreen = ({ route, navigation }) => {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
               transition={{ type: "timing", duration: 400 }}
-              style={styles.loaderBox}
+              style={[styles.loaderBox, { backgroundColor: colors.cardsbackground }]}
             >
               <MotiView
                 from={{ rotate: "0deg" }}
                 animate={{ rotate: "360deg" }}
                 transition={{ loop: true, type: "timing", duration: 1200 }}
-                style={styles.loaderRing}
+                style={[styles.loaderRing, { borderTopColor: colors.primary }]}
               />
               <Text style={styles.loaderText}>Please wait...</Text>
             </MotiView>
@@ -238,7 +227,7 @@ const AccountDetailScreen = ({ route, navigation }) => {
         )}
       </AnimatePresence>
 
-      {/* ✅ Success / Error Modal */}
+      {/* ✅ Toast Modal */}
       <AnimatePresence>
         {showToast && (
           <MotiView
@@ -252,9 +241,9 @@ const AccountDetailScreen = ({ route, navigation }) => {
               from={{ opacity: 0, translateY: 20 }}
               animate={{ opacity: 1, translateY: 0 }}
               transition={{ type: "timing", duration: 400, delay: 150 }}
-              style={styles.confirmationBox}
+              style={[styles.confirmationBox, { backgroundColor: colors.cardsbackground }]}
             >
-              <View style={styles.iconWrapper}>
+              <View style={[styles.iconWrapper, { backgroundColor: "rgba(6,182,212,0.15)" }]}>
                 <Ionicons
                   name={
                     toastMessage.includes("fail") || toastMessage.includes("wrong")
@@ -262,7 +251,7 @@ const AccountDetailScreen = ({ route, navigation }) => {
                       : "checkmark-circle"
                   }
                   size={60}
-                  color="#ff3d9b"
+                  color={colors.primary}
                 />
               </View>
               <Text style={styles.confirmationTitle}>Done</Text>
@@ -271,38 +260,37 @@ const AccountDetailScreen = ({ route, navigation }) => {
           </MotiView>
         )}
       </AnimatePresence>
-    </LinearGradient>
+    </View>
   );
 };
 
 export default AccountDetailScreen;
 
 const styles = StyleSheet.create({
-  gradient: { flex: 1 },
+  screen: { flex: 1 },
   container: { flex: 1, padding: 20 },
   formContainer: {
-    backgroundColor: "rgba(13, 13, 26, 0.9)",
     padding: 25,
     borderRadius: 20,
-    borderWidth: 2,
-    borderColor: "#4d4d4d",
-    shadowColor: neonPink,
-    shadowOpacity: 0.5,
+    borderWidth: 1.5,
+    borderColor: colors.border,
+    shadowColor: colors.primary,
+    shadowOpacity: 0.3,
     shadowOffset: { width: 0, height: 0 },
-    shadowRadius: 15,
-    elevation: 10,
+    shadowRadius: 12,
+    elevation: 8,
   },
   title: {
     fontSize: 26,
     fontWeight: "bold",
-    color: "#fff",
+    color: colors.text,
     textAlign: "center",
-    textShadowColor: neonPurple,
-    textShadowRadius: 12,
+    textShadowColor: colors.primary,
+    textShadowRadius: 8,
     marginBottom: 8,
   },
   subtitle: {
-    color: "#c9c9e8",
+    color: colors.mutedText,
     textAlign: "center",
     marginBottom: 25,
     fontSize: 14,
@@ -310,42 +298,42 @@ const styles = StyleSheet.create({
   inputGroup: { marginBottom: 15 },
   label: {
     fontSize: 14,
-    color: "#fff",
+    color: colors.text,
     fontWeight: "500",
     marginBottom: 5,
   },
   input: {
     borderWidth: 1,
-    borderColor: "#444",
+    borderColor: colors.border,
     borderRadius: 10,
     padding: 12,
     fontSize: 16,
-    color: "#fff",
-    backgroundColor: "#1a1a1a",
+    color: colors.text,
+    backgroundColor: colors.secondary,
   },
   simpleButton: {
     width: "100%",
     paddingVertical: 14,
     borderRadius: 12,
-    backgroundColor: "#2a2a2a",
+    backgroundColor: colors.secondary,
     borderWidth: 1,
-    borderColor: "#4d4d4d",
+    borderColor: colors.border,
     alignItems: "center",
     justifyContent: "center",
     marginTop: 5,
   },
   simpleButtonText: {
-    color: "#ffffff",
+    color: colors.text,
     fontSize: 16,
     fontWeight: "600",
   },
   buttonWrapper: {
     width: "100%",
-    borderRadius: 40,
-    shadowColor: "#ff66c4",
+    borderRadius: 12,
+    shadowColor: colors.primary,
     shadowOpacity: 0.8,
     shadowRadius: 20,
-    elevation: 8,
+    elevation: 8
   },
   button: {
     paddingVertical: 15,
@@ -353,7 +341,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttonText: {
-    color: "#ffffff",
+    color: colors.text,
     fontSize: 17,
     fontWeight: "600",
   },
@@ -368,54 +356,50 @@ const styles = StyleSheet.create({
   loaderBox: {
     width: 140,
     height: 140,
-    backgroundColor: "#1E1E1E",
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1.5,
-    borderColor: "#4d4d4d",
+    borderColor: colors.border,
   },
   loaderRing: {
     width: 55,
     height: 55,
     borderRadius: 30,
     borderWidth: 4,
-    borderColor: "rgba(139,61,255,0.2)",
-    borderTopColor: "#ff3d9b",
+    borderColor: "rgba(255,255,255,0.1)",
     marginBottom: 12,
   },
   loaderText: {
-    color: "#fff",
+    color: colors.text,
     fontSize: 15,
     fontWeight: "600",
   },
   confirmationBox: {
     width: "75%",
-    backgroundColor: "#1E1E1E",
     borderRadius: 18,
     alignItems: "center",
     paddingVertical: 24,
     paddingHorizontal: 16,
     borderWidth: 1.5,
-    borderColor: "#4d4d4d",
+    borderColor: colors.border,
   },
   iconWrapper: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: "rgba(139,61,255,0.15)",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 12,
   },
   confirmationTitle: {
-    color: "#fff",
+    color: colors.text,
     fontSize: 20,
     fontWeight: "700",
     marginBottom: 6,
   },
   confirmationText: {
-    color: "#bbb",
+    color: colors.mutedText,
     fontSize: 14,
     textAlign: "center",
     lineHeight: 20,

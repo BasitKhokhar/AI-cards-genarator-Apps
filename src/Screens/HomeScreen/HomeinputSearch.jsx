@@ -422,6 +422,450 @@
 //     paddingVertical: 1,
 //   },
 // });
+// import { colors } from "../../Themes/colors";
+// import React, { useState, useRef } from "react";
+// import {
+//   View,
+//   Text,
+//   TextInput,
+//   TouchableOpacity,
+//   StyleSheet,
+//   Image,
+//   TouchableWithoutFeedback,
+//   ScrollView,
+//   Modal,
+//   Dimensions,
+// } from "react-native";
+// import * as ImagePicker from "expo-image-picker";
+// import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+// import { LinearGradient } from "expo-linear-gradient";
+// import { apiFetch } from "../../apiFetch";
+
+// const { height } = Dimensions.get("window");
+
+// const aspectRatios = [
+//   { label: "Auto", w: "", h: "" },
+//   { label: "1:1", w: 1024, h: 1024, icon: "square-outline" },
+//   { label: "16:9", w: 1920, h: 1080, icon: "rectangle-outline" },
+//   { label: "9:16", w: 1080, h: 1920, icon: "cellphone" },
+//   { label: "3:2", w: 1536, h: 1024, icon: "rectangle" },
+//   { label: "2:3", w: 1024, h: 1536, icon: "tablet-cellphone" },
+// ];
+
+// const resolutions = [
+//   { label: "720p", value: "720p" },
+//   { label: "1080p", value: "1080p" },
+//   { label: "2K", value: "2k" },
+//   { label: "4K", value: "4k" },
+// ];
+
+// const DEFAULT_WIDTH = "1296";
+// const DEFAULT_HEIGHT = "2728";
+
+// const SearchHeader = () => {
+//   const [search, setSearch] = useState("");
+//   const [aspectRatio, setAspectRatio] = useState(aspectRatios[0]);
+//   const [resolution, setResolution] = useState(resolutions[2]);
+//   const [width, setWidth] = useState(DEFAULT_WIDTH);
+//   const [heightPx, setHeightPx] = useState(DEFAULT_HEIGHT);
+//   const [selectedImage, setSelectedImage] = useState(null);
+//   const [isModalVisible, setIsModalVisible] = useState(false);
+//   const inputField = useRef(null);
+
+//   const handleSearch = async () => {
+//     const payload = {
+//       query: search,
+//       aspectRatio: aspectRatio.label,
+//       resolution: resolution.value,
+//       width,
+//       height: heightPx,
+//     };
+//     console.log("🔹 Sending payload:", payload);
+
+//     try {
+//       const res = await apiFetch(`/ai/generate`, {
+//         method: "POST",
+//         body: JSON.stringify(payload),
+//         headers: { "Content-Type": "application/json" },
+//       });
+//       const data = await res.json();
+//       console.log("✅ AI Generated Response:", data);
+//     } catch (error) {
+//       console.error("❌ Error generating AI image:", error);
+//     }
+//   };
+
+//   const pickImage = async () => {
+//     const result = await ImagePicker.launchImageLibraryAsync({
+//       mediaTypes: ImagePicker.MediaTypeOptions.Images,
+//       quality: 1,
+//     });
+//     if (!result.canceled) setSelectedImage(result.assets[0].uri);
+//   };
+
+//   const addDoubleQuotes = () => setSearch((prev) => prev + ' " "');
+//   const toggleModal = () => setIsModalVisible(!isModalVisible);
+
+//   const handleAspectSelect = (item) => {
+//     setAspectRatio(item);
+//     if (item.w && item.h) {
+//       setWidth(String(item.w));
+//       setHeightPx(String(item.h));
+//     }
+//   };
+
+
+// // this is for gobutton dynaimc coloring
+//     const isTyping = query.trim().length > 0;
+//   return (
+//     <TouchableWithoutFeedback>
+//       <View style={{ paddingHorizontal: 16 }}>
+//         {/* Header */}
+//         <View style={styles.headerRow}>
+//           <View style={styles.newBadge}>
+//             <Text style={styles.newText}>New</Text>
+//           </View>
+//           <Text style={styles.title}>Design cards with AI magic</Text>
+//         </View>
+
+//         {/* Input + Toolbar */}
+//         <View style={styles.container}>
+//           <View style={styles.searchBar}>
+//             <TextInput
+//               ref={inputField}
+//               style={styles.input}
+//               placeholder="Describe your card design..."
+//               placeholderTextColor={colors.mutedText}
+//               value={search}
+//               onChangeText={setSearch}
+//               multiline
+//               numberOfLines={3}
+//               textAlignVertical="top"
+//             />
+
+//           </View>
+
+//           {/* Toolbar Buttons */}
+//           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+//             <View style={styles.toolbar}>
+//               <TouchableOpacity style={styles.iconBtn} onPress={pickImage}>
+//                 <Ionicons name="image-outline" size={18} color={colors.mutedText} />
+//               </TouchableOpacity>
+
+//               <TouchableOpacity style={styles.iconBtn} onPress={addDoubleQuotes}>
+//                 <Text style={styles.quoteText}>“T”</Text>
+//               </TouchableOpacity>
+
+//               <TouchableOpacity style={styles.iconBtn} onPress={toggleModal}>
+//                 <Ionicons name="add" size={20} color={colors.mutedText} />
+//               </TouchableOpacity>
+//             </View>
+//             <View>
+//               {/* <TouchableOpacity style={styles.goButton} onPress={handleSearch}>
+//                 <Ionicons name="arrow-forward" size={18} color={colors.bodybackground} />
+//               </TouchableOpacity> */}
+//               <TouchableOpacity
+//                         style={[
+//                           styles.goButton,
+//                           isTyping
+//                             ? { backgroundColor: colors.text, borderColor: colors.text }
+//                             : { backgroundColor: colors.border, borderColor: colors.border },
+//                         ]}
+//                         onPress={handleSearch}
+//                       >
+//                         <Ionicons
+//                           name="arrow-forward"
+//                           size={18}
+//                           color={isTyping ? colors.bodybackground : colors.text}
+//                         />
+//                       </TouchableOpacity>
+//             </View>
+//           </View>
+//           <View>
+//             {selectedImage && (
+//               <View style={styles.imageWrapper}>
+//                 <Image
+//                   source={{ uri: selectedImage }}
+//                   style={styles.previewImage}
+//                 />
+//                 <TouchableOpacity
+//                   style={styles.removeIcon}
+//                   onPress={() => setSelectedImage(null)}
+//                 >
+//                   <Text style={{ color: "black", fontSize: 10 }}>✕</Text>
+//                 </TouchableOpacity>
+//               </View>
+//             )}
+//           </View>
+
+//         </View>
+
+//         {/* ⚙️ Settings Modal (Styled like PaymentModal) */}
+//         <Modal visible={isModalVisible} animationType="slide" transparent>
+//           <View style={styles.overlay}>
+//             <View
+
+//               style={styles.modalContainer}
+//             >
+//               {/* Close Button */}
+//               <TouchableOpacity
+//                 style={styles.closeButton}
+//                 onPress={toggleModal}
+//               >
+//                 <Ionicons name="close" size={24} color="#fff" />
+//               </TouchableOpacity>
+
+//               <Text style={styles.modalTitle}>Adjust Image Settings</Text>
+
+//               <ScrollView showsVerticalScrollIndicator={false}>
+//                 {/* Aspect Ratios */}
+//                 <Text style={styles.sectionTitle}>Aspect Ratios</Text>
+//                 <View style={styles.row}>
+//                   {aspectRatios.map((item) => {
+//                     const isSelected = aspectRatio.label === item.label;
+//                     return (
+//                       <TouchableOpacity
+//                         key={item.label}
+//                         onPress={() => handleAspectSelect(item)}
+//                         style={[
+//                           styles.optionBtn,
+//                           isSelected && styles.optionSelected,
+//                         ]}
+//                       >
+//                         <MaterialCommunityIcons
+//                           name={item.icon}
+//                           size={18}
+//                           color={isSelected ? "#fff" : "#bbb"}
+//                           style={{ marginRight: 6 }}
+//                         />
+//                         <Text
+//                           style={{
+//                             color: isSelected ? "#fff" : "#bbb",
+//                             fontWeight: isSelected ? "700" : "500",
+//                           }}
+//                         >
+//                           {item.label}
+//                         </Text>
+//                       </TouchableOpacity>
+//                     );
+//                   })}
+//                 </View>
+
+//                 {/* Custom Size */}
+//                 <View style={styles.sizeBox}>
+//                   <Text style={styles.sizeLabel}>Custom Size (px):</Text>
+//                   <View style={styles.sizeRow}>
+//                     <View style={styles.sizeInputContainer}>
+//                       <Text style={styles.sizeInputLabel}>W</Text>
+//                       <TextInput
+//                         style={styles.sizeInput}
+//                         keyboardType="numeric"
+//                         value={width}
+//                         onChangeText={setWidth}
+//                       />
+//                     </View>
+//                     <Text style={styles.xText}>×</Text>
+//                     <View style={styles.sizeInputContainer}>
+//                       <Text style={styles.sizeInputLabel}>H</Text>
+//                       <TextInput
+//                         style={styles.sizeInput}
+//                         keyboardType="numeric"
+//                         value={heightPx}
+//                         onChangeText={setHeightPx}
+//                       />
+//                     </View>
+//                   </View>
+//                 </View>
+
+//                 {/* Resolution */}
+//                 <Text style={[styles.sectionTitle, { marginTop: 16 }]}>
+//                   Resolution
+//                 </Text>
+//                 <View style={styles.row}>
+//                   {resolutions.map((r) => (
+//                     <TouchableOpacity
+//                       key={r.value}
+//                       style={[
+//                         styles.optionBtn,
+//                         resolution.value === r.value && styles.optionSelected,
+//                       ]}
+//                       onPress={() => setResolution(r)}
+//                     >
+//                       <Text style={styles.optionText}>{r.label}</Text>
+//                     </TouchableOpacity>
+//                   ))}
+//                 </View>
+//               </ScrollView>
+//             </View>
+//           </View>
+//         </Modal>
+//       </View>
+//     </TouchableWithoutFeedback>
+//   );
+// };
+
+// export default SearchHeader;
+
+// const styles = StyleSheet.create({
+//   headerRow: { flexDirection: "row", alignItems: "center", marginTop: 15 },
+
+//   newBadge: {
+//     paddingHorizontal: 8,
+//     paddingVertical: 4,
+//     borderRadius: 50,
+//     borderWidth: 1,
+//     borderColor: colors.primary,
+//     marginRight: 8,
+//   },
+
+//   newText: { color: colors.text, fontSize: 12, fontWeight: "bold" },
+
+//   title: { fontSize: 18, fontWeight: "600", color: colors.text },
+
+//   container: {
+//     backgroundColor: colors.cardsbackground,
+//     paddingTop: 16,
+//     paddingHorizontal: 10,
+//     borderRadius: 14,
+//     marginTop: 15,
+//     borderWidth: 1,
+//     borderColor: colors.border,
+//   },
+
+//   searchBar: { flexDirection: "row", marginBottom: 10 },
+
+//   input: { flex: 1, padding: 10, color: colors.text, fontSize: 15, height: 80 },
+
+//   goButton: {
+//     backgroundColor: colors.text,
+//     borderRadius: 50,
+//     padding: 8,
+//     justifyContent: "center",
+//     alignItems: "center",
+//   },
+
+//   toolbar: { flexDirection: "row", alignItems: "center", marginBottom: 8 },
+
+//   iconBtn: {
+//     backgroundColor: colors.secondary,
+//     borderRadius: 8,
+//     paddingHorizontal: 10,
+//     paddingVertical: 8,
+//     marginRight: 8,
+//     borderWidth: 1,
+//     borderColor: colors.border,
+//     flexDirection: "row",
+//     alignItems: "center",
+//   },
+
+//   quoteText: { color: colors.text, fontWeight: "bold", fontSize: 15 },
+
+//   imageWrapper: { position: "relative", width: 50, height: 50, marginVertical: 10 },
+
+//   previewImage: { width: 50, height: 50, borderRadius: 8 },
+
+//   removeIcon: {
+//     position: "absolute",
+//     top: -7,
+//     right: -7,
+//     backgroundColor: colors.text,
+//     borderRadius: 10,
+//     paddingHorizontal: 3,
+//     paddingVertical: 1,
+//   },
+
+//   overlay: {
+//     flex: 1,
+//     justifyContent: "flex-end",
+//   },
+
+//   modalContainer: {
+//     backgroundColor: colors.cardsbackground,
+//     borderWidth: 1,
+//     borderColor: colors.border,
+//     height: height * 0.6,
+//     borderTopLeftRadius: 25,
+//     borderTopRightRadius: 25,
+//     padding: 20,
+//   },
+
+//   closeButton: {
+//     position: "absolute",
+//     top: 18,
+//     right: 15,
+//     zIndex: 10,
+//     backgroundColor: "rgba(255,255,255,0.1)",
+//     borderRadius: 20,
+//     padding: 6,
+//   },
+
+//   modalTitle: {
+//     color: colors.text,
+//     fontSize: 20,
+//     fontWeight: "700",
+//     textAlign: "center",
+//     marginBottom: 20,
+//     marginTop: 0,
+//   },
+
+//   sectionTitle: { color: colors.text, fontSize: 15, marginVertical: 8, fontWeight: "500" },
+
+//   row: { flexDirection: "row", flexWrap: "wrap" },
+
+//   optionBtn: {
+//     paddingVertical: 8,
+//     paddingHorizontal: 12,
+//     borderRadius: 8,
+//     marginRight: 6,
+//     marginBottom: 8,
+//     borderWidth: 1,
+//     borderColor: colors.border,
+//     backgroundColor: colors.cardsbackground,
+//     flexDirection: "row",
+//     alignItems: "center",
+//   },
+
+//   optionSelected: { borderColor: colors.text },
+
+//   optionText: { color: colors.text, fontSize: 14 },
+
+//   sizeBox: {
+//     marginTop: 12,
+//     backgroundColor: colors.secondary,
+//     borderRadius: 12,
+//     padding: 10,
+//     borderWidth: 1,
+//     borderColor: colors.border,
+//   },
+
+//   sizeLabel: { color: colors.mutedText, marginBottom: 4, fontSize: 14 },
+
+//   sizeRow: { flexDirection: "row", alignItems: "center" },
+
+//   sizeInputContainer: {
+//     flexDirection: "row",
+//     alignItems: "center",
+//     backgroundColor: colors.cardsbackground,
+//     borderRadius: 8,
+//     paddingHorizontal: 8,
+//     flex: 1,
+//     borderWidth: 1,
+//     borderColor: colors.border,
+//   },
+
+//   sizeInputLabel: { color: colors.mutedText, fontWeight: "600", fontSize: 13, marginRight: 6 },
+
+//   sizeInput: { flex: 1, color: colors.text, paddingVertical: 6,marginVertical:3,borderRadius:5, fontSize: 14, textAlign: "center",borderWidth: 1,
+//     borderColor: colors.border, },
+
+//   xText: { color: colors.mutedText, marginHorizontal: 10, fontSize: 16, fontWeight: "600" },
+
+//   doneButton: { marginTop: 25 },
+
+//   doneBtnGradient: { borderRadius: 12, paddingVertical: 14, alignItems: "center" },
+
+//   doneText: { color: colors.text, fontSize: 16, fontWeight: "700" },
+// });
 import { colors } from "../../Themes/colors";
 import React, { useState, useRef } from "react";
 import {
@@ -472,7 +916,11 @@ const SearchHeader = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const inputField = useRef(null);
 
+  const isTyping = search.trim().length > 0; // ✅ For dynamic Go button color
+
   const handleSearch = async () => {
+    if (!search.trim()) return;
+
     const payload = {
       query: search,
       aspectRatio: aspectRatio.label,
@@ -539,11 +987,10 @@ const SearchHeader = () => {
               numberOfLines={3}
               textAlignVertical="top"
             />
-
           </View>
 
-          {/* Toolbar Buttons */}
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          {/* Toolbar & Go Button */}
+          <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
             <View style={styles.toolbar}>
               <TouchableOpacity style={styles.iconBtn} onPress={pickImage}>
                 <Ionicons name="image-outline" size={18} color={colors.mutedText} />
@@ -558,35 +1005,41 @@ const SearchHeader = () => {
               </TouchableOpacity>
             </View>
             <View>
-              <TouchableOpacity style={styles.goButton} onPress={handleSearch}>
-                <Ionicons name="arrow-forward" size={18} color={colors.bodybackground} />
+              {/* ✅ Dynamic Go Button */}
+              <TouchableOpacity
+                style={[
+                  styles.goButton,
+                  isTyping
+                    ? { backgroundColor: colors.text, borderColor: colors.text }
+                    : { backgroundColor: colors.border, borderColor: colors.border },
+                ]}
+                onPress={handleSearch}
+              >
+                <Ionicons
+                  name="arrow-forward"
+                  size={18}
+                  color={isTyping ? colors.bodybackground : colors.text}
+                />
               </TouchableOpacity>
             </View>
-          </View>
-          <View>
-            {selectedImage && (
-              <View style={styles.imageWrapper}>
-                <Image
-                  source={{ uri: selectedImage }}
-                  style={styles.previewImage}
-                />
-                <TouchableOpacity
-                  style={styles.removeIcon}
-                  onPress={() => setSelectedImage(null)}
-                >
-                  <Text style={{ color: "black", fontSize: 10 }}>✕</Text>
-                </TouchableOpacity>
-              </View>
-            )}
+
           </View>
 
+          {/* Image Preview */}
+          {selectedImage && (
+            <View style={styles.imageWrapper}>
+              <Image source={{ uri: selectedImage }} style={styles.previewImage} />
+              <TouchableOpacity style={styles.removeIcon} onPress={() => setSelectedImage(null)}>
+                <Text style={{ color: "black", fontSize: 10 }}>✕</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
 
-        {/* ⚙️ Settings Modal (Styled like PaymentModal) */}
+        {/* ⚙️ Settings Modal */}
         <Modal visible={isModalVisible} animationType="slide" transparent>
           <View style={styles.overlay}>
             <View
-
               style={styles.modalContainer}
             >
               {/* Close Button */}
@@ -690,7 +1143,6 @@ export default SearchHeader;
 
 const styles = StyleSheet.create({
   headerRow: { flexDirection: "row", alignItems: "center", marginTop: 15 },
-
   newBadge: {
     paddingHorizontal: 8,
     paddingVertical: 4,
@@ -699,11 +1151,8 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
     marginRight: 8,
   },
-
   newText: { color: colors.text, fontSize: 12, fontWeight: "bold" },
-
   title: { fontSize: 18, fontWeight: "600", color: colors.text },
-
   container: {
     backgroundColor: colors.cardsbackground,
     paddingTop: 16,
@@ -713,21 +1162,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
-
   searchBar: { flexDirection: "row", marginBottom: 10 },
-
   input: { flex: 1, padding: 10, color: colors.text, fontSize: 15, height: 80 },
-
-  goButton: {
-    backgroundColor: colors.text,
-    borderRadius: 50,
-    padding: 8,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
   toolbar: { flexDirection: "row", alignItems: "center", marginBottom: 8 },
-
   iconBtn: {
     backgroundColor: colors.secondary,
     borderRadius: 8,
@@ -739,13 +1176,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-
-  quoteText: { color: colors.text, fontWeight: "bold", fontSize: 15 },
-
+  quoteText: { color: colors.mutedText, fontWeight: "bold", fontSize: 15 },
+  goButton: {
+    borderWidth: 1,
+    borderRadius: 50,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+  },
   imageWrapper: { position: "relative", width: 50, height: 50, marginVertical: 10 },
-
   previewImage: { width: 50, height: 50, borderRadius: 8 },
-
   removeIcon: {
     position: "absolute",
     top: -7,
@@ -835,10 +1274,9 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
 
-  sizeInputLabel: { color: colors.mutedText, fontWeight: "600", fontSize: 13, marginRight: 6 },
+  sizeInputLabel: { color: colors.text, fontWeight: "600", fontSize: 13, marginRight: 6 },
 
-  sizeInput: { flex: 1, color: colors.text, paddingVertical: 6,marginVertical:3,borderRadius:5, fontSize: 14, textAlign: "center",borderWidth: 1,
-    borderColor: colors.border, },
+  sizeInput: { flex: 1, color: colors.mutedText, paddingVertical: 6, marginVertical: 3, borderRadius: 5, fontSize: 14, textAlign: "center", },
 
   xText: { color: colors.mutedText, marginHorizontal: 10, fontSize: 16, fontWeight: "600" },
 

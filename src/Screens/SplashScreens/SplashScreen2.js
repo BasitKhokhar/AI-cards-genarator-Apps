@@ -135,7 +135,7 @@ const SplashScreen2 = ({ onNext }) => {
       {/* Top Image with gradient overlay */}
       <View style={styles.topContainer}>
         <ImageBackground
-          source={require("../../../assets/splash11.jpg")}
+          source={require("../../../assets/paymentmodel.jpg")}
           style={styles.image}
         >
           {/* Gradient Overlay at bottom */}

@@ -276,7 +276,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { apiFetch } from "../../apiFetch";
 import { colors } from "../../Themes/colors";
-
+import Loader from "../../Components/Loader/Loader";
 const PAGE_SIZE = 10;
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = (width - 36) / 2; // two columns with padding
@@ -424,8 +424,8 @@ const SearchResultsScreen = () => {
       </View>
 
       {loading && (
-        <View style={styles.loader}>
-          <ActivityIndicator size="large" color={colors.primary} />
+        <View style={styles.loaderContainer}>
+          <Loader />
         </View>
       )}
 
@@ -457,6 +457,13 @@ const SearchResultsScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    backgroundColor: colors.bodybackground,
+  },
   container: { flex: 1, backgroundColor: colors.bodybackground, paddingTop: 10 },
 
   searchContainer: {

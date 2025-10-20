@@ -14,6 +14,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import * as SecureStore from "expo-secure-store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
+import { colors } from "../../Themes/colors"; 
 
 const API_BASE_URL = Constants.expoConfig.extra.API_BASE_URL;
 
@@ -60,7 +61,10 @@ const LoginScreen = ({ navigation }) => {
   };
 
   return (
-    <LinearGradient colors={["#0d0d0d", "#0d0d0d"]} style={styles.gradient}>
+    <LinearGradient
+      colors={colors.gradients.deepTech}
+      style={styles.gradient}
+    >
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -74,7 +78,7 @@ const LoginScreen = ({ navigation }) => {
           {/* Email */}
           <TextInput
             placeholder="Email"
-            placeholderTextColor="#aaa"
+            placeholderTextColor={colors.mutedText}
             value={email}
             onChangeText={setEmail}
             style={[styles.input, emailError && styles.errorInput]}
@@ -88,7 +92,7 @@ const LoginScreen = ({ navigation }) => {
           <View style={styles.passwordContainer}>
             <TextInput
               placeholder="Password"
-              placeholderTextColor="#aaa"
+              placeholderTextColor={colors.mutedText}
               value={password}
               onChangeText={setPassword}
               style={[
@@ -105,7 +109,7 @@ const LoginScreen = ({ navigation }) => {
               <Icon
                 name={passwordVisible ? "eye-slash" : "eye"}
                 size={20}
-                color="#ccc"
+                color={colors.mutedText}
               />
             </TouchableOpacity>
           </View>
@@ -116,26 +120,21 @@ const LoginScreen = ({ navigation }) => {
           )}
 
           {/* Login Button */}
-          {/* <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <TouchableOpacity
+            onPress={handleLogin}
+            activeOpacity={0.9}
+            style={styles.buttonWrapper}
+          >
             <LinearGradient
-              colors={["#8b3dff", "#ff3d9b"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.gradientButton}
-            >
-              <Text style={styles.buttonText}>Login</Text>
-            </LinearGradient>
-          </TouchableOpacity> */}
-          <TouchableOpacity onPress={handleLogin} activeOpacity={0.9} style={styles.buttonWrapper}>
-            <LinearGradient
-              colors={["#8b3dff", "#ff3d9b"]}
+              colors={colors.gradients.ocean}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.button}
             >
-              <Text style={styles.buttonText}>Next</Text>
+              <Text style={styles.buttonText}>Login</Text>
             </LinearGradient>
           </TouchableOpacity>
+
           {/* Signup Link */}
           <View style={styles.signupRow}>
             <Text style={styles.normalText}>Don’t have an account?</Text>
@@ -153,7 +152,7 @@ const LoginScreen = ({ navigation }) => {
               <Icon name="facebook" size={22} color="#4267B2" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.socialButton}>
-              <Icon name="apple" size={22} color="#fff" />
+              <Icon name="apple" size={22} color={colors.text} />
             </TouchableOpacity>
           </View>
         </View>
@@ -161,9 +160,6 @@ const LoginScreen = ({ navigation }) => {
     </LinearGradient>
   );
 };
-
-const neonPurple = "#8b3dff";
-const neonPink = "#ff3d9b";
 
 const styles = StyleSheet.create({
   gradient: {
@@ -176,46 +172,45 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   formContainer: {
-    backgroundColor: "rgba(13, 13, 26, 0.9)",
+    backgroundColor: colors.cardsbackground,
     padding: 30,
     borderRadius: 20,
-    borderWidth: 2,
-    borderColor: "#4d4d4d",
-    shadowColor: neonPink,
+    borderWidth: 1.5,
+    borderColor: colors.border,
+    shadowColor: colors.primary,
     shadowOpacity: 0.5,
     shadowOffset: { width: 0, height: 0 },
     shadowRadius: 18,
-    elevation: 12,
+    elevation: 10,
     width: "100%",
     maxWidth: 400,
   },
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#fff",
+    color: colors.text,
     textAlign: "center",
-    textShadowColor: neonPurple,
+    textShadowColor: colors.primary,
     textShadowRadius: 12,
     marginBottom: 5,
   },
   subtitle: {
-    color: "#c9c9e8",
+    color: colors.mutedText,
     textAlign: "center",
     marginBottom: 20,
     fontSize: 14,
   },
   input: {
     borderWidth: 1,
-    borderColor: "#444",
+    borderColor: colors.border,
     padding: 12,
     marginVertical: 8,
     borderRadius: 12,
-    backgroundColor: "#1a1a1a",
-    color: "#fff",
+    backgroundColor: colors.secondary,
+    color: colors.text,
   },
   errorInput: {
     borderColor: "red",
-    borderWidth: 1.5,
   },
   errorText: {
     color: "red",
@@ -235,14 +230,14 @@ const styles = StyleSheet.create({
     right: 12,
     top: 20,
   },
-   buttonWrapper: {
+  buttonWrapper: {
     width: "100%",
     borderRadius: 40,
-    shadowColor: "#ff66c4",
+    shadowColor: colors.accent,
     shadowOpacity: 0.8,
     shadowRadius: 20,
     elevation: 8,
-    marginTop:30
+    marginTop: 30,
   },
   button: {
     paddingVertical: 16,
@@ -250,7 +245,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttonText: {
-    color: "#ffffff",
+    color: colors.text,
     fontSize: 18,
     fontWeight: "600",
     letterSpacing: 1,
@@ -261,11 +256,11 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   normalText: {
-    color: "#ccc",
+    color: colors.mutedText,
     fontSize: 14,
   },
   link: {
-    color: neonPink,
+    color: colors.primary,
     fontWeight: "bold",
     fontSize: 15,
   },
@@ -276,7 +271,7 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   socialButton: {
-    backgroundColor: "#1a1a1a",
+    backgroundColor: colors.secondary,
     padding: 14,
     borderRadius: 50,
     alignItems: "center",
@@ -284,8 +279,8 @@ const styles = StyleSheet.create({
     width: 55,
     height: 55,
     borderWidth: 1,
-    borderColor: "#444",
-    shadowColor: neonPurple,
+    borderColor: colors.border,
+    shadowColor: colors.primary,
     shadowOpacity: 0.4,
     shadowRadius: 10,
     elevation: 5,

@@ -7,6 +7,7 @@ export const colors = {
   text: '#ffff',
   mutedText: '#B3B3B3',
   border: '#4d4d4d',
+  error:'#FF0033',
 
    gradients: {
     ocean: ["#1a2980", "#26d0ce"],   // bluish-cyan
