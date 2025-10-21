@@ -83,6 +83,59 @@ const prisma = require('../prisma/client');
 //     res.status(500).json({ message: "Internal server error" });
 //   }
 // };
+// ✅ Get About Cardify PDF (ID = 1)
+// ✅ Fetch PDF and open in browser (About or Privacy)
+exports.getPdfFileById = async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const file = await prisma.apppdffiles.findUnique({ where: { id } });
+
+    if (!file) {
+      return res.status(404).json({ error: "PDF not found" });
+    }
+
+    // 🔁 Redirect directly to Firebase URL
+    return res.redirect(file.url);
+  } catch (error) {
+    console.error("Error fetching PDF file:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+
+// exports.getAboutCardifyPdf = async (req, res) => {
+//   try {
+//     const file = await prisma.appPdfFiles.findUnique({
+//       where: { id: 1 },
+//       select: { id: true, title: true, url: true },
+//     });
+
+//     if (!file) return res.status(404).json({ error: "About file not found" });
+
+//     res.json(file);
+//   } catch (error) {
+//     console.error("Error fetching About Cardify file:", error);
+//     res.status(500).json({ error: "Server error" });
+//   }
+// };
+
+// // ✅ Get Privacy Policy PDF (ID = 2)
+// exports.getPrivacyPolicyPdf = async (req, res) => {
+//   try {
+//     const file = await prisma.appPdfFiles.findUnique({
+//       where: { id: 2 },
+//       select: { id: true, title: true, url: true },
+//     });
+
+//     if (!file) return res.status(404).json({ error: "Privacy Policy file not found" });
+
+//     res.json(file);
+//   } catch (error) {
+//     console.error("Error fetching Privacy Policy file:", error);
+//     res.status(500).json({ error: "Server error" });
+//   }
+// };
+
 exports.getPrivacyPolicy = async (req, res) => {
   try {
     const policy = await prisma.privacyPolicy.findFirst();

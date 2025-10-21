@@ -12,13 +12,17 @@
 const express = require('express');
 const router = express.Router();
 const {verifyToken, }= require('../middleware/authMiddleware');
-const { getAllFaqs, getLogoImage, getSliderImages, getSocialIcons,getPaymentBtnImage,getPrivacyPolicy,getAboutApp
+const { getAllFaqs, getLogoImage, getSliderImages, getSocialIcons,getPaymentBtnImage,getPdfFileById,getAboutApp
     ,getAboutMe,getMissionVision
  } = require('../controllers/contentController');
 
 router.get('/faqs',verifyToken, getAllFaqs);
-router.get('/privacy-policy',verifyToken, getPrivacyPolicy);
-router.get('/about-App',verifyToken, getAboutApp);
+// ✅ Updated PDF routes
+// Fetch PDF for "About Cardify-AI" (id = 1)
+router.get('/pdf-files/:id', getPdfFileById);
+
+// Fetch PDF for "Privacy Policy" (id = 2)
+// router.get('/privacy-policy', verifyToken, getPrivacyPolicyPdf);
 router.get('/logo_image', getLogoImage);
 router.get('/sliderimages',verifyToken, getSliderImages);
 router.get('/aboutme', verifyToken, getAboutMe);

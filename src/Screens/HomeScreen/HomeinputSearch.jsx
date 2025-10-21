@@ -867,7 +867,7 @@
 //   doneText: { color: colors.text, fontSize: 16, fontWeight: "700" },
 // });
 import { colors } from "../../Themes/colors";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -884,6 +884,17 @@ import * as ImagePicker from "expo-image-picker";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { apiFetch } from "../../apiFetch";
+
+
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+// rn-tourguide imports
+import {
+  TourGuideZone,
+  TourGuideZoneByPosition,
+  useTourGuideController,
+} from "rn-tourguide";
 
 const { height } = Dimensions.get("window");
 
@@ -916,7 +927,36 @@ const SearchHeader = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const inputField = useRef(null);
 
+   // tour controller
+  const { start, canStart, stop } = useTourGuideController();
+
+  // refs (optional if needing to measure)
+  const inputFieldRef = useRef(null);
+  const imageBtnRef = useRef(null);
+  const quoteBtnRef = useRef(null);
+  const addBtnRef = useRef(null);
+
+  
+  
   const isTyping = search.trim().length > 0; // ✅ For dynamic Go button color
+
+  useEffect(() => {
+    // start the tour automatically only once per user
+    (async () => {
+      try {
+        const flag = await AsyncStorage.getItem("hasSeenSearchHeaderTour");
+        if (!flag && canStart) {
+          // small delay so UI has rendered
+          setTimeout(() => start(), 700);
+          await AsyncStorage.setItem("hasSeenSearchHeaderTour", "true");
+        }
+      } catch (err) {
+        console.warn("Tour start check failed", err);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canStart, start]);
+
 
   const handleSearch = async () => {
     if (!search.trim()) return;
@@ -962,7 +1002,7 @@ const SearchHeader = () => {
     }
   };
 
-  return (
+   return (
     <TouchableWithoutFeedback>
       <View style={{ paddingHorizontal: 16 }}>
         {/* Header */}
@@ -975,37 +1015,74 @@ const SearchHeader = () => {
 
         {/* Input + Toolbar */}
         <View style={styles.container}>
-          <View style={styles.searchBar}>
-            <TextInput
-              ref={inputField}
-              style={styles.input}
-              placeholder="Describe your card design..."
-              placeholderTextColor={colors.mutedText}
-              value={search}
-              onChangeText={setSearch}
-              multiline
-              numberOfLines={3}
-              textAlignVertical="top"
-            />
-          </View>
+          {/* ======= INPUT (step 1) ======= */}
+          <TourGuideZone
+            zone={1}
+            text="Type a short description of the card you want here. Use styles, mood, and details!"
+            shape="rectangle"
+            borderRadius={12}
+          >
+            <View style={styles.searchBar}>
+              <TextInput
+                ref={inputFieldRef}
+                style={styles.input}
+                placeholder="Describe your card design..."
+                placeholderTextColor={colors.mutedText}
+                value={search}
+                onChangeText={setSearch}
+                multiline
+                numberOfLines={3}
+                textAlignVertical="top"
+              />
+            </View>
+          </TourGuideZone>
 
           {/* Toolbar & Go Button */}
           <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
             <View style={styles.toolbar}>
-              <TouchableOpacity style={styles.iconBtn} onPress={pickImage}>
-                <Ionicons name="image-outline" size={18} color={colors.mutedText} />
-              </TouchableOpacity>
+              {/* ======= IMAGE BUTTON (step 2) ======= */}
+              <TourGuideZone
+                zone={2}
+                text="Tap to pick an image from gallery. The AI will use this as a base for your card."
+                shape="circle"
+              >
+                <TouchableOpacity
+                  ref={imageBtnRef}
+                  style={styles.iconBtn}
+                  onPress={pickImage}
+                >
+                  <Ionicons name="image-outline" size={18} color={colors.mutedText} />
+                </TouchableOpacity>
+              </TourGuideZone>
 
-              <TouchableOpacity style={styles.iconBtn} onPress={addDoubleQuotes}>
-                <Text style={styles.quoteText}>“T”</Text>
-              </TouchableOpacity>
+              {/* ======= QUOTE T BUTTON (step 3) ======= */}
+              <TourGuideZone
+                zone={3}
+                text='Tap "T" to quickly insert quotation marks for short messages or quotes.'
+                shape="circle"
+              >
+                <TouchableOpacity
+                  ref={quoteBtnRef}
+                  style={styles.iconBtn}
+                  onPress={addDoubleQuotes}
+                >
+                  <Text style={styles.quoteText}>“T”</Text>
+                </TouchableOpacity>
+              </TourGuideZone>
 
-              <TouchableOpacity style={styles.iconBtn} onPress={toggleModal}>
-                <Ionicons name="add" size={20} color={colors.mutedText} />
-              </TouchableOpacity>
+              {/* ======= PLUS / SETTINGS BUTTON (step 4) ======= */}
+              <TourGuideZone
+                zone={4}
+                text="Tap + to open advanced settings (aspect ratio, resolution, custom size)."
+                shape="circle"
+              >
+                <TouchableOpacity style={styles.iconBtn} onPress={toggleModal}>
+                  <Ionicons name="add" size={20} color={colors.mutedText} />
+                </TouchableOpacity>
+              </TourGuideZone>
             </View>
+
             <View>
-              {/* ✅ Dynamic Go Button */}
               <TouchableOpacity
                 style={[
                   styles.goButton,
@@ -1022,7 +1099,6 @@ const SearchHeader = () => {
                 />
               </TouchableOpacity>
             </View>
-
           </View>
 
           {/* Image Preview */}
@@ -1036,24 +1112,16 @@ const SearchHeader = () => {
           )}
         </View>
 
-        {/* ⚙️ Settings Modal */}
+        {/* Settings Modal (keep your existing modal content) */}
         <Modal visible={isModalVisible} animationType="slide" transparent>
           <View style={styles.overlay}>
-            <View
-              style={styles.modalContainer}
-            >
-              {/* Close Button */}
-              <TouchableOpacity
-                style={styles.closeButton}
-                onPress={toggleModal}
-              >
+            <View style={styles.modalContainer}>
+              <TouchableOpacity style={styles.closeButton} onPress={toggleModal}>
                 <Ionicons name="close" size={24} color="#fff" />
               </TouchableOpacity>
 
               <Text style={styles.modalTitle}>Adjust Image Settings</Text>
-
               <ScrollView showsVerticalScrollIndicator={false}>
-                {/* Aspect Ratios */}
                 <Text style={styles.sectionTitle}>Aspect Ratios</Text>
                 <View style={styles.row}>
                   {aspectRatios.map((item) => {
@@ -1062,10 +1130,7 @@ const SearchHeader = () => {
                       <TouchableOpacity
                         key={item.label}
                         onPress={() => handleAspectSelect(item)}
-                        style={[
-                          styles.optionBtn,
-                          isSelected && styles.optionSelected,
-                        ]}
+                        style={[styles.optionBtn, isSelected && styles.optionSelected]}
                       >
                         <MaterialCommunityIcons
                           name={item.icon}
@@ -1073,12 +1138,7 @@ const SearchHeader = () => {
                           color={isSelected ? "#fff" : "#bbb"}
                           style={{ marginRight: 6 }}
                         />
-                        <Text
-                          style={{
-                            color: isSelected ? "#fff" : "#bbb",
-                            fontWeight: isSelected ? "700" : "500",
-                          }}
-                        >
+                        <Text style={{ color: isSelected ? "#fff" : "#bbb", fontWeight: isSelected ? "700" : "500" }}>
                           {item.label}
                         </Text>
                       </TouchableOpacity>
@@ -1086,44 +1146,28 @@ const SearchHeader = () => {
                   })}
                 </View>
 
-                {/* Custom Size */}
+                {/* custom size + resolution UI (unchanged) */}
                 <View style={styles.sizeBox}>
                   <Text style={styles.sizeLabel}>Custom Size (px):</Text>
                   <View style={styles.sizeRow}>
                     <View style={styles.sizeInputContainer}>
                       <Text style={styles.sizeInputLabel}>W</Text>
-                      <TextInput
-                        style={styles.sizeInput}
-                        keyboardType="numeric"
-                        value={width}
-                        onChangeText={setWidth}
-                      />
+                      <TextInput style={styles.sizeInput} keyboardType="numeric" value={width} onChangeText={setWidth} />
                     </View>
                     <Text style={styles.xText}>×</Text>
                     <View style={styles.sizeInputContainer}>
                       <Text style={styles.sizeInputLabel}>H</Text>
-                      <TextInput
-                        style={styles.sizeInput}
-                        keyboardType="numeric"
-                        value={heightPx}
-                        onChangeText={setHeightPx}
-                      />
+                      <TextInput style={styles.sizeInput} keyboardType="numeric" value={heightPx} onChangeText={setHeightPx} />
                     </View>
                   </View>
                 </View>
 
-                {/* Resolution */}
-                <Text style={[styles.sectionTitle, { marginTop: 16 }]}>
-                  Resolution
-                </Text>
+                <Text style={[styles.sectionTitle, { marginTop: 16 }]}>Resolution</Text>
                 <View style={styles.row}>
                   {resolutions.map((r) => (
                     <TouchableOpacity
                       key={r.value}
-                      style={[
-                        styles.optionBtn,
-                        resolution.value === r.value && styles.optionSelected,
-                      ]}
+                      style={[styles.optionBtn, resolution.value === r.value && styles.optionSelected]}
                       onPress={() => setResolution(r)}
                     >
                       <Text style={styles.optionText}>{r.label}</Text>
@@ -1194,12 +1238,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 3,
     paddingVertical: 1,
   },
-
   overlay: {
     flex: 1,
     justifyContent: "flex-end",
   },
-
   modalContainer: {
     backgroundColor: colors.cardsbackground,
     borderWidth: 1,
@@ -1209,7 +1251,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 25,
     padding: 20,
   },
-
   closeButton: {
     position: "absolute",
     top: 18,
@@ -1219,7 +1260,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 6,
   },
-
   modalTitle: {
     color: colors.text,
     fontSize: 20,
@@ -1228,11 +1268,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginTop: 0,
   },
-
   sectionTitle: { color: colors.text, fontSize: 15, marginVertical: 8, fontWeight: "500" },
-
   row: { flexDirection: "row", flexWrap: "wrap" },
-
   optionBtn: {
     paddingVertical: 8,
     paddingHorizontal: 12,
@@ -1245,11 +1282,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-
   optionSelected: { borderColor: colors.text },
-
   optionText: { color: colors.text, fontSize: 14 },
-
   sizeBox: {
     marginTop: 12,
     backgroundColor: colors.secondary,
@@ -1258,11 +1292,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
-
   sizeLabel: { color: colors.mutedText, marginBottom: 4, fontSize: 14 },
-
   sizeRow: { flexDirection: "row", alignItems: "center" },
-
   sizeInputContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -1273,17 +1304,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
-
   sizeInputLabel: { color: colors.text, fontWeight: "600", fontSize: 13, marginRight: 6 },
-
-  sizeInput: { flex: 1, color: colors.mutedText, paddingVertical: 6, marginVertical: 3, borderRadius: 5, fontSize: 14, textAlign: "center", },
-
+  sizeInput: {
+    flex: 1,
+    color: colors.mutedText,
+    paddingVertical: 6,
+    marginVertical: 3,
+    borderRadius: 5,
+    fontSize: 14,
+    textAlign: "center",
+  },
   xText: { color: colors.mutedText, marginHorizontal: 10, fontSize: 16, fontWeight: "600" },
-
   doneButton: { marginTop: 25 },
-
   doneBtnGradient: { borderRadius: 12, paddingVertical: 14, alignItems: "center" },
-
   doneText: { color: colors.text, fontSize: 16, fontWeight: "700" },
 });
 

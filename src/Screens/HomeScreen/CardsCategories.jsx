@@ -229,6 +229,7 @@
 // });
 
 // export default CategoriesScreen;
+
 import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
@@ -243,6 +244,8 @@ import { useNavigation } from "@react-navigation/native";
 import { apiFetch } from "../../apiFetch";
 import SearchTemplates from "./SearchTemplate";
 import { colors } from "../../Themes/colors"; // ✅ imported colors
+import Loader from "../../Components/Loader/Loader";
+
 
 const FIXED_HEIGHT = 160;
 const PAGE_SIZE = 5;
@@ -250,14 +253,18 @@ const PAGE_SIZE = 5;
 const CategoriesScreen = () => {
   const [categories, setCategories] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-  const navigation = useNavigation();
 
+    const [loading, setLoading] = useState(false);
+  const navigation = useNavigation();
+  
   const loadCategories = async () => {
     try {
+      setLoading(true);
       const res = await apiFetch("/cards/categories", {}, navigation);
       if (!res.ok) throw new Error("Failed to load categories");
 
       const data = await res.json();
+      setLoading(false);
       const formatted = data.map((cat) => ({
         ...cat,
         templates: [],
@@ -355,6 +362,16 @@ const CategoriesScreen = () => {
     loadCategories();
   }, []);
 
+if (loading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <Loader />
+      </View>
+    );
+  }
+
+
+
   const renderTemplate = ({ item }) => (
     <TouchableOpacity
       onPress={() =>
@@ -390,7 +407,7 @@ const CategoriesScreen = () => {
         ListFooterComponent={
           cat.loadingMore ? (
             <View style={styles.loader}>
-              <Text style={{ color: colors.primary }}>Loading...</Text>
+              {/* <Text style={{ color: colors.primary }}>Loading...</Text> */}
             </View>
           ) : null
         }
@@ -419,6 +436,13 @@ const CategoriesScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    backgroundColor: colors.bodybackground,
+  },
   container: {
     flex: 1,
     backgroundColor: colors.bodybackground, // ✅ from colors

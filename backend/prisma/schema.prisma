@@ -100,6 +100,14 @@ model users {
   favourites   UserFavouriteTemplate[]
 }
 
+
+model Apppdffiles {
+  id    Int    @id @default(autoincrement())
+  title String
+  url   String
+}
+
+
 model AboutMe {
   id        Int    @id @default(autoincrement())
   paragraph String @db.Text

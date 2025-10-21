@@ -1,26 +1,5 @@
 
 const jwt = require('jsonwebtoken');
-
-// 🔐 HTTP Middleware (Express)
-// exports.verifyToken = (req, res, next) => {
-//   const authHeader = req.headers['authorization'];
-//   const token = authHeader && authHeader.split(' ')[1]; // Accepts "Bearer <token>"
-
-//   console.log("🛡️ Incoming Authorization Header:", authHeader); // Log full header
-//   console.log("🛡️ Extracted Token:", token); // Log extracted token
-
-//   if (!token) {
-//     return res.status(403).json({ error: 'No token provided' });
-//   }
-
-//   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-//     if (err) return res.status(401).json({ error: 'Unauthorized' });
-//     console.log("✅ Token decoded successfully:", decoded);
-//     req.user = { id: decoded.userId };
-//      console.log("👤 User ID attached to req.user:", req.user.id);
-//     next();
-//   });
-// };
 exports.verifyToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];

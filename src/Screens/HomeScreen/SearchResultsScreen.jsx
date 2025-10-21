@@ -483,7 +483,7 @@ const styles = StyleSheet.create({
   goButton: {
     backgroundColor: colors.text,
     borderRadius: 50,
-    paddingVertical: 12,
+    paddingVertical: 12,marginVertical:2,marginRight:3,
     paddingHorizontal: 12,
     marginLeft: 6,
   },

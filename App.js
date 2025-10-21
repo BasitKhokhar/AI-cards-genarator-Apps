@@ -5,7 +5,11 @@ import { ThemeProvider, useTheme } from "./src/Context/ThemeContext";
 import React, { useState, useEffect } from "react";
 import { StripeProvider } from "@stripe/stripe-react-native";
 import { View, Image, Text, StyleSheet, TouchableOpacity } from "react-native";
+
+import { TourGuideProvider } from "rn-tourguide";
+// import RootNavigator from "./src/navigation/RootNavigator";
 import { NavigationContainer } from "@react-navigation/native";
+
 import { createStackNavigator } from "@react-navigation/stack";
 import { LinearGradient } from "expo-linear-gradient";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -87,7 +91,7 @@ const MainLayout = ({ navigation, children, currentScreen }) => {
           {/* 🔔 Notification Icon */}
           <TouchableOpacity
             onPress={() => navigation.navigate("AllNotifications")}
-            style={[styles.circularButton, { borderWidth: 2, borderColor:colors.primary }]}
+            style={[styles.circularButton, { borderWidth: 2, borderColor: colors.primary }]}
             activeOpacity={0.8}
           >
             <View style={[styles.circularGradient, { backgroundColor: "#1f1f1f" }]}>
@@ -109,36 +113,36 @@ const MainLayout = ({ navigation, children, currentScreen }) => {
       <View style={styles.body}>{children}</View>
 
       {/* Footer */}
-     <View style={styles.footer}>
-  {[
-    { name: "Home", icon: "home" },
-    { name: "Designs", icon: "auto-awesome" },
-    { name: "Assets", icon: "collections" },
-    { name: "Profile", icon: "person" },
-  ].map(({ name, icon }) => {
-    const isActive = currentScreen === name;
+      <View style={styles.footer}>
+        {[
+          { name: "Home", icon: "home" },
+          { name: "Designs", icon: "auto-awesome" },
+          { name: "Assets", icon: "collections" },
+          { name: "Profile", icon: "person" },
+        ].map(({ name, icon }) => {
+          const isActive = currentScreen === name;
 
-    return (
-      <TouchableOpacity
-        key={name}
-        style={styles.footerButton}
-        onPress={() => navigation.navigate(name)}
-      >
-        {isActive ? (
-          <View style={[styles.iconWrapper, styles.activeCircle]}>
-            <GradientIcon iconName={icon} iconSize={22} />
-            <Text style={styles.activeText}>{name}</Text>
-          </View>
-        ) : (
-          <>
-            <Icon name={icon} size={22} color="white" />
-            <Text style={styles.inactiveText}>{name}</Text>
-          </>
-        )}
-      </TouchableOpacity>
-    );
-  })}
-</View>
+          return (
+            <TouchableOpacity
+              key={name}
+              style={styles.footerButton}
+              onPress={() => navigation.navigate(name)}
+            >
+              {isActive ? (
+                <View style={[styles.iconWrapper, styles.activeCircle]}>
+                  <GradientIcon iconName={icon} iconSize={22} />
+                  <Text style={styles.activeText}>{name}</Text>
+                </View>
+              ) : (
+                <>
+                  <Icon name={icon} size={22} color="white" />
+                  <Text style={styles.inactiveText}>{name}</Text>
+                </>
+              )}
+            </TouchableOpacity>
+          );
+        })}
+      </View>
     </View>
   );
 };
@@ -186,7 +190,7 @@ const BottomTabs = () => {
 // 💫 Common header style for all screens
 export const commonHeaderOptions = {
   headerStyle: {
-    backgroundColor: colors.cardsbackground, borderBottomWidth: 1, borderColor:colors.border
+    backgroundColor: colors.cardsbackground, borderBottomWidth: 1, borderColor: colors.border
   },
   headerTintColor: colors.text,
   headerTitleStyle: {
@@ -283,58 +287,65 @@ const App = () => {
   }
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <TourGuideProvider
+      overlayColor="rgba(0,0,0,0.6)"
+      androidStatusBarVisible={true}
+      tooltipStyle={{ borderRadius: 12 }}
+      tooltipTextStyle={{ color: "#fff" }}
+    >
 
 
-      <ThemeProvider>
-        <StripeProvider
-          publishableKey={stripeKey}
-          merchantDisplayName="Basit Sanitary App"
-        >
-          <NavigationContainer>
-            <Stack.Navigator initialRouteName={userId ? "Main" : "Login"}>
-              <Stack.Screen name="Signup" component={SignupScreen} options={{ headerShown: false }} />
-              <Stack.Screen name="Login" options={{ headerShown: false }}>
-                {(props) => <LoginScreen {...props} setUserId={setUserId} />}
-              </Stack.Screen>
-              <Stack.Screen name="Main" options={{ headerShown: false }}>
-                {(props) => <BottomTabs {...props} />}
-              </Stack.Screen>
-              <Stack.Screen name="AllNotifications" component={AllNotifications} options={{ title: "All Notifications", ...commonHeaderOptions, }} />
-              <Stack.Screen name="templatefeatures" component={TemplateDetail} options={{
-                title: "Template Features Detail", ...commonHeaderOptions,
-              }} />
-              <Stack.Screen name="SearchResultsScreen" component={SearchResultsScreen} options={{ title: "Search Anything", ...commonHeaderOptions, }} />
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <ThemeProvider>
+          <StripeProvider
+            publishableKey={stripeKey}
+            merchantDisplayName="Basit Sanitary App"
+          >
+            <NavigationContainer>
+              <Stack.Navigator initialRouteName={userId ? "Main" : "Login"}>
+                <Stack.Screen name="Signup" component={SignupScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="Login" options={{ headerShown: false }}>
+                  {(props) => <LoginScreen {...props} setUserId={setUserId} />}
+                </Stack.Screen>
+                <Stack.Screen name="Main" options={{ headerShown: false }}>
+                  {(props) => <BottomTabs {...props} />}
+                </Stack.Screen>
+                <Stack.Screen name="AllNotifications" component={AllNotifications} options={{ title: "All Notifications", ...commonHeaderOptions, }} />
+                <Stack.Screen name="templatefeatures" component={TemplateDetail} options={{
+                  title: "Template Features Detail", ...commonHeaderOptions,
+                }} />
+                <Stack.Screen name="SearchResultsScreen" component={SearchResultsScreen} options={{ title: "Search Anything", ...commonHeaderOptions, }} />
 
-              <Stack.Screen name="SimpleImageEditor" component={SimpleImageEditor} options={{ title: "Image Editor" }} />
+                <Stack.Screen name="SimpleImageEditor" component={SimpleImageEditor} options={{ title: "Image Editor" }} />
 
-              <Stack.Screen name="SplashScreen" component={SplashScreen} options={{ headerShown: false }} />
-              <Stack.Screen name="Profile" component={UserScreen} options={{ title: "Profile" }} />
+                <Stack.Screen name="SplashScreen" component={SplashScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="Profile" component={UserScreen} options={{ title: "Profile" }} />
 
-              <Stack.Screen name="PaymentmethodsScreen" component={PaymentSelectionScreen} options={{ title: "Payment Methods", ...commonHeaderOptions, }} />
-              <Stack.Screen name="jazzcashscreenScreen" component={JazzCashPaymentScreen} options={{ title: "JazzCash", ...commonHeaderOptions, }} />
-              <Stack.Screen name="easypaisaScreen" component={EasypaisaPaymentScreen} options={{ title: "EasyPaisa", ...commonHeaderOptions, }} />
-              {/* <Stack.Screen name="UserDetailsScreen" component={UserDetailsScreen} /> */}
-              <Stack.Screen name="User" component={UserScreen} />
-              <Stack.Screen name="AccountDetail" component={AccountDetailScreen} options={{ title: "Account Details", ...commonHeaderOptions, }} />
-              <Stack.Screen name="AboutAppScreen" component={AboutApp} options={{ title: "About CardiFy-AI", ...commonHeaderOptions, }} />
-              <Stack.Screen name="CustomerSupport" component={CustomerSupportScreen} options={{ title: "Customer Support", ...commonHeaderOptions, }} />
-              <Stack.Screen name="PrivacyPolicyScreen" component={PrivacyPolicy} options={{ title: "Privacy Policies", ...commonHeaderOptions, }} />
-              <Stack.Screen name="faq" component={FAQ} options={{ title: "All FAQs", ...commonHeaderOptions, }} />
-              {/* <Stack.Screen name="StripePayment" component={StripePayment} /> */}
-              <Stack.Screen name="Logout" component={LogoutScreen} options={{ title: "Logout", ...commonHeaderOptions, }} />
-            </Stack.Navigator>
-          </NavigationContainer>
-        </StripeProvider>
-      </ThemeProvider>
-    </GestureHandlerRootView>
+                <Stack.Screen name="PaymentmethodsScreen" component={PaymentSelectionScreen} options={{ title: "Payment Methods", ...commonHeaderOptions, }} />
+                <Stack.Screen name="jazzcashscreenScreen" component={JazzCashPaymentScreen} options={{ title: "JazzCash", ...commonHeaderOptions, }} />
+                <Stack.Screen name="easypaisaScreen" component={EasypaisaPaymentScreen} options={{ title: "EasyPaisa", ...commonHeaderOptions, }} />
+                {/* <Stack.Screen name="UserDetailsScreen" component={UserDetailsScreen} /> */}
+                <Stack.Screen name="User" component={UserScreen} />
+                <Stack.Screen name="AccountDetail" component={AccountDetailScreen} options={{ title: "Account Details", ...commonHeaderOptions, }} />
+                <Stack.Screen name="AboutAppScreen" component={AboutApp} options={{ title: "About CardiFy-AI", ...commonHeaderOptions, }} />
+                <Stack.Screen name="CustomerSupport" component={CustomerSupportScreen} options={{ title: "Customer Support", ...commonHeaderOptions, }} />
+                <Stack.Screen name="PrivacyPolicyScreen" component={PrivacyPolicy} options={{ title: "Privacy Policies", ...commonHeaderOptions, }} />
+                <Stack.Screen name="faq" component={FAQ} options={{ title: "All FAQs", ...commonHeaderOptions, }} />
+                {/* <Stack.Screen name="StripePayment" component={StripePayment} /> */}
+                <Stack.Screen name="Logout" component={LogoutScreen} options={{ title: "Logout", ...commonHeaderOptions, }} />
+              </Stack.Navigator>
+            </NavigationContainer>
+          </StripeProvider>
+        </ThemeProvider>
+      </GestureHandlerRootView>
+    </TourGuideProvider>
   );
 };
 
 export default App;
 
 const styles = StyleSheet.create({
- container: { flex: 1, backgroundColor: colors.cardsbackground },
+  container: { flex: 1, backgroundColor: colors.cardsbackground },
 
   // 🔥 Header
   header: {

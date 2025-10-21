@@ -146,10 +146,10 @@ const LoginScreen = ({ navigation }) => {
           {/* Social Buttons */}
           <View style={styles.buttonsContainer}>
             <TouchableOpacity style={styles.socialButton}>
-              <Icon name="google" size={22} color="#DB4437" />
+              <Icon name="google" size={22} color={colors.text} />
             </TouchableOpacity>
             <TouchableOpacity style={styles.socialButton}>
-              <Icon name="facebook" size={22} color="#4267B2" />
+              <Icon name="facebook" size={22} color={colors.text} />
             </TouchableOpacity>
             <TouchableOpacity style={styles.socialButton}>
               <Icon name="apple" size={22} color={colors.text} />
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
   buttonWrapper: {
     width: "100%",
     borderRadius: 40,
-    shadowColor: colors.accent,
+    // shadowColor: colors.accent,
     shadowOpacity: 0.8,
     shadowRadius: 20,
     elevation: 8,

@@ -167,7 +167,7 @@ const SignupScreen = ({ navigation }) => {
             style={styles.buttonWrapper}
           >
             <LinearGradient
-              colors={colors.gradients.mintGlow}
+              colors={colors.gradients.ocean}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.button}

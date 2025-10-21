@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Animatable from "react-native-animatable";
-import { colors } from "../../Themes/colors"; // ✅ import your theme colors
+import { colors } from "../../Themes/colors"; 
 
 const SplashScreen = ({ navigation }) => {
   const fullText = "Welcome to CardiFy-AI — Your AI Designer for Every Occasion";
@@ -97,9 +97,9 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 28,
     marginBottom: 30,
-    borderWidth: 2,
-    borderColor: colors.primary, // ✅ primary highlight
-    shadowColor: colors.accent, // ✅ accent neon shadow
+    // borderWidth: 2,
+    // borderColor: colors.primary, // ✅ primary highlight
+    // shadowColor: colors.accent, // ✅ accent neon shadow
     shadowOpacity: 0.8,
     shadowRadius: 25,
   },

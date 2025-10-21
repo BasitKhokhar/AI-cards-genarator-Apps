@@ -163,7 +163,7 @@ const SplashScreen1 = () => {
       <Animatable.Image
         animation="zoomIn"
         duration={1500}
-        source={require("../../../assets/logo.png")}
+        source={require("../../../assets/mainlogo.jpg")}
         style={styles.image}
       />
 
@@ -187,15 +187,15 @@ const styles = StyleSheet.create({
   },
   image: {
     width: 110,
-    height: 200,
+    height: 110,
     resizeMode: "contain",
     shadowColor: colors.primary,
     shadowOpacity: 0.5,
     shadowRadius: 20,
     elevation: 15,
-    // borderRadius: 12,
-    // borderWidth: 2,
-    // borderColor: colors.text,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: colors.text,
   },
   bottomTextContainer: {
     position: "absolute",

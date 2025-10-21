@@ -91,46 +91,76 @@
 // });
 
 // export default LogoutScreen;
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Modal } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "@react-navigation/native";
-import { colors } from "../../Themes/colors"; // ✅ Import theme colors
+import { colors } from "../../Themes/colors";
 
 const LogoutScreen = () => {
   const navigation = useNavigation();
+  const [modalVisible, setModalVisible] = useState(false);
 
   const handleLogout = async () => {
     try {
-      // 🧹 Clear AsyncStorage data
-      await AsyncStorage.multiRemove(["userId", "email", "hasSeenGuide"]);
+      // 🧹 Clear AsyncStorage data including ALL tour guide flags
+      await AsyncStorage.multiRemove([
+        "userId",
+        "email",
+        "hasSeenGuide",
+        "hasSeenSearchHeaderTour", // ✅ Added this line
+      ]);
 
       // 🧹 Clear tokens from SecureStore
       await SecureStore.deleteItemAsync("accessToken");
       await SecureStore.deleteItemAsync("refreshToken");
 
-      // ✅ Reset navigation stack
-      navigation.reset({
-        index: 0,
-        routes: [{ name: "Login" }],
-      });
+      console.log("✅ Cleared user data, tokens, and all tour flags");
 
-      Alert.alert("Success", "You have been logged out successfully!");
+      // ✅ Show modal confirmation
+      setModalVisible(true);
+
+      // Wait 1.5s before navigating to Login screen
+      setTimeout(() => {
+        setModalVisible(false);
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Login" }],
+        });
+      }, 1500);
     } catch (error) {
       console.error("❌ Logout error:", error);
-      Alert.alert("Error", "Logout failed. Please try again.");
+      setModalVisible(true);
     }
   };
 
   return (
     <View style={[styles.container, { backgroundColor: colors.bodybackground }]}>
-      {/* <Text style={styles.title}>Logout</Text> */}
       <Text style={styles.text}>Are you sure you want to log out?</Text>
 
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.logoutText}>Confirm Logout</Text>
       </TouchableOpacity>
+
+      {/* 🟣 Success Modal */}
+      <Modal
+        transparent
+        visible={modalVisible}
+        animationType="fade"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, { backgroundColor: colors.cardsbackground }]}>
+            <Text style={[styles.modalTitle, { color: colors.primary }]}>
+              Logged Out Successfully!
+            </Text>
+            <Text style={[styles.modalMessage, { color: colors.mutedText }]}>
+              Redirecting to login screen...
+            </Text>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -144,23 +174,11 @@ const styles = StyleSheet.create({
     alignItems: "center", 
     padding: 20,
   },
-  title: {  
-    fontSize: 28,
-    fontWeight: "bold",
-    color: colors.primary,
-    textShadowColor: colors.accent,
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 12,
-    marginBottom: 10,
-  },
   text: { 
     fontSize: 18, 
     color: colors.mutedText, 
     textAlign: "center",
     marginBottom: 30,
-    // textShadowColor: colors.text + "40",
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 6,
   },
   logoutButton: { 
     paddingVertical: 12,
@@ -182,6 +200,33 @@ const styles = StyleSheet.create({
     textShadowColor: colors.accent,
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 8,
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalContent: {
+    width: "80%",
+    borderRadius: 16,
+    paddingVertical: 30,
+    paddingHorizontal: 20,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    elevation: 10,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  modalMessage: {
+    fontSize: 16,
+    textAlign: "center",
   },
 });
 

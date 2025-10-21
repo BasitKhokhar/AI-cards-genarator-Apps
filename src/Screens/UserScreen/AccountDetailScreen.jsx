@@ -274,10 +274,10 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1.5,
     borderColor: colors.border,
-    shadowColor: colors.primary,
-    shadowOpacity: 0.3,
-    shadowOffset: { width: 0, height: 0 },
-    shadowRadius: 12,
+    // shadowColor: colors.primary,
+    // shadowOpacity: 0.3,
+    // shadowOffset: { width: 0, height: 0 },
+    // shadowRadius: 12,
     elevation: 8,
   },
   title: {
@@ -315,7 +315,7 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingVertical: 14,
     borderRadius: 12,
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.cardsbackground,
     borderWidth: 1,
     borderColor: colors.border,
     alignItems: "center",
@@ -330,7 +330,7 @@ const styles = StyleSheet.create({
   buttonWrapper: {
     width: "100%",
     borderRadius: 12,
-    shadowColor: colors.primary,
+    // shadowColor: colors.primary,
     shadowOpacity: 0.8,
     shadowRadius: 20,
     elevation: 8
