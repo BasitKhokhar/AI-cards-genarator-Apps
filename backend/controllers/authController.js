@@ -6,14 +6,25 @@ const prisma = require('../prisma/client');
 
 exports.signup = async (req, res) => {
   try {
-    const { name, email, password, phone,termsStatus,city,address } = req.body;
-    console.log("Signup data:", { name, email, password, phone,termsStatus,city,address });
+    const { name, email, password, phone, termsStatus } = req.body;
+    console.log("Signup data:", { name, email, password, phone, termsStatus });
+
     const hashed = await bcrypt.hash(password, 10);
-    console.log("Hashed password:", hashed);
-    const user = await prisma.users.create({ data: { name, email, password: hashed, phone,termsStatus,city,address } });
+
+    const user = await prisma.users.create({
+      data: {
+        name,
+        email,
+        password: hashed,
+        phone,
+        termsStatus,
+      },
+    });
+
     console.log("User created:", user);
     res.json({ message: "User registered successfully", user });
   } catch (err) {
+    console.error("Signup Error:", err);
     res.status(500).json({ error: err.message });
   }
 };

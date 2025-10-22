@@ -19,6 +19,8 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 
 
 import GradientIcon from "./src/Screens/AssetsScreen/samplegradient";
+
+import CustomTooltip from "./src/Components/IntroGuiding/CustomTooltip";
 // splashscreens //
 import SplashScreen from "./src/Screens/SplashScreens/SplashScreen";
 import SplashScreen1 from "./src/Screens/SplashScreens/SplashScreen1";
@@ -288,10 +290,10 @@ const App = () => {
 
   return (
     <TourGuideProvider
+      tooltipComponent={CustomTooltip}
       overlayColor="rgba(0,0,0,0.6)"
       androidStatusBarVisible={true}
       tooltipStyle={{ borderRadius: 12 }}
-      tooltipTextStyle={{ color: "#fff" }}
     >
 
 

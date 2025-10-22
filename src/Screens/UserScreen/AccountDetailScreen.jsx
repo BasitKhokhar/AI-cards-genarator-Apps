@@ -17,7 +17,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { apiFetch } from "../../apiFetch";
 import { Ionicons } from "@expo/vector-icons";
 import { MotiView, AnimatePresence } from "moti";
-import { colors } from "../../Themes/colors"; // ✅ Import theme colors
+import { colors } from "../../Themes/colors"; 
 
 const API_BASE_URL = Constants.expoConfig.extra.API_BASE_URL;
 

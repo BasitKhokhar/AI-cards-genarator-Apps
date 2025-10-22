@@ -152,7 +152,7 @@ const LogoutScreen = () => {
       >
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, { backgroundColor: colors.cardsbackground }]}>
-            <Text style={[styles.modalTitle, { color: colors.primary }]}>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>
               Logged Out Successfully!
             </Text>
             <Text style={[styles.modalMessage, { color: colors.mutedText }]}>
@@ -168,19 +168,19 @@ const LogoutScreen = () => {
 export default LogoutScreen;
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    justifyContent: "center", 
-    alignItems: "center", 
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
   },
-  text: { 
-    fontSize: 18, 
-    color: colors.mutedText, 
+  text: {
+    fontSize: 18,
+    color: colors.mutedText,
     textAlign: "center",
     marginBottom: 30,
   },
-  logoutButton: { 
+  logoutButton: {
     paddingVertical: 12,
     paddingHorizontal: 35,
     borderRadius: 12,
@@ -193,8 +193,8 @@ const styles = StyleSheet.create({
     shadowRadius: 14,
     elevation: 8,
   },
-  logoutText: { 
-    fontSize: 18, 
+  logoutText: {
+    fontSize: 18,
     fontWeight: "bold",
     color: colors.error,
     textShadowColor: colors.accent,
@@ -208,15 +208,15 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.5)",
   },
   modalContent: {
-    width: "80%",
+    width: "80%", borderWidth: 1, borderColor: colors.border,
     borderRadius: 16,
     paddingVertical: 30,
     paddingHorizontal: 20,
     alignItems: "center",
-    shadowColor: "#000",
+    shadowColor: colors.primary,
+    shadowOpacity: 0.4,
     shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.25,
-    shadowRadius: 6,
+    shadowRadius: 10,
     elevation: 10,
   },
   modalTitle: {

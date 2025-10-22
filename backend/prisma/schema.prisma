@@ -90,8 +90,6 @@ model users {
   password     String               @db.VarChar(255)
   phone        String?              @db.VarChar(20)
   termsStatus  Boolean              @default(false)
-  city         String?
-  address      String?
   refreshToken String? 
   created_at   DateTime             @default(now()) @db.DateTime(0)
 

@@ -220,7 +220,7 @@ const EnhancedImageGallery = ({ navigation }) => {
       />
 
       {/* 🔄 Loader Modal */}
-      <AnimatePresence>
+      {/* <AnimatePresence>
         {showLoader && (
           <MotiView
             from={{ opacity: 0 }}
@@ -246,7 +246,35 @@ const EnhancedImageGallery = ({ navigation }) => {
             </MotiView>
           </MotiView>
         )}
+      </AnimatePresence> */}
+   <AnimatePresence>
+        {showLoader && (
+          <MotiView
+            from={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ type: "timing", duration: 300 }}
+            style={styles.confirmationOverlay}
+          >
+            <MotiView
+              from={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ type: "timing", duration: 400 }}
+              style={[styles.loaderBox, { backgroundColor: colors.cardsbackground }]}
+            >
+              <MotiView
+                from={{ rotate: "0deg" }}
+                animate={{ rotate: "360deg" }}
+                transition={{ loop: true, type: "timing", duration: 1200 }}
+                style={[styles.loaderRing, { borderTopColor: colors.primary }]}
+              />
+              <Text style={styles.loaderText}>Downloading...</Text>
+            </MotiView>
+          </MotiView>
+        )}
       </AnimatePresence>
+
 
       {/* ✅ Success Confirmation Modal */}
       <AnimatePresence>
@@ -278,12 +306,12 @@ export default EnhancedImageGallery;
 
 const styles = StyleSheet.create({
   loaderContainer: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      paddingHorizontal: 16,
-      backgroundColor: colors.bodybackground,
-    },
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    backgroundColor: colors.bodybackground,
+  },
   container: {
     flex: 1,
     backgroundColor: colors.bodybackground,
@@ -356,7 +384,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderWidth: 1.5,
     borderColor: colors.border,
-    shadowColor: colors.primary,
+    // shadowColor: colors.primary,
     shadowOpacity: 0.4,
     shadowOffset: { width: 0, height: 3 },
     shadowRadius: 10,
@@ -366,6 +394,9 @@ const styles = StyleSheet.create({
     width: 55,
     height: 55,
     borderRadius: 30,
+    borderWidth: 4,
+    backgroundColor:colors.bodybackground,
+    borderColor: "rgba(255,255,255,0.1)",
     marginBottom: 12,
   },
   loaderText: {
