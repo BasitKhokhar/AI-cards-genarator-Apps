@@ -4,30 +4,35 @@ import { colors } from "../../Themes/colors";
 
 // 🧭 Define all steps text here
 const stepLabels = {
-  1: {
-    title: "Search Bar",
+   1: {
+    title: "Guide to Features",
+    description:
+      "Learn how each feature works to make your card design process smoother and faster.",
+  },
+  2: {
+    title: "Describe Your Idea",
     description:
       "Describe your card design here. The AI will generate cards based on your input.",
   },
-  2: {
-    title: "Image Picker",
+  3: {
+    title: "Add Image Reference",
     description:
       "Pick an image from your gallery. The AI will use it as a base for your design.",
   },
-  3: {
+  4: {
     title: "Quote Shortcut",
     description:
       'Tap “T” to quickly insert quotation marks for short quotes or phrases.',
   },
-  4: {
+  5: {
     title: "Advanced Settings",
     description:
       "Tap + to open aspect ratio, resolution, and custom size settings.",
   },
-  5: {
+  6: {
     title: "Generate Design",
     description:
-      "Tap the arrow to generate your design based on the entered description.",
+      "Tap the arrow button to generate your design based on the entered description.",
   },
 };
 
@@ -62,7 +67,7 @@ const CustomTooltip = ({ currentStep, handleNext, handleStop }) => {
           onPress={handleStop}
         >
           <Text style={[styles.buttonText, { color: colors.text }]}>
-            {isFinal ? "Finish" : "Close"}
+            {isFinal ? "Finish" : "Skip"}
           </Text>
         </TouchableOpacity>
 

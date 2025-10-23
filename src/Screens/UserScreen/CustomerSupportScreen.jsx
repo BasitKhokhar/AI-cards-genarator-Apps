@@ -26,7 +26,8 @@ const CustomerSupportScreen = () => {
         <View style={styles.gradientBox}>
           <View style={styles.infoBox}>
             <Text style={styles.heading}>📧  Email Support</Text>
-            <Text style={styles.infoText}>1. basitsanitaryapp@gmail.com</Text>
+            <Text style={styles.infoText}>1. basitkhokhar957@gmail.com</Text>
+            <Text style={styles.infoText}>2. coderzpark4949@gmail.com</Text>
             <Text style={styles.infoText}>2. support.cardifyai@gmail.com</Text>
           </View>
         </View>

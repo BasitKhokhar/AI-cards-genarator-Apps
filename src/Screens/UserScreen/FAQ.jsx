@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.secondary,
     padding: 15,
     borderTopWidth: 1,
-    borderTopColor: colors.primary + "33",
+    borderTopColor: colors.border,
   },
   answerText: {
     fontSize: 14,

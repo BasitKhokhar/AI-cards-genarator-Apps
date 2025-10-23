@@ -1,18 +1,6 @@
-
 import { colors } from "../../Themes/colors";
 import React, { useState, useRef, useEffect } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Image,
-  TouchableWithoutFeedback,
-  ScrollView,
-  Modal,
-  Dimensions,
-} from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, TouchableWithoutFeedback, ScrollView, Modal, Dimensions, } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -52,6 +40,8 @@ const SearchHeader = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const inputField = useRef(null);
 
+
+  const [layoutReady, setLayoutReady] = useState(false);
   // tour controller
   const { start, canStart, stop } = useTourGuideController();
 
@@ -65,22 +55,39 @@ const SearchHeader = () => {
 
   const isTyping = search.trim().length > 0; // ✅ For dynamic Go button color
 
+  // useEffect(() => {
+  //   if (canStart && layoutReady) {
+  //     setTimeout(() => start(), 300); 
+  //   }
+  // }, [canStart, layoutReady]);
+
   useEffect(() => {
-    // start the tour automatically only once per user
-    (async () => {
+    const initTourGuide = async () => {
       try {
-        const flag = await AsyncStorage.getItem("hasSeenSearchHeaderTour");
-        if (!flag && canStart) {
-          // small delay so UI has rendered
-          setTimeout(() => start(), 700);
+        const hasJustLoggedIn = await AsyncStorage.getItem("hasJustLoggedIn");
+        const hasSeenSearchHeaderTour = await AsyncStorage.getItem("hasSeenSearchHeaderTour");
+
+        // ✅ Run only if user just logged in or has not seen the tour before
+        if ((hasJustLoggedIn === "true" || !hasSeenSearchHeaderTour) && canStart && layoutReady) {
+          console.log("🟢 Starting TourGuide at zone 1...");
+          setTimeout(() => start(), 300);
+
+          // remove login trigger
+          await AsyncStorage.removeItem("hasJustLoggedIn");
+
+          // store flag that user has seen the tour
           await AsyncStorage.setItem("hasSeenSearchHeaderTour", "true");
         }
       } catch (err) {
-        console.warn("Tour start check failed", err);
+        console.warn("⚠️ TourGuide start error:", err);
       }
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [canStart, start]);
+    };
+
+    // Only run when both ready
+    if (canStart && layoutReady) {
+      initTourGuide();
+    }
+  }, [canStart, layoutReady]);
 
 
   const handleSearch = async () => {
@@ -139,108 +146,122 @@ const SearchHeader = () => {
         </View>
 
         {/* Input + Toolbar */}
-        <View style={styles.container}>
-          {/* ======= INPUT (step 1 - RECTANGLE) ======= */}
-          <TourGuideZone
-            zone={1}
-            shape="rectangle"
-            // borderRadius={12}
-          >
-            <View style={styles.searchBar}>
-              <TextInput
-                ref={inputFieldRef}
-                style={styles.input}
-                placeholder="Describe your card design..."
-                placeholderTextColor={colors.mutedText}
-                value={search}
-                onChangeText={setSearch}
-                multiline
-                numberOfLines={3}
-                textAlignVertical="top"
-              />
-            </View>
-          </TourGuideZone>
-          {/* Toolbar & Go Button */}
-          <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-            <View style={styles.toolbar}>
-              {/* ======= IMAGE BUTTON (step 2 - CIRCLE) ======= */}
+        <TourGuideZone
+          zone={1}
+          shape="rectangle"
+          backdropColor="rgba(0,0,0,0.9)"
+          borderRadius={12}
+        // maskOffset={6}
+        >
+          <View style={styles.container}>
+            {/* ======= INPUT (step 1 - RECTANGLE) ======= */}
+            <View onLayout={() => setLayoutReady(true)}>
               <TourGuideZone
                 zone={2}
-                shape="circle"
-
+                shape="rectangle"
+                // backdropColor="rgba(0,0,0,0.9)"
+                borderRadius={12}
+              // maskOffset={6}
               >
-                <TouchableOpacity
-                  ref={imageBtnRef}
-                  style={styles.iconBtn}
-                  onPress={pickImage}
-                >
-                  <Ionicons name="image-outline" size={18} color={colors.mutedText} />
-                </TouchableOpacity>
-              </TourGuideZone>
-
-              {/* ======= QUOTE BUTTON (step 3 - CIRCLE) ======= */}
-              <TourGuideZone
-                zone={3}
-                shape="circle"
-
-              >
-                <TouchableOpacity
-                  ref={quoteBtnRef}
-                  style={styles.iconBtn}
-                  onPress={addDoubleQuotes}
-                >
-                  <Text style={styles.quoteText}>“T”</Text>
-                </TouchableOpacity>
-              </TourGuideZone>
-
-              {/* ======= PLUS / SETTINGS BUTTON (step 4 - CIRCLE) ======= */}
-              <TourGuideZone
-                zone={4}
-                shape="circle"
-
-              >
-                <TouchableOpacity style={styles.iconBtn} onPress={toggleModal}>
-                  <Ionicons name="add" size={20} color={colors.mutedText} />
-                </TouchableOpacity>
-              </TourGuideZone>
-            </View>
-
-            {/* ======= ARROW / GO BUTTON (step 5 - CIRCLE) ======= */}
-            <View>
-              <TourGuideZone
-                zone={5}
-                shape="circle"
-
-              >
-                <TouchableOpacity
-                  style={[
-                    styles.goButton,
-                    isTyping
-                      ? { backgroundColor: colors.text, borderColor: colors.text }
-                      : { backgroundColor: colors.border, borderColor: colors.border },
-                  ]}
-                  onPress={handleSearch}
-                >
-                  <Ionicons
-                    name="arrow-forward"
-                    size={18}
-                    color={isTyping ? colors.bodybackground : colors.text}
+                <View style={styles.searchBar}>
+                  <TextInput
+                    ref={inputFieldRef}
+                    style={styles.input}
+                    placeholder="Describe your card design..."
+                    placeholderTextColor={colors.mutedText}
+                    value={search}
+                    onChangeText={setSearch}
+                    multiline
+                    numberOfLines={3}
+                    textAlignVertical="top"
                   />
-                </TouchableOpacity>
+                </View>
               </TourGuideZone>
             </View>
+
+            {/* Toolbar & Go Button */}
+            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+              <View style={styles.toolbar}>
+                {/* ======= IMAGE BUTTON (step 2 - CIRCLE) ======= */}
+                <TourGuideZone
+                  zone={3}
+                  shape="circle"
+
+                >
+                  <TouchableOpacity
+                    ref={imageBtnRef}
+                    style={styles.iconBtn}
+                    onPress={pickImage}
+                  >
+                    <Ionicons name="image-outline" size={18} color={colors.mutedText} />
+                  </TouchableOpacity>
+                </TourGuideZone>
+
+                {/* ======= QUOTE BUTTON (step 3 - CIRCLE) ======= */}
+                <TourGuideZone
+                  zone={4}
+                  shape="circle_and_keep"
+
+                >
+                  <TouchableOpacity
+                    ref={quoteBtnRef}
+                    style={styles.iconBtn}
+                    onPress={addDoubleQuotes}
+                  >
+                    <Text style={styles.quoteText}>“T”</Text>
+                  </TouchableOpacity>
+                </TourGuideZone>
+
+                {/* ======= PLUS / SETTINGS BUTTON (step 4 - CIRCLE) ======= */}
+                <TourGuideZone
+                  zone={5}
+                  shape="circle"
+
+                >
+                  <TouchableOpacity style={styles.iconBtn} onPress={toggleModal}>
+                    <Ionicons name="add" size={20} color={colors.mutedText} />
+                  </TouchableOpacity>
+                </TourGuideZone>
+              </View>
+
+              {/* ======= ARROW / GO BUTTON (step 5 - CIRCLE) ======= */}
+              <View>
+                <TourGuideZone
+                  zone={6}
+                  shape="circle"
+
+                >
+                  <TouchableOpacity
+                    style={[
+                      styles.goButton,
+                      isTyping
+                        ? { backgroundColor: colors.text, borderColor: colors.text }
+                        : { backgroundColor: colors.border, borderColor: colors.border },
+                    ]}
+                    onPress={handleSearch}
+                  >
+                    <Ionicons
+                      name="arrow-forward"
+                      size={18}
+                      color={isTyping ? colors.bodybackground : colors.text}
+                    />
+                  </TouchableOpacity>
+                </TourGuideZone>
+              </View>
+            </View>
+
+            {/* Image Preview */}
+            {selectedImage && (
+              <View style={styles.imageWrapper}>
+                <Image source={{ uri: selectedImage }} style={styles.previewImage} />
+                <TouchableOpacity style={styles.removeIcon} onPress={() => setSelectedImage(null)}>
+                  <Text style={{ color: "black", fontSize: 10 }}>✕</Text>
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
 
-          {/* Image Preview */}
-          {selectedImage && (
-            <View style={styles.imageWrapper}>
-              <Image source={{ uri: selectedImage }} style={styles.previewImage} />
-              <TouchableOpacity style={styles.removeIcon} onPress={() => setSelectedImage(null)}>
-                <Text style={{ color: "black", fontSize: 10 }}>✕</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
+        </TourGuideZone>
 
 
         {/* Settings Modal (keep your existing modal content) */}
@@ -322,7 +343,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 50,
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: colors.primary,
     marginRight: 8,
   },
