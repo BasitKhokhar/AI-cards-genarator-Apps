@@ -34,6 +34,8 @@ import LoginScreen from "./src/Components/Authentication/Login";
 import PaymentModal from "./src/Screens/PaymentMethodsScreen/PaymentModel";
 import HomeScreen from "./src/Screens/HomeScreen/HomeScreen";
 import TemplateDetail from "./src/Screens/HomeScreen/CardsTemplates";
+import CommunityCategoryTemplatesScreen from "./src/Screens/HomeScreen/CommunityTemplates";
+
 
 import CategoriesScreen from "./src/Screens/HomeScreen/CardsCategories";
 import SearchResultsScreen from "./src/Screens/HomeScreen/SearchResultsScreen";
@@ -293,6 +295,8 @@ const App = () => {
       tooltipComponent={CustomTooltip}
       overlayColor="rgba(0,0,0,0.6)"
       androidStatusBarVisible={true}
+      preventOutsideInteraction={true}  // ✅ block all background touches
+      backdropColor="rgba(0,0,0,0.7)"   // ✅ darker focus effect
       tooltipStyle={{ borderRadius: 12 }}
     >
 
@@ -322,6 +326,8 @@ const App = () => {
 
                 <Stack.Screen name="SplashScreen" component={SplashScreen} options={{ headerShown: false }} />
                 <Stack.Screen name="Profile" component={UserScreen} options={{ title: "Profile" }} />
+
+ <Stack.Screen name="CommunityTemplatesScreen" component={CommunityCategoryTemplatesScreen}  options={{ headerShown: false }} />
 
                 <Stack.Screen name="PaymentmethodsScreen" component={PaymentSelectionScreen} options={{ title: "Payment Methods", ...commonHeaderOptions, }} />
                 <Stack.Screen name="jazzcashscreenScreen" component={JazzCashPaymentScreen} options={{ title: "JazzCash", ...commonHeaderOptions, }} />

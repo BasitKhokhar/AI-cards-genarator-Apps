@@ -10,6 +10,7 @@ import { useTheme } from "../../Context/ThemeContext";
 import ImageSlider from "../../Components/Sliders/Slider";
 import CategoriesScreen from "./CardsCategories";
 import SearchHeader from "./HomeinputSearch";
+import CommunityTemplatesButton from "./CommunityTemplatesbtn";
 import TrendingTemplates from "./TrendingTemplates";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Loader from "../../Components/Loader/Loader";
@@ -85,7 +86,7 @@ const HomeScreen = ({ navigation }) => {
   const sections = [
     { key: "slider", render: () => <ImageSlider sliderData={homeData.sliderData} /> },
     { key: "search", render: () => <SearchHeader onToggle={(open) => setFilterExpanded(open)} /> },
-    // { key: "categories", render: () => <CategoriesScreen /> },
+    { key: "communitytemplatesbtn", render: () => <CommunityTemplatesButton /> },
     { key: "trending", render: () => <TrendingTemplates /> },
   ];
 

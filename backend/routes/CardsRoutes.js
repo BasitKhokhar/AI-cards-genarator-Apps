@@ -3,7 +3,7 @@ const router = express.Router();
 const { verifyToken } = require("../middleware/authMiddleware");
 const {
   getCategories,
-  getTemplatesByCategory,
+  getTemplatesByCategory,getTemplatesBySpecificCategory,
   getTemplateById,
   getTrendingTemplates,
   searchTemplates,
@@ -13,8 +13,10 @@ const {
 router.get("/categories", verifyToken, getCategories);
 
 // ✅ Get templates for a specific category (paginated)
-router.get("/categories/:id/templates", verifyToken, getTemplatesByCategory);
+router.get("/categories/:id/templates", verifyToken, getTemplatesBySpecificCategory);
 
+// ✅ Get templates for a specific category (paginated)
+router.get("/categories/:id/templates", verifyToken, getTemplatesByCategory);
 // ✅ Search templates
 router.get("/templates/search", verifyToken, searchTemplates);
 

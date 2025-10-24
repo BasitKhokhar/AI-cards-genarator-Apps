@@ -40,10 +40,16 @@ const SearchHeader = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const inputField = useRef(null);
 
+  // for "T" model
+  const [isQuoteModalVisible, setIsQuoteModalVisible] = useState(false);
+  const [quoteInput, setQuoteInput] = useState('""');
+  const quoteInputRef = useRef(null);
+
+
 
   const [layoutReady, setLayoutReady] = useState(false);
   // tour controller
-  const { start, canStart, stop } = useTourGuideController();
+  const { start, canStart } = useTourGuideController();
 
   // refs (optional if needing to measure)
   const inputFieldRef = useRef(null);
@@ -53,13 +59,7 @@ const SearchHeader = () => {
 
 
 
-  const isTyping = search.trim().length > 0; // ✅ For dynamic Go button color
-
-  // useEffect(() => {
-  //   if (canStart && layoutReady) {
-  //     setTimeout(() => start(), 300); 
-  //   }
-  // }, [canStart, layoutReady]);
+  const isTyping = search.trim().length > 0;
 
   useEffect(() => {
     const initTourGuide = async () => {
@@ -134,6 +134,36 @@ const SearchHeader = () => {
     }
   };
 
+  const openQuoteModal = () => {
+    setQuoteInput('""');
+    setIsQuoteModalVisible(true);
+    setTimeout(() => {
+      if (quoteInputRef.current) {
+        quoteInputRef.current.focus();
+        quoteInputRef.current.setNativeProps({ selection: { start: 1, end: 1 } });
+      }
+    }, 100);
+  };
+  // add another "" inside modal
+  const addQuotesInModal = () => {
+    const cursorPosition = quoteInputRef.current?._lastNativeSelection?.start || quoteInput.length;
+    const newText =
+      quoteInput.slice(0, cursorPosition) + '""' + quoteInput.slice(cursorPosition);
+    setQuoteInput(newText);
+    setTimeout(() => {
+      quoteInputRef.current?.setNativeProps({
+        selection: { start: cursorPosition + 1, end: cursorPosition + 1 },
+      });
+    }, 50);
+  };
+
+  // insert text into main input
+  const insertQuoteText = () => {
+    setSearch((prev) => `${prev} ${quoteInput}`);
+    setIsQuoteModalVisible(false);
+  };
+
+
   return (
     <TouchableWithoutFeedback>
       <View style={{ paddingHorizontal: 16 }}>
@@ -146,90 +176,92 @@ const SearchHeader = () => {
         </View>
 
         {/* Input + Toolbar */}
+        {/* ========== MAIN ZONE (Step 1) ========== */}
         <TourGuideZone
           zone={1}
           shape="rectangle"
-          backdropColor="rgba(0,0,0,0.9)"
           borderRadius={12}
-        // maskOffset={6}
+          maskOffset={10}
+          keepTooltipPosition
+          zonePadding={12}
         >
-          <View style={styles.container}>
-            {/* ======= INPUT (step 1 - RECTANGLE) ======= */}
-            <View onLayout={() => setLayoutReady(true)}>
-              <TourGuideZone
-                zone={2}
-                shape="rectangle"
-                // backdropColor="rgba(0,0,0,0.9)"
-                borderRadius={12}
-              // maskOffset={6}
-              >
-                <View style={styles.searchBar}>
-                  <TextInput
-                    ref={inputFieldRef}
-                    style={styles.input}
-                    placeholder="Describe your card design..."
-                    placeholderTextColor={colors.mutedText}
-                    value={search}
-                    onChangeText={setSearch}
-                    multiline
-                    numberOfLines={3}
-                    textAlignVertical="top"
-                  />
-                </View>
-              </TourGuideZone>
-            </View>
+          <View style={styles.container} onLayout={() => setLayoutReady(true)}>
 
-            {/* Toolbar & Go Button */}
-            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-              <View style={styles.toolbar}>
-                {/* ======= IMAGE BUTTON (step 2 - CIRCLE) ======= */}
+            {/* ======= INPUT FIELD (Step 2) ======= */}
+            <TourGuideZone
+              zone={2}
+              shape="rectangle"
+              maskOffset={10}
+              borderRadius={12}
+              keepTooltipPosition
+              zonePadding={10}
+            >
+              <View style={styles.searchBar}>
+                <TextInput
+                  ref={inputFieldRef}
+                  style={styles.input}
+                  placeholder="Describe your card design..."
+                  placeholderTextColor={colors.mutedText}
+                  value={search}
+                  onChangeText={setSearch}
+                  multiline
+                  numberOfLines={3}
+                  textAlignVertical="top"
+                />
+              </View>
+            </TourGuideZone>
+
+            {/* ======= TOOLBAR ROW ======= */}
+            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center",marginVertical:10 }}>
+              <View style={[styles.toolbar, { alignItems: "center" }]}>
+
+                {/* 🖼️ IMAGE BUTTON (Step 3) */}
                 <TourGuideZone
                   zone={3}
                   shape="circle"
-
+                  maskOffset={6}
+                  keepTooltipPosition
+                  zonePadding={6}
                 >
-                  <TouchableOpacity
-                    ref={imageBtnRef}
-                    style={styles.iconBtn}
-                    onPress={pickImage}
-                  >
+                  <TouchableOpacity ref={imageBtnRef} style={styles.iconBtn} onPress={pickImage}>
                     <Ionicons name="image-outline" size={18} color={colors.mutedText} />
                   </TouchableOpacity>
                 </TourGuideZone>
 
-                {/* ======= QUOTE BUTTON (step 3 - CIRCLE) ======= */}
+                {/* ✨ QUOTE BUTTON (Step 4) */}
                 <TourGuideZone
                   zone={4}
-                  shape="circle_and_keep"
-
+                  shape="circle"
+                  maskOffset={6}
+                  keepTooltipPosition
+                  zonePadding={6}
                 >
-                  <TouchableOpacity
-                    ref={quoteBtnRef}
-                    style={styles.iconBtn}
-                    onPress={addDoubleQuotes}
-                  >
+                  <TouchableOpacity ref={quoteBtnRef} style={styles.iconBtn} onPress={openQuoteModal}>
                     <Text style={styles.quoteText}>“T”</Text>
                   </TouchableOpacity>
                 </TourGuideZone>
 
-                {/* ======= PLUS / SETTINGS BUTTON (step 4 - CIRCLE) ======= */}
+                {/* ➕ SETTINGS BUTTON (Step 5) */}
                 <TourGuideZone
                   zone={5}
                   shape="circle"
-
+                  maskOffset={6}
+                  keepTooltipPosition
+                  zonePadding={6}
                 >
                   <TouchableOpacity style={styles.iconBtn} onPress={toggleModal}>
                     <Ionicons name="add" size={20} color={colors.mutedText} />
                   </TouchableOpacity>
                 </TourGuideZone>
               </View>
-
-              {/* ======= ARROW / GO BUTTON (step 5 - CIRCLE) ======= */}
               <View>
+                {/* 🚀 GO BUTTON (Step 6) */}
                 <TourGuideZone
                   zone={6}
                   shape="circle"
-
+                  maskOffset={6}
+                  keepTooltipPosition
+                  zonePadding={6}
                 >
                   <TouchableOpacity
                     style={[
@@ -248,22 +280,48 @@ const SearchHeader = () => {
                   </TouchableOpacity>
                 </TourGuideZone>
               </View>
-            </View>
 
-            {/* Image Preview */}
+            </View>
             {selectedImage && (
               <View style={styles.imageWrapper}>
                 <Image source={{ uri: selectedImage }} style={styles.previewImage} />
-                <TouchableOpacity style={styles.removeIcon} onPress={() => setSelectedImage(null)}>
-                  <Text style={{ color: "black", fontSize: 10 }}>✕</Text>
+                <TouchableOpacity
+                  style={styles.removeIcon}
+                  onPress={() => setSelectedImage(null)}
+                >
+                  <Text style={{ color: "black", fontSize: 12 }}>✕</Text>
                 </TouchableOpacity>
               </View>
             )}
           </View>
-
         </TourGuideZone>
 
+        {/* Model for "T" */}
+        <Modal visible={isQuoteModalVisible} animationType="fade" transparent>
+          <View style={styles.quoteOverlay}>
+            <View style={styles.quoteModal}>
+              <Text style={styles.modalTitle}>Insert Quoted Text</Text>
 
+              <TextInput
+                ref={quoteInputRef}
+                style={styles.quoteInputField}
+                multiline
+                value={quoteInput}
+                onChangeText={setQuoteInput}
+              />
+
+              <View style={styles.quoteButtonsRow}>
+                <TouchableOpacity style={styles.iconBtn} onPress={addQuotesInModal}>
+                  <Text style={styles.quoteText}>“T”</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={[styles.iconBtn, { backgroundColor: colors.text }]} onPress={insertQuoteText}>
+                  <Text style={{ color: colors.bodybackground, fontWeight: "700" }}>Insert</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
         {/* Settings Modal (keep your existing modal content) */}
         <Modal visible={isModalVisible} animationType="slide" transparent>
           <View style={styles.overlay}>
@@ -360,7 +418,7 @@ const styles = StyleSheet.create({
   },
   searchBar: { flexDirection: "row", marginBottom: 10 },
   input: { flex: 1, padding: 10, color: colors.text, fontSize: 15, height: 80 },
-  toolbar: { flexDirection: "row", alignItems: "center", marginBottom: 8 },
+  toolbar: { flexDirection: "row", alignItems: "center" },
   iconBtn: {
     backgroundColor: colors.secondary,
     borderRadius: 8,
@@ -373,6 +431,37 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   quoteText: { color: colors.mutedText, fontWeight: "bold", fontSize: 15 },
+  // "T" model styling
+  quoteOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  quoteModal: {
+    width: "85%",
+    backgroundColor: colors.cardsbackground,
+    borderRadius: 14,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  quoteInputField: {
+    backgroundColor: colors.secondary,
+    borderRadius: 10,
+    padding: 10,
+    color: colors.text,
+    fontSize: 15,
+    minHeight: 80,
+    borderWidth: 1,
+    borderColor: colors.border,
+    marginBottom: 15,
+  },
+  quoteButtonsRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
   goButton: {
     borderWidth: 1,
     borderRadius: 50,
@@ -471,7 +560,6 @@ const styles = StyleSheet.create({
   doneBtnGradient: { borderRadius: 12, paddingVertical: 14, alignItems: "center" },
   doneText: { color: colors.text, fontSize: 16, fontWeight: "700" },
 });
-
 
 
 

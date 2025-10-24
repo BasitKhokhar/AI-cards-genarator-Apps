@@ -461,7 +461,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 10,
-    color: colors.text, // ✅ from colors
+    color: colors.text,
   },
   cardImage: {
     borderRadius: 12,

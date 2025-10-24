@@ -24,7 +24,7 @@
 const darkOcean = {
   bodybackground: "#0d0d0d",
   cardsbackground: "#1a1a1a",
-  primary: "#06b6d4",
+  primary: "#26d0ce",
   accent: "#1a2980",
   secondary: "#3D3D3D",
   text: "#ffffff",

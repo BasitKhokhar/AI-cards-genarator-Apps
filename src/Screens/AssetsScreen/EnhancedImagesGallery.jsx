@@ -220,34 +220,7 @@ const EnhancedImageGallery = ({ navigation }) => {
       />
 
       {/* 🔄 Loader Modal */}
-      {/* <AnimatePresence>
-        {showLoader && (
-          <MotiView
-            from={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ type: "timing", duration: 300 }}
-            style={styles.confirmationOverlay}
-          >
-            <MotiView
-              from={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              transition={{ type: "timing", duration: 400 }}
-              style={styles.loaderBox}
-            >
-              <LinearGradient
-                colors={colors.gradients.mintGlow}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.loaderRing}
-              />
-              <Text style={styles.loaderText}>Downloading...</Text>
-            </MotiView>
-          </MotiView>
-        )}
-      </AnimatePresence> */}
-   <AnimatePresence>
+      <AnimatePresence>
         {showLoader && (
           <MotiView
             from={{ opacity: 0 }}
@@ -395,7 +368,7 @@ const styles = StyleSheet.create({
     height: 55,
     borderRadius: 30,
     borderWidth: 4,
-    backgroundColor:colors.bodybackground,
+    backgroundColor: colors.bodybackground,
     borderColor: "rgba(255,255,255,0.1)",
     marginBottom: 12,
   },

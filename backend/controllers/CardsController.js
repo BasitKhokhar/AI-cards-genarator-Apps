@@ -55,83 +55,6 @@ exports.getTemplatesByCategory = async (req, res) => {
 };
 
 
-
-// exports.getCategoriesWithTemplates = async (req, res) => {
-//   console.log("📥 [API] /cards/categories called");
-
-//   try {
-//     // fetch categories with minimal template info
-//     const categories = await prisma.cardCategory.findMany({
-//       orderBy: { createdAt: "asc" },
-//       include: {
-//         templates: {
-//           select: { id: true, imageUrl: true }, // ✅ only return id + imageUrl
-//           orderBy: { createdAt: "desc" },
-//         },
-//       },
-//     });
-
-//     if (!categories || categories.length === 0) {
-//       console.warn("⚠️ No categories found");
-//       return res.status(404).json({ message: "No categories found" });
-//     }
-
-//     console.log("✅ Categories with template previews fetched");
-//     res.json(categories);
-//   } catch (err) {
-//     console.error("❌ Error in getCategoriesWithTemplates:", err.message);
-//     res.status(500).json({ message: "Server error", error: err.message });
-//   }
-// };
-
-
-// ✅ Get a single template by ID with full details
-// exports.getTemplateById = async (req, res) => {
-//   console.log("📥 [API] /cards/templates/:id called", req.params);
-
-//   try {
-//     const { id } = req.params;
-//     const templateId = parseInt(id);
-
-//     if (isNaN(templateId)) {
-//       return res.status(400).json({ message: "Invalid template ID" });
-//     }
-
-//     const template = await prisma.cardTemplate.findUnique({
-//       where: { id: templateId },
-//       include: { category: true },
-//     });
-
-//     if (!template) {
-//       console.warn("⚠️ Template not found for ID:", templateId);
-//       return res.status(404).json({ message: "Template not found" });
-//     }
-
-//     let isFavourite = false;
-
-//     // ✅ if user is logged in (verifyToken middleware must add req.user)
-//     if (req.user?.id) {
-//       const fav = await prisma.userFavouriteTemplate.findFirst({
-//         where: {
-//           userId: req.user.id,
-//           templateId: templateId,
-//         },
-//       });
-//       isFavourite = !!fav;
-//     }
-
-//     console.log("✅ Template fetched:", template.title, " | Favourite:", isFavourite);
-
-//     res.json({
-//       ...template,
-//       isFavourite, // ✅ send favourite status
-//     });
-//   } catch (err) {
-//     console.error("❌ Error in getTemplateById:", err.message);
-//     res.status(500).json({ message: "Server error", error: err.message });
-//   }
-// };
-
 exports.getTemplateById = async (req, res) => {
   console.log("📥 [API] /cards/templates/:id called", req.params);
 
@@ -280,5 +203,55 @@ exports.searchTemplates = async (req, res) => {
       message: "Server error while searching templates",
       error: err.message,
     });
+  }
+};
+
+
+/**
+ * ✅ Fetch templates for a specific category (with pagination + hasMore flag)
+ */
+exports.getTemplatesBySpecificCategory = async (req, res) => {
+  try {
+    const categoryId = parseInt(req.params.id);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    if (isNaN(categoryId)) {
+      return res.status(400).json({ message: "Invalid category ID" });
+    }
+
+    // Fetch templates with pagination
+    const [templates, totalCount] = await Promise.all([
+      prisma.cardTemplate.findMany({
+        where: { categoryId },
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limit,
+        select: {
+          id: true,
+          title: true,
+          imageUrl: true,
+          aspectRatio: true,
+          uses: true,
+        },
+      }),
+      prisma.cardTemplate.count({ where: { categoryId } }),
+    ]);
+
+    // Clean BigInts (if any)
+    const cleanTemplates = templates.map((t) => ({
+      ...t,
+      id: Number(t.id),
+      uses: t.uses ? Number(t.uses) : 0,
+    }));
+
+    res.status(200).json({
+      templates: cleanTemplates,
+      hasMore: skip + limit < totalCount,
+    });
+  } catch (err) {
+    console.error("❌ Error fetching category templates:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 };
