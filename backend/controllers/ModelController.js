@@ -3,6 +3,39 @@ const replicate = require('../utils/replicate');
 const { storage, ref, uploadBytesResumable, getDownloadURL } = require('../utils/firebase');
 const fetch = require('node-fetch');
 
+// controllers/MockModelController.js
+
+exports.mockEnhanceImage = async (req, res) => {
+  const { userId, modelUsed, prompt } = req.body;
+
+  console.log("🎨 Mock enhancement request:", { userId, modelUsed, prompt });
+
+  // Simulate step-by-step progress
+  try {
+    // Fixed image URL for mock
+    const fixedImageUrl =
+      "https://firebasestorage.googleapis.com/v0/b/basit-b2712.appspot.com/o/CardiFy%2Fbirthday1.png?alt=media&token=6ffaad1c-9897-4549-954d-696d56af3582";
+
+    // Send progress updates via simple response after delays
+    setTimeout(() => console.log("⏳ Step 1: Preparing input..."), 1000);
+    setTimeout(() => console.log("⚙️ Step 2: Generating image..."), 2500);
+    setTimeout(() => console.log("📤 Step 3: Uploading to Firebase..."), 4000);
+
+    // After some time, send the mock response
+    setTimeout(() => {
+      console.log("✅ Enhancement completed.");
+      res.json({
+        success: true,
+        enhancedImageUrl: fixedImageUrl,
+        createdAt: new Date(),
+        promptUsed: prompt,
+      });
+    }, 5000);
+  } catch (err) {
+    console.error("Mock enhancement failed:", err);
+    res.status(500).json({ error: "Mock enhancement failed" });
+  }
+};
 
 // const modelInputSchemas = {
 //   'flux-kontext-apps/restore-image': 'input_image',
@@ -103,11 +136,13 @@ const fetch = require('node-fetch');
 // };
 
 // ✅ controllers/ModelController.js
+
+
 exports.getGeneratedImages = async (req, res) => {
   try {
     const userId = req.user.id;
-    const page = parseInt(req.query.page) || 1; // Default page = 1
-    const limit = parseInt(req.query.limit) || 10; // Default limit = 10
+    const page = parseInt(req.query.page) || 1; 
+    const limit = parseInt(req.query.limit) || 10; 
     const skip = (page - 1) * limit;
 
     console.log(`📥 Fetching generated images for userId: ${userId}, page: ${page}`);

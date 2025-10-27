@@ -4,6 +4,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, TouchableWi
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { EnhanceLoader } from "../../Components/Loader/EnhancLoader";
 import { apiFetch } from "../../apiFetch";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 // rn-tourguide imports
@@ -45,6 +46,9 @@ const SearchHeader = () => {
   const [quoteInput, setQuoteInput] = useState('""');
   const quoteInputRef = useRef(null);
 
+  // mdoell states
+  const [showLoader, setShowLoader] = useState(false);
+  const [payload, setPayload] = useState(null);
 
 
   const [layoutReady, setLayoutReady] = useState(false);
@@ -90,30 +94,52 @@ const SearchHeader = () => {
   }, [canStart, layoutReady]);
 
 
-  const handleSearch = async () => {
-    if (!search.trim()) return;
+  // const handleSearch = async () => {
+  //   if (!search.trim()) return;
 
-    const payload = {
-      query: search,
-      aspectRatio: aspectRatio.label,
-      resolution: resolution.value,
-      width,
-      height: heightPx,
-    };
-    console.log("🔹 Sending payload:", payload);
+  //   const payload = {
+  //     query: search,
+  //     aspectRatio: aspectRatio.label,
+  //     resolution: resolution.value,
+  //     width,
+  //     height: heightPx,
+  //   };
+  //   setPayload(payload);
+  //   setShowLoader(true);
+  //   console.log("🔹 Sending payload:", payload);
 
-    try {
-      const res = await apiFetch(`/ai/generate`, {
-        method: "POST",
-        body: JSON.stringify(payload),
-        headers: { "Content-Type": "application/json" },
-      });
-      const data = await res.json();
-      console.log("✅ AI Generated Response:", data);
-    } catch (error) {
-      console.error("❌ Error generating AI image:", error);
-    }
+  //   try {
+  //     const res = await apiFetch(`/ai/generate`, {
+  //       method: "POST",
+  //       body: JSON.stringify(payload),
+  //       headers: { "Content-Type": "application/json" },
+  //     });
+  //     const data = await res.json();
+  //     console.log("✅ AI Generated Response:", data);
+  //   } catch (error) {
+  //     console.error("❌ Error generating AI image:", error);
+  //   }
+  // };
+const handleSearch = async () => {
+  if (!search.trim()) return;
+
+  // 🛑 Prevent starting a new loader if one is already running
+  if (showLoader) return;
+
+  const payload = {
+    query: search,
+    aspectRatio: aspectRatio.label,
+    resolution: resolution.value,
+    width,
+    height: heightPx,
   };
+
+  console.log("🚀 Sending payload:", payload);
+  setPayload(payload);
+  setShowLoader(true); // triggers EnhanceLoader
+};
+
+
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -212,13 +238,14 @@ const SearchHeader = () => {
             </TourGuideZone>
 
             {/* ======= TOOLBAR ROW ======= */}
-            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center",marginVertical:10 }}>
+            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginVertical: 10 }}>
               <View style={[styles.toolbar, { alignItems: "center" }]}>
 
                 {/* 🖼️ IMAGE BUTTON (Step 3) */}
                 <TourGuideZone
                   zone={3}
-                  shape="circle"
+                  shape="rectangle"
+                  borderRadius={12}
                   maskOffset={6}
                   keepTooltipPosition
                   zonePadding={6}
@@ -231,7 +258,8 @@ const SearchHeader = () => {
                 {/* ✨ QUOTE BUTTON (Step 4) */}
                 <TourGuideZone
                   zone={4}
-                  shape="circle"
+                  shape="rectangle"
+                  borderRadius={12}
                   maskOffset={6}
                   keepTooltipPosition
                   zonePadding={6}
@@ -244,7 +272,8 @@ const SearchHeader = () => {
                 {/* ➕ SETTINGS BUTTON (Step 5) */}
                 <TourGuideZone
                   zone={5}
-                  shape="circle"
+                  shape="rectangle"
+                  borderRadius={12}
                   maskOffset={6}
                   keepTooltipPosition
                   zonePadding={6}
@@ -300,12 +329,19 @@ const SearchHeader = () => {
         <Modal visible={isQuoteModalVisible} animationType="fade" transparent>
           <View style={styles.quoteOverlay}>
             <View style={styles.quoteModal}>
+              {/* Close Button (Top Right) */}
+              <TouchableOpacity style={styles.closeButton} onPress={() => setIsQuoteModalVisible(false)}>
+                <Ionicons name="close" size={24} color="#fff" />
+              </TouchableOpacity>
+
               <Text style={styles.modalTitle}>Insert Quoted Text</Text>
 
               <TextInput
                 ref={quoteInputRef}
                 style={styles.quoteInputField}
                 multiline
+                numberOfLines={3}
+                textAlignVertical="top"
                 value={quoteInput}
                 onChangeText={setQuoteInput}
               />
@@ -315,13 +351,17 @@ const SearchHeader = () => {
                   <Text style={styles.quoteText}>“T”</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={[styles.iconBtn, { backgroundColor: colors.text }]} onPress={insertQuoteText}>
+                <TouchableOpacity
+                  style={[styles.iconBtn, { backgroundColor: colors.mutedText }]}
+                  onPress={insertQuoteText}
+                >
                   <Text style={{ color: colors.bodybackground, fontWeight: "700" }}>Insert</Text>
                 </TouchableOpacity>
               </View>
             </View>
           </View>
         </Modal>
+
         {/* Settings Modal (keep your existing modal content) */}
         <Modal visible={isModalVisible} animationType="slide" transparent>
           <View style={styles.overlay}>
@@ -388,7 +428,19 @@ const SearchHeader = () => {
             </View>
           </View>
         </Modal>
+
+        {showLoader && (
+          <EnhanceLoader
+            userId={"123"}
+            modelUsed="flux/cardify-v1"
+            payload={payload}
+            onFinish={() => setShowLoader(false)} // 👈 reset automatically after completion
+          />
+        )}
+
+
       </View>
+
     </TouchableWithoutFeedback>
   );
 };
@@ -432,14 +484,23 @@ const styles = StyleSheet.create({
   },
   quoteText: { color: colors.mutedText, fontWeight: "bold", fontSize: 15 },
   // "T" model styling
+  closeButton: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    zIndex: 1,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    borderRadius: 20,
+    padding: 4,
+  },
   quoteOverlay: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.5)",
+    // backgroundColor: "rgba(0,0,0,0.5)",
   },
   quoteModal: {
-    width: "85%",
+    width: "90%",
     backgroundColor: colors.cardsbackground,
     borderRadius: 14,
     padding: 20,
@@ -447,7 +508,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   quoteInputField: {
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.cardsbackground,
     borderRadius: 10,
     padding: 10,
     color: colors.text,

@@ -6,6 +6,8 @@ const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const cardRoutes = require("./routes/CardsRoutes");
 
+// const ModelRoutes = require("./routes/ModelRoutes");
+
 const FavouriteTempRoutes = require('./routes/FavouriteTempRoutes');
 
 const ModelRoutes = require('./routes/ModelRoutes');
@@ -24,6 +26,9 @@ app.use(express.json());
 app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use("/cards", cardRoutes);
+
+// app.use("/model", ModelRoutes);
+
 app.use('/favourites', FavouriteTempRoutes);
 
 app.use('/Model', ModelRoutes);

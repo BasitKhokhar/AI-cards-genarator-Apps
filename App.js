@@ -36,6 +36,7 @@ import HomeScreen from "./src/Screens/HomeScreen/HomeScreen";
 import TemplateDetail from "./src/Screens/HomeScreen/CardsTemplates";
 import CommunityCategoryTemplatesScreen from "./src/Screens/HomeScreen/CommunityTemplates";
 
+import AITemplatesResultScreen from "./src/Screens/HomeScreen/AITemplateResultsScreen";
 
 import CategoriesScreen from "./src/Screens/HomeScreen/CardsCategories";
 import SearchResultsScreen from "./src/Screens/HomeScreen/SearchResultsScreen";
@@ -328,6 +329,9 @@ const App = () => {
                 <Stack.Screen name="Profile" component={UserScreen} options={{ title: "Profile" }} />
 
  <Stack.Screen name="CommunityTemplatesScreen" component={CommunityCategoryTemplatesScreen}  options={{ headerShown: false }} />
+
+                <Stack.Screen name="AitemplateResultsScreen" component={AITemplatesResultScreen} options={{ title: "AI Templates Result Screen", ...commonHeaderOptions, }} />
+
 
                 <Stack.Screen name="PaymentmethodsScreen" component={PaymentSelectionScreen} options={{ title: "Payment Methods", ...commonHeaderOptions, }} />
                 <Stack.Screen name="jazzcashscreenScreen" component={JazzCashPaymentScreen} options={{ title: "JazzCash", ...commonHeaderOptions, }} />
