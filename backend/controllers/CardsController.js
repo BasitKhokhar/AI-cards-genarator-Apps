@@ -255,3 +255,97 @@ exports.getTemplatesBySpecificCategory = async (req, res) => {
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
+
+
+exports.getRelatedTemplates = async (req, res) => {
+  try {
+    const templateId = parseInt(req.params.id);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    console.log("📥 Incoming Related Template Request:", { templateId, page, limit });
+
+    if (isNaN(templateId)) {
+      console.log("❌ Invalid Template ID");
+      return res.status(400).json({ message: "Invalid template ID" });
+    }
+
+    const baseTemplate = await prisma.cardTemplate.findUnique({
+      where: { id: templateId },
+      select: { id: true, categoryId: true, prompt: true, title: true },
+    });
+
+    if (!baseTemplate) {
+      console.log("❌ Base template not found");
+      return res.status(404).json({ message: "Template not found" });
+    }
+
+    console.log("📑 Base Template:", baseTemplate);
+
+    const searchKeywords = baseTemplate.prompt
+      ? baseTemplate.prompt.split(" ").slice(0, 3).join(" ")
+      : baseTemplate.title;
+
+    console.log("🔍 Searching using keywords:", searchKeywords);
+
+    const templates = await prisma.$queryRawUnsafe(
+      `
+      SELECT id, title, description, imageUrl, aspectRatio, uses, categoryId, createdAt
+      FROM cardTemplate
+      WHERE id != ?
+      AND (
+        categoryId = ?
+        OR LOWER(prompt) LIKE LOWER(?)
+        OR LOWER(title) LIKE LOWER(?)
+      )
+      ORDER BY uses DESC
+      LIMIT ? OFFSET ?
+      `,
+      templateId,
+      baseTemplate.categoryId,
+      `%${searchKeywords}%`,
+      `%${searchKeywords}%`,
+      limit,
+      skip
+    );
+
+    console.log(`🖼️ Found ${templates.length} related templates`);
+
+    const totalCount = await prisma.$queryRawUnsafe(
+      `
+      SELECT COUNT(*) as count
+      FROM cardTemplate
+      WHERE id != ?
+      AND (
+        categoryId = ?
+        OR LOWER(prompt) LIKE LOWER(?)
+        OR LOWER(title) LIKE LOWER(?)
+      )
+      `,
+      templateId,
+      baseTemplate.categoryId,
+      `%${searchKeywords}%`,
+      `%${searchKeywords}%`
+    );
+
+    const total = Number(totalCount[0]?.count || 0);
+    console.log("📊 Total related:", total);
+
+    const cleanTemplates = templates.map((t) => ({
+      ...t,
+      id: Number(t.id),
+      categoryId: Number(t.categoryId),
+      uses: Number(t.uses || 0),
+      createdAt: new Date(t.createdAt).toISOString(),
+    }));
+
+    console.log("✅ Returning clean templates:", cleanTemplates.length);
+    res.status(200).json({
+      templates: cleanTemplates,
+      hasMore: skip + limit < total,
+    });
+  } catch (err) {
+    console.error("❌ Error in getRelatedTemplates:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};

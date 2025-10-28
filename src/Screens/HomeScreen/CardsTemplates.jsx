@@ -16,6 +16,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { apiFetch } from "../../apiFetch";
 import { colors } from "../../Themes/colors";
+import { EnhanceLoader } from "../../Components/Loader/EnhancLoader";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
@@ -33,6 +34,10 @@ const TemplateDetail = ({ route }) => {
   const [showCustomSize, setShowCustomSize] = useState(false);
   const [width, setWidth] = useState("1024");
   const [height, setHeight] = useState("1024");
+
+
+const [showLoader, setShowLoader] = useState(false);
+
 
   const navigation = useNavigation();
 
@@ -101,27 +106,42 @@ const TemplateDetail = ({ route }) => {
     }
   }, [template?.imageUrl]);
 
-  const handleGenerate = async () => {
-    const payload = { templateId, prompt, aspectRatio, resolution, width, height };
-    console.log("payload sending to model backend",payload)
-    try {
-      const res = await apiFetch(
-        "/generate",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        },
-        navigation
-      );
-      if (res.ok) {
-        const result = await res.json();
-        console.log("✅ Generated result:", result);
-      }
-    } catch (err) {
-      console.error("⚠️ Error generating:", err);
-    }
+  // const handleGenerate = async () => {
+  //   const payload = { templateId, prompt, aspectRatio, resolution, width, height };
+  //   console.log("payload sending to model backend",payload)
+  //   try {
+  //     const res = await apiFetch(
+  //       "/generate",
+  //       {
+  //         method: "POST",
+  //         headers: { "Content-Type": "application/json" },
+  //         body: JSON.stringify(payload),
+  //       },
+  //       navigation
+  //     );
+  //     if (res.ok) {
+  //       const result = await res.json();
+  //       console.log("✅ Generated result:", result);
+  //     }
+  //   } catch (err) {
+  //     console.error("⚠️ Error generating:", err);
+  //   }
+  // };
+const handleGenerate = async () => {
+  const payload = {
+    templateId,
+    prompt,
+    aspectRatio,
+    resolution,
+    width,
+    height,
   };
+
+  console.log("🚀 Starting enhancement with payload:", payload);
+  setShowLoader(true);
+};
+
+
 
   const toggleFavourite = async () => {
     if (loadingFav) return;
@@ -292,6 +312,22 @@ const TemplateDetail = ({ route }) => {
             <Text style={styles.buttonText}>⚡ Generate</Text>
           </LinearGradient>
         </TouchableOpacity>
+        {showLoader && (
+  <EnhanceLoader
+    userId={"123"} // or your actual logged-in user ID
+    modelUsed="flux/cardify-v1"
+    payload={{
+      templateId,
+      query: prompt,
+      aspectRatio,
+      resolution,
+      width,
+      height,
+    }}
+    onFinish={() => setShowLoader(false)}
+  />
+)}
+
       </ScrollView>
     </View>
   );

@@ -6,8 +6,10 @@ const {
   getTemplatesByCategory,getTemplatesBySpecificCategory,
   getTemplateById,
   getTrendingTemplates,
-  searchTemplates,
+  searchTemplates,getRelatedTemplates
 } = require("../controllers/CardsController");
+
+router.get("/templates/:id/related",verifyToken ,getRelatedTemplates);
 
 // ✅ Get all categories
 router.get("/categories", verifyToken, getCategories);
@@ -25,5 +27,8 @@ router.get("/templates/:id", verifyToken, getTemplateById);
 
 // ✅ Get trending templates (for infinite scroll)
 router.get("/trendingtemplates/home", verifyToken, getTrendingTemplates);
+
+
+
 
 module.exports = router;

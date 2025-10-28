@@ -1,4 +1,6 @@
 import { colors } from "../../Themes/colors";
+import { AnimatePresence, MotiView } from "moti";
+
 import React, { useState, useRef, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, TouchableWithoutFeedback, ScrollView, Modal, Dimensions, } from "react-native";
 import * as ImagePicker from "expo-image-picker";
@@ -13,7 +15,7 @@ import { TourGuideZone, TourGuideZoneByPosition, useTourGuideController, } from 
 const { height } = Dimensions.get("window");
 
 const aspectRatios = [
-  { label: "Auto", w: "", h: "" },
+  { label: "Auto", w: "", h: "", icon: "auto-fix" },
   { label: "1:1", w: 1024, h: 1024, icon: "square-outline" },
   { label: "16:9", w: 1920, h: 1080, icon: "rectangle-outline" },
   { label: "9:16", w: 1080, h: 1920, icon: "cellphone" },
@@ -120,24 +122,24 @@ const SearchHeader = () => {
   //     console.error("❌ Error generating AI image:", error);
   //   }
   // };
-const handleSearch = async () => {
-  if (!search.trim()) return;
+  const handleSearch = async () => {
+    if (!search.trim()) return;
 
-  // 🛑 Prevent starting a new loader if one is already running
-  if (showLoader) return;
+    // 🛑 Prevent starting a new loader if one is already running
+    if (showLoader) return;
 
-  const payload = {
-    query: search,
-    aspectRatio: aspectRatio.label,
-    resolution: resolution.value,
-    width,
-    height: heightPx,
+    const payload = {
+      query: search,
+      aspectRatio: aspectRatio.label,
+      resolution: resolution.value,
+      width,
+      height: heightPx,
+    };
+
+    console.log("🚀 Sending payload:", payload);
+    setPayload(payload);
+    setShowLoader(true); // triggers EnhanceLoader
   };
-
-  console.log("🚀 Sending payload:", payload);
-  setPayload(payload);
-  setShowLoader(true); // triggers EnhanceLoader
-};
 
 
 
@@ -326,41 +328,63 @@ const handleSearch = async () => {
         </TourGuideZone>
 
         {/* Model for "T" */}
-        <Modal visible={isQuoteModalVisible} animationType="fade" transparent>
-          <View style={styles.quoteOverlay}>
-            <View style={styles.quoteModal}>
-              {/* Close Button (Top Right) */}
-              <TouchableOpacity style={styles.closeButton} onPress={() => setIsQuoteModalVisible(false)}>
-                <Ionicons name="close" size={24} color="#fff" />
-              </TouchableOpacity>
-
-              <Text style={styles.modalTitle}>Insert Quoted Text</Text>
-
-              <TextInput
-                ref={quoteInputRef}
-                style={styles.quoteInputField}
-                multiline
-                numberOfLines={3}
-                textAlignVertical="top"
-                value={quoteInput}
-                onChangeText={setQuoteInput}
-              />
-
-              <View style={styles.quoteButtonsRow}>
-                <TouchableOpacity style={styles.iconBtn} onPress={addQuotesInModal}>
-                  <Text style={styles.quoteText}>“T”</Text>
-                </TouchableOpacity>
-
+        <AnimatePresence>
+          {isQuoteModalVisible && (
+            <MotiView
+              from={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ type: "timing", duration: 200 }}
+              style={styles.quoteOverlay}
+            >
+              <MotiView
+                from={{ translateY: 300, opacity: 0 }}
+                animate={{ translateY: 0, opacity: 1 }}
+                exit={{ translateY: 300, opacity: 0 }}
+                transition={{ type: "timing", duration: 400 }}
+                style={styles.quoteModal}
+              >
+                {/* Close Button (Top Right) */}
                 <TouchableOpacity
-                  style={[styles.iconBtn, { backgroundColor: colors.mutedText }]}
-                  onPress={insertQuoteText}
+                  style={styles.closeButton}
+                  onPress={() => setIsQuoteModalVisible(false)}
                 >
-                  <Text style={{ color: colors.bodybackground, fontWeight: "700" }}>Insert</Text>
+                  <Ionicons name="close" size={24} color="#fff" />
                 </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </Modal>
+
+                <Text style={styles.modalTitle}>Insert Quoted Text</Text>
+
+                <TextInput
+                  ref={quoteInputRef}
+                  placeholder="Describe your card design..."
+                  placeholderTextColor={colors.mutedText}
+                  style={styles.quoteInputField}
+                  multiline
+                  numberOfLines={3}
+                  textAlignVertical="top"
+                  value={quoteInput}
+                  onChangeText={setQuoteInput}
+                />
+
+                <View style={styles.quoteButtonsRow}>
+                  <TouchableOpacity style={styles.iconBtn} onPress={addQuotesInModal}>
+                    <Text style={styles.quoteText}>“T”</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={[styles.iconBtn, { backgroundColor: colors.mutedText }]}
+                    onPress={insertQuoteText}
+                  >
+                    <Text style={{ color: colors.bodybackground, fontWeight: "700" }}>
+                      Insert
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </MotiView>
+            </MotiView>
+          )}
+        </AnimatePresence>
+
 
         {/* Settings Modal (keep your existing modal content) */}
         <Modal visible={isModalVisible} animationType="slide" transparent>
@@ -494,18 +518,20 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   quoteOverlay: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    // backgroundColor: "rgba(0,0,0,0.5)",
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "flex-end", // bottom slide
   },
   quoteModal: {
-    width: "90%",
-    backgroundColor: colors.cardsbackground,
-    borderRadius: 14,
+    backgroundColor: colors.cardsbackground, marginHorizontal: 10,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     padding: 20,
-    borderWidth: 1,
-    borderColor: colors.border,
+    minHeight: 220,
   },
   quoteInputField: {
     backgroundColor: colors.cardsbackground,
