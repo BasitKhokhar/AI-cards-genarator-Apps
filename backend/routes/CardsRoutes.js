@@ -28,7 +28,4 @@ router.get("/templates/:id", verifyToken, getTemplateById);
 // ✅ Get trending templates (for infinite scroll)
 router.get("/trendingtemplates/home", verifyToken, getTrendingTemplates);
 
-
-
-
 module.exports = router;

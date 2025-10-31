@@ -14,6 +14,7 @@ import * as FileSystem from "expo-file-system";
 import * as MediaLibrary from "expo-media-library";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { MotiView, AnimatePresence } from "moti";
+import Loading from "../../Components/Loader/Loading";
 import Loader from "../../Components/Loader/Loader";
 import { LinearGradient } from "expo-linear-gradient";
 import { colors } from "../../Themes/colors";
@@ -236,12 +237,9 @@ const EnhancedImageGallery = ({ navigation }) => {
               transition={{ type: "timing", duration: 400 }}
               style={[styles.loaderBox, { backgroundColor: colors.cardsbackground }]}
             >
-              <MotiView
-                from={{ rotate: "0deg" }}
-                animate={{ rotate: "360deg" }}
-                transition={{ loop: true, type: "timing", duration: 1200 }}
-                style={[styles.loaderRing, { borderTopColor: colors.primary }]}
-              />
+              <View style={styles.loaderRing}>
+                <Loading />
+              </View>
               <Text style={styles.loaderText}>Downloading...</Text>
             </MotiView>
           </MotiView>
@@ -364,12 +362,6 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   loaderRing: {
-    width: 55,
-    height: 55,
-    borderRadius: 30,
-    borderWidth: 4,
-    backgroundColor: colors.bodybackground,
-    borderColor: "rgba(255,255,255,0.1)",
     marginBottom: 12,
   },
   loaderText: {

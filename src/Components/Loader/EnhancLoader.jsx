@@ -145,6 +145,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { MotiView, AnimatePresence } from "moti";
+import Loading from "./Loading";
 import Svg, { Circle } from "react-native-svg";
 import { useNavigation } from "@react-navigation/native";
 import { colors } from "../../Themes/colors";
@@ -163,63 +164,63 @@ export const EnhanceLoader = ({ userId, modelUsed, payload, onFinish }) => {
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (circumference * progress) / 100;
 
-useEffect(() => {
-  // Progress text stages (match backend)
-  const stages = [
-    { t: 0, text: "Preparing input..." },
-    { t: 4000, text: "Running AI model..." },
-    { t: 7000, text: "Processing output..." },
-    { t: 9000, text: "Finalizing..." },
-  ];
-  stages.forEach((s) => setTimeout(() => setProgressText(s.text), s.t));
+  useEffect(() => {
+    // Progress text stages (match backend)
+    const stages = [
+      { t: 0, text: "Preparing input..." },
+      { t: 4000, text: "Running AI model..." },
+      { t: 7000, text: "Processing output..." },
+      { t: 9000, text: "Finalizing..." },
+    ];
+    stages.forEach((s) => setTimeout(() => setProgressText(s.text), s.t));
 
-  // Simulate smooth progress over 10 seconds
-  const totalDuration = 10000; // 10s same as backend
-  const intervalTime = 100; // update every 100ms
-  let current = 0;
-  const increment = 100 / (totalDuration / intervalTime); // 1% every 100ms = 10s total
+    // Simulate smooth progress over 10 seconds
+    const totalDuration = 10000; // 10s same as backend
+    const intervalTime = 100; // update every 100ms
+    let current = 0;
+    const increment = 100 / (totalDuration / intervalTime); // 1% every 100ms = 10s total
 
-  const interval = setInterval(() => {
-    current += increment;
-    if (current >= 100) current = 100;
-    setProgress(current);
-  }, intervalTime);
+    const interval = setInterval(() => {
+      current += increment;
+      if (current >= 100) current = 100;
+      setProgress(current);
+    }, intervalTime);
 
-  // Call backend simultaneously
-  const callEnhancement = async () => {
-    try {
-      const res = await apiFetch(`/Model/mock-enhance`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, modelUsed, ...payload }),
-      });
-      const data = await res.json();
-
-      // Stop loader when both progress = 100 and API done
-      setTimeout(() => {
-        clearInterval(interval);
-        setShowLoader(false);
-        navigation.navigate("AitemplateResultsScreen", {
-          imageUrl: data.enhancedImageUrl,
-          prompt: payload.query,
-          model: modelUsed,
-          createdAt: data.createdAt,
-          resolution:payload.resolution,
-          aspectratio:payload.aspectRatio,
+    // Call backend simultaneously
+    const callEnhancement = async () => {
+      try {
+        const res = await apiFetch(`/Model/mock-enhance`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId, modelUsed, ...payload }),
         });
-        if (onFinish) onFinish();
-      }, 1000); // small delay for smoother finish
-    } catch (err) {
-      clearInterval(interval);
-      setProgressText("⚠️ Network or server error");
-      setTimeout(() => setShowLoader(false), 2000);
-    }
-  };
+        const data = await res.json();
 
-  callEnhancement();
+        // Stop loader when both progress = 100 and API done
+        setTimeout(() => {
+          clearInterval(interval);
+          setShowLoader(false);
+          navigation.navigate("AitemplateResultsScreen", {
+            imageUrl: data.enhancedImageUrl,
+            prompt: payload.query,
+            model: modelUsed,
+            createdAt: data.createdAt,
+            resolution: payload.resolution,
+            aspectratio: payload.aspectRatio,
+          });
+          if (onFinish) onFinish();
+        }, 1000); // small delay for smoother finish
+      } catch (err) {
+        clearInterval(interval);
+        setProgressText("⚠️ Network or server error");
+        setTimeout(() => setShowLoader(false), 2000);
+      }
+    };
 
-  return () => clearInterval(interval);
-}, []);
+    callEnhancement();
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <AnimatePresence>
@@ -238,19 +239,19 @@ useEffect(() => {
             style={styles.card}
           >
             {/* Circular progress indicator */}
-            <View style={{ justifyContent: "center", alignItems: "center" }}>
-              <Svg width={size} height={size}>
-                {/* Background ring */}
-                <Circle
+            {/* <View style={{ justifyContent: "center", alignItems: "center" }}>
+              <Svg width={size} height={size}> */}
+            {/* Background ring */}
+            {/* <Circle
                   stroke={colors.border}
                   fill="none"
                   cx={size / 2}
                   cy={size / 2}
                   r={radius}
                   strokeWidth={strokeWidth}
-                />
-                {/* Foreground progress ring */}
-                <Circle
+                /> */}
+            {/* Foreground progress ring */}
+            {/* <Circle
                   stroke={colors.primary}
                   fill="none"
                   cx={size / 2}
@@ -262,18 +263,20 @@ useEffect(() => {
                   strokeLinecap="round"
                   transform={`rotate(-90 ${size / 2} ${size / 2})`}
                 />
-              </Svg>
+              </Svg> */}
 
-              {/* Rotating overlay for AI “movement” */}
-              <MotiView
+            {/* Rotating overlay for AI “movement” */}
+            {/* <MotiView
                 from={{ rotate: "0deg" }}
                 animate={{ rotate: "360deg" }}
                 transition={{ loop: true, type: "timing", duration: 1500 }}
                 style={styles.rotatorOverlay}
               />
               <Text style={styles.percentage}>{progress}%</Text>
+            </View> */}
+            <View style={styles.loaderRing}>
+              <Loading />
             </View>
-
             {/* Changing status text */}
             <Text style={styles.text}>{progressText}</Text>
           </MotiView>
@@ -286,7 +289,7 @@ useEffect(() => {
 const styles = StyleSheet.create({
   overlay: {
     position: "absolute",
-    backgroundColor: "rgba(0,0,0,0.6)",
+    // backgroundColor: "rgba(0,0,0,0.6)",
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
@@ -298,6 +301,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: "center",
     width: 220,
+     borderWidth: 1.5,
+    borderColor: colors.border,
   },
   rotatorOverlay: {
     position: "absolute",
@@ -313,6 +318,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "700",
     color: colors.primary,
+  },
+   loaderRing: {
+    marginBottom: 12,
   },
   text: {
     color: colors.text,

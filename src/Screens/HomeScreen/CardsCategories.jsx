@@ -1,4 +1,3 @@
-
 // import React, { useEffect, useState, useCallback } from "react";
 // import {
 //   View,
@@ -12,6 +11,9 @@
 // import { useNavigation } from "@react-navigation/native";
 // import { apiFetch } from "../../apiFetch";
 // import SearchTemplates from "./SearchTemplate";
+// import { colors } from "../../Themes/colors"; 
+// import Loader from "../../Components/Loader/Loader";
+
 
 // const FIXED_HEIGHT = 160;
 // const PAGE_SIZE = 5;
@@ -19,15 +21,18 @@
 // const CategoriesScreen = () => {
 //   const [categories, setCategories] = useState([]);
 //   const [refreshing, setRefreshing] = useState(false);
+
+//     const [loading, setLoading] = useState(false);
 //   const navigation = useNavigation();
 
-//   // ✅ Load categories (without templates first)
 //   const loadCategories = async () => {
 //     try {
+//       setLoading(true);
 //       const res = await apiFetch("/cards/categories", {}, navigation);
 //       if (!res.ok) throw new Error("Failed to load categories");
 
 //       const data = await res.json();
+//       setLoading(false);
 //       const formatted = data.map((cat) => ({
 //         ...cat,
 //         templates: [],
@@ -38,7 +43,6 @@
 
 //       setCategories(formatted);
 
-//       // Load first page for each category
 //       for (const cat of formatted) {
 //         fetchMoreTemplates(cat.id, 1);
 //       }
@@ -47,7 +51,6 @@
 //     }
 //   };
 
-//   // ✅ Fetch paginated templates + calculate dynamic width
 //   const fetchMoreTemplates = async (categoryId, pageNum) => {
 //     try {
 //       setCategories((prev) =>
@@ -67,7 +70,6 @@
 //       let fetched = data.templates || [];
 //       const hasMore = data.hasMore;
 
-//       // ✅ Calculate dynamic width based on image ratio
 //       const processed = await Promise.all(
 //         fetched.map(async (t) => {
 //           if (!t.imageUrl) return { ...t, calcWidth: FIXED_HEIGHT };
@@ -87,7 +89,6 @@
 //         })
 //       );
 
-//       // ✅ Update category state
 //       setCategories((prev) =>
 //         prev.map((cat) =>
 //           cat.id === categoryId
@@ -119,7 +120,6 @@
 //     }
 //   };
 
-//   // ✅ Pull to refresh
 //   const onRefresh = useCallback(async () => {
 //     setRefreshing(true);
 //     await loadCategories();
@@ -130,7 +130,16 @@
 //     loadCategories();
 //   }, []);
 
-//   // ✅ Template item (just image, dynamic width)
+// if (loading) {
+//     return (
+//       <View style={styles.loaderContainer}>
+//         <Loader />
+//       </View>
+//     );
+//   }
+
+
+
 //   const renderTemplate = ({ item }) => (
 //     <TouchableOpacity
 //       onPress={() =>
@@ -148,7 +157,6 @@
 //     </TouchableOpacity>
 //   );
 
-//   // ✅ Category block
 //   const renderCategory = (cat) => (
 //     <View key={cat.id} style={styles.categoryBlock}>
 //       <Text style={styles.categoryTitle}>{cat.name}</Text>
@@ -167,7 +175,7 @@
 //         ListFooterComponent={
 //           cat.loadingMore ? (
 //             <View style={styles.loader}>
-//               <Text style={{ color: "#8b3dff" }}>Loading...</Text>
+//               {/* <Text style={{ color: colors.primary }}>Loading...</Text> */}
 //             </View>
 //           ) : null
 //         }
@@ -186,7 +194,7 @@
 //           <RefreshControl
 //             refreshing={refreshing}
 //             onRefresh={onRefresh}
-//             tintColor="#8b3dff"
+//             tintColor={colors.primary}
 //           />
 //         }
 //         showsVerticalScrollIndicator={false}
@@ -196,17 +204,24 @@
 // };
 
 // const styles = StyleSheet.create({
+//   loaderContainer: {
+//     flex: 1,
+//     justifyContent: "center",
+//     alignItems: "center",
+//     paddingHorizontal: 16,
+//     backgroundColor: colors.bodybackground,
+//   },
 //   container: {
 //     flex: 1,
-//     backgroundColor: "#0d0d0d",
+//     backgroundColor: colors.bodybackground, // ✅ from colors
 //     padding: 10,
 //     paddingLeft: 16,
 //   },
 //   categoryBlock: {
 //     marginBottom: 25,
-//     backgroundColor: "#1a1a1a",
+//     backgroundColor: colors.cardsbackground, // ✅ from colors
 //     borderWidth: 1,
-//     borderColor: "#4d4d4d",
+//     borderColor: colors.border, // ✅ from colors
 //     padding: 10,
 //     borderRadius: 12,
 //   },
@@ -214,7 +229,7 @@
 //     fontSize: 20,
 //     fontWeight: "bold",
 //     marginBottom: 10,
-//     color: "white",
+//     color: colors.text,
 //   },
 //   cardImage: {
 //     borderRadius: 12,
@@ -230,6 +245,7 @@
 
 // export default CategoriesScreen;
 
+
 import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
@@ -239,24 +255,25 @@ import {
   Image,
   StyleSheet,
   RefreshControl,
+  Dimensions,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { apiFetch } from "../../apiFetch";
 import SearchTemplates from "./SearchTemplate";
-import { colors } from "../../Themes/colors"; // ✅ imported colors
+import { colors } from "../../Themes/colors";
 import Loader from "../../Components/Loader/Loader";
-
+import { MotiView } from "moti";
 
 const FIXED_HEIGHT = 160;
 const PAGE_SIZE = 5;
+const SCREEN_WIDTH = Dimensions.get("window").width;
 
 const CategoriesScreen = () => {
   const [categories, setCategories] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-
-    const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
-  
+
   const loadCategories = async () => {
     try {
       setLoading(true);
@@ -264,7 +281,6 @@ const CategoriesScreen = () => {
       if (!res.ok) throw new Error("Failed to load categories");
 
       const data = await res.json();
-      setLoading(false);
       const formatted = data.map((cat) => ({
         ...cat,
         templates: [],
@@ -274,12 +290,11 @@ const CategoriesScreen = () => {
       }));
 
       setCategories(formatted);
-
-      for (const cat of formatted) {
-        fetchMoreTemplates(cat.id, 1);
-      }
+      for (const cat of formatted) fetchMoreTemplates(cat.id, 1);
     } catch (err) {
       console.error("⚠️ Error fetching categories:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -299,19 +314,14 @@ const CategoriesScreen = () => {
       if (!res.ok) throw new Error("Failed to fetch templates");
 
       const data = await res.json();
-      let fetched = data.templates || [];
+      const fetched = data.templates || [];
       const hasMore = data.hasMore;
 
       const processed = await Promise.all(
         fetched.map(async (t) => {
-          if (!t.imageUrl) return { ...t, calcWidth: FIXED_HEIGHT };
           try {
             const { width, height } = await new Promise((resolve, reject) =>
-              Image.getSize(
-                t.imageUrl,
-                (w, h) => resolve({ width: w, height: h }),
-                reject
-              )
+              Image.getSize(t.imageUrl, (w, h) => resolve({ width: w, height: h }), reject)
             );
             const aspectRatio = width / height;
             return { ...t, calcWidth: FIXED_HEIGHT * aspectRatio };
@@ -362,58 +372,130 @@ const CategoriesScreen = () => {
     loadCategories();
   }, []);
 
-if (loading) {
+  const renderTemplate = ({ item }) => (
+    <TouchableOpacity
+      activeOpacity={0.85}
+      onPress={() => navigation.navigate("templatefeatures", { templateId: item.id })}
+    >
+      <MotiView
+        from={{ opacity: 0, scale: 0.97 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ type: "timing", duration: 300 }}
+        style={{ marginRight: 15 }}
+      >
+        <Image
+          source={{ uri: item.imageUrl || "https://via.placeholder.com/150" }}
+          style={[
+            styles.cardImage,
+            { width: item.calcWidth ?? FIXED_HEIGHT, height: FIXED_HEIGHT },
+          ]}
+          resizeMode="cover"
+        />
+      </MotiView>
+    </TouchableOpacity>
+  );
+
+  // 🧩 Category renderer with skeletons
+  const renderCategory = (cat) => (
+    <View key={cat.id} style={styles.categoryBlock}>
+      <Text style={styles.categoryTitle}>{cat.name}</Text>
+
+      {cat.templates.length === 0 && !cat.loadingMore ? (
+        // 🦴 Skeleton placeholders like screenshot
+        <View style={{ flexDirection: "row", paddingLeft: 4 }}>
+          {Array.from({ length: 3 }).map((_, idx) => (
+            <MotiView
+              key={idx}
+              from={{ opacity: 0.4 }}
+              animate={{ opacity: 1 }}
+              transition={{
+                loop: true,
+                type: "timing",
+                duration: 1000,
+                delay: idx * 150,
+                repeatReverse: true,
+              }}
+              style={styles.skeletonCard}
+            />
+          ))}
+        </View>
+      ) : (
+        <FlatList
+          horizontal
+          data={cat.templates}
+          keyExtractor={(item, idx) => `${cat.id}-${item.id || idx}`}
+          renderItem={renderTemplate}
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ paddingRight: 20 }}
+          snapToAlignment="start"
+          decelerationRate="fast"
+          snapToInterval={SCREEN_WIDTH * 0.42 + 12}
+          getItemLayout={(_, index) => ({
+            length: SCREEN_WIDTH * 0.42 + 12,
+            offset: (SCREEN_WIDTH * 0.42 + 12) * index,
+            index,
+          })}
+          onEndReached={() => {
+            if (!cat.loadingMore && cat.hasMore) {
+              fetchMoreTemplates(cat.id, cat.page + 1);
+            }
+          }}
+          onEndReachedThreshold={0.3}
+          ListFooterComponent={
+            cat.loadingMore ? (
+              <MotiView
+                from={{ opacity: 0.4 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                  loop: true,
+                  type: "timing",
+                  duration: 800,
+                  repeatReverse: true,
+                }}
+                style={styles.skeletonCard}
+              />
+            ) : null
+          }
+        />
+      )}
+    </View>
+  );
+
+  // Outer skeleton while categories load
+  const renderCategorySkeleton = () => (
+    <View>
+      {Array.from({ length: 3 }).map((_, i) => (
+        <View key={i} style={styles.categoryBlock}>
+          <View style={[styles.skelTitle, { marginBottom: 10 }]} />
+          <View style={{ flexDirection: "row", paddingLeft: 4 }}>
+            {Array.from({ length: 3 }).map((_, idx) => (
+              <MotiView
+                key={idx}
+                from={{ opacity: 0.4 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                  loop: true,
+                  type: "timing",
+                  duration: 1000,
+                  delay: idx * 150,
+                  repeatReverse: true,
+                }}
+                style={styles.skeletonCard}
+              />
+            ))}
+          </View>
+        </View>
+      ))}
+    </View>
+  );
+
+  if (loading) {
     return (
       <View style={styles.loaderContainer}>
         <Loader />
       </View>
     );
   }
-
-
-
-  const renderTemplate = ({ item }) => (
-    <TouchableOpacity
-      onPress={() =>
-        navigation.navigate("templatefeatures", { templateId: item.id })
-      }
-    >
-      <Image
-        source={{ uri: item.imageUrl || "https://via.placeholder.com/150" }}
-        style={[
-          styles.cardImage,
-          { width: item.calcWidth, height: FIXED_HEIGHT },
-        ]}
-        resizeMode="cover"
-      />
-    </TouchableOpacity>
-  );
-
-  const renderCategory = (cat) => (
-    <View key={cat.id} style={styles.categoryBlock}>
-      <Text style={styles.categoryTitle}>{cat.name}</Text>
-      <FlatList
-        horizontal
-        data={cat.templates}
-        keyExtractor={(item, idx) => `${cat.id}-${item.id || idx}`}
-        renderItem={renderTemplate}
-        showsHorizontalScrollIndicator={false}
-        onEndReached={() => {
-          if (!cat.loadingMore && cat.hasMore) {
-            fetchMoreTemplates(cat.id, cat.page + 1);
-          }
-        }}
-        onEndReachedThreshold={0.3}
-        ListFooterComponent={
-          cat.loadingMore ? (
-            <View style={styles.loader}>
-              {/* <Text style={{ color: colors.primary }}>Loading...</Text> */}
-            </View>
-          ) : null
-        }
-      />
-    </View>
-  );
 
   return (
     <View style={styles.container}>
@@ -422,6 +504,9 @@ if (loading) {
         data={categories}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => renderCategory(item)}
+        ListEmptyComponent={
+          categories.length === 0 ? renderCategorySkeleton() : null
+        }
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -440,38 +525,49 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 16,
     backgroundColor: colors.bodybackground,
   },
   container: {
     flex: 1,
-    backgroundColor: colors.bodybackground, // ✅ from colors
-    padding: 10,
-    paddingLeft: 16,
+    backgroundColor: colors.bodybackground,
+    paddingHorizontal: 16,
+    paddingTop: 10,
   },
   categoryBlock: {
     marginBottom: 25,
-    backgroundColor: colors.cardsbackground, // ✅ from colors
+    backgroundColor: colors.cardsbackground,
     borderWidth: 1,
-    borderColor: colors.border, // ✅ from colors
-    padding: 10,
+    borderColor: colors.border,
+    padding: 12,
     borderRadius: 12,
   },
   categoryTitle: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: "600",
     marginBottom: 10,
     color: colors.text,
   },
   cardImage: {
     borderRadius: 12,
-    marginRight: 15,
     marginBottom: 15,
+    backgroundColor: colors.cardsbackground,
+    width: SCREEN_WIDTH * 0.42,
+    height: FIXED_HEIGHT,
   },
-  loader: {
-    justifyContent: "center",
-    alignItems: "center",
-    width: 100,
+  // 🦴 Skeleton Styles
+  skelTitle: {
+    backgroundColor: colors.border,
+    width: 120,
+    height: 18,
+    borderRadius: 8,
+  },
+  skeletonCard: {
+    width: 140,
+    height: FIXED_HEIGHT,
+    borderRadius: 12,
+    marginRight: 12,
+    backgroundColor: colors.border,
+    opacity: 0.3,
   },
 });
 

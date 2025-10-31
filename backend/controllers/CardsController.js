@@ -263,13 +263,41 @@ exports.getRelatedTemplates = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
+
     console.log("📥 Incoming Related Template Request:", { templateId, page, limit });
 
+    // 🟡 CASE 1: No valid template ID — return popular templates
     if (isNaN(templateId)) {
-      console.log("❌ Invalid Template ID");
-      return res.status(400).json({ message: "Invalid template ID" });
+      console.log("⚠️ No template ID provided, returning popular templates instead.");
+      const templates = await prisma.cardTemplate.findMany({
+        orderBy: { uses: "desc" },
+        take: limit,
+        skip,
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          imageUrl: true,
+          aspectRatio: true,
+          uses: true,
+          categoryId: true,
+          createdAt: true,
+        },
+      });
+
+      return res.status(200).json({
+        templates: templates.map((t) => ({
+          ...t,
+          id: Number(t.id),
+          uses: Number(t.uses || 0),
+          categoryId: Number(t.categoryId),
+          createdAt: new Date(t.createdAt).toISOString(),
+        })),
+        hasMore: false,
+      });
     }
 
+    // 🟢 CASE 2: Valid template ID — fetch related ones
     const baseTemplate = await prisma.cardTemplate.findUnique({
       where: { id: templateId },
       select: { id: true, categoryId: true, prompt: true, title: true },
@@ -280,13 +308,11 @@ exports.getRelatedTemplates = async (req, res) => {
       return res.status(404).json({ message: "Template not found" });
     }
 
-    console.log("📑 Base Template:", baseTemplate);
-
     const searchKeywords = baseTemplate.prompt
       ? baseTemplate.prompt.split(" ").slice(0, 3).join(" ")
       : baseTemplate.title;
 
-    console.log("🔍 Searching using keywords:", searchKeywords);
+    console.log("🔍 Searching related using keywords:", searchKeywords);
 
     const templates = await prisma.$queryRawUnsafe(
       `
@@ -309,8 +335,6 @@ exports.getRelatedTemplates = async (req, res) => {
       skip
     );
 
-    console.log(`🖼️ Found ${templates.length} related templates`);
-
     const totalCount = await prisma.$queryRawUnsafe(
       `
       SELECT COUNT(*) as count
@@ -329,19 +353,15 @@ exports.getRelatedTemplates = async (req, res) => {
     );
 
     const total = Number(totalCount[0]?.count || 0);
-    console.log("📊 Total related:", total);
 
-    const cleanTemplates = templates.map((t) => ({
-      ...t,
-      id: Number(t.id),
-      categoryId: Number(t.categoryId),
-      uses: Number(t.uses || 0),
-      createdAt: new Date(t.createdAt).toISOString(),
-    }));
-
-    console.log("✅ Returning clean templates:", cleanTemplates.length);
     res.status(200).json({
-      templates: cleanTemplates,
+      templates: templates.map((t) => ({
+        ...t,
+        id: Number(t.id),
+        uses: Number(t.uses || 0),
+        categoryId: Number(t.categoryId),
+        createdAt: new Date(t.createdAt).toISOString(),
+      })),
       hasMore: skip + limit < total,
     });
   } catch (err) {

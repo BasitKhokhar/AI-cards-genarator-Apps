@@ -458,7 +458,7 @@ const SearchHeader = () => {
             userId={"123"}
             modelUsed="flux/cardify-v1"
             payload={payload}
-            onFinish={() => setShowLoader(false)} // 👈 reset automatically after completion
+            onFinish={() => setShowLoader(false)} 
           />
         )}
 

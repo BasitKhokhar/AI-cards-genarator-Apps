@@ -17,6 +17,7 @@ import { MotiView, AnimatePresence } from "moti";
 import { useNavigation } from "@react-navigation/native";
 import PaymentModal from "../PaymentMethodsScreen/PaymentModel";
 import { useTheme } from "../../Context/ThemeContext";
+import Loading from "../../Components/Loader/Loading";
 import Loader from "../../Components/Loader/Loader";
 import { apiFetch } from "../../apiFetch";
 import Constants from "expo-constants";
@@ -34,7 +35,7 @@ const UserScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
 
-   const [showLoader, setShowLoader] = useState(false);
+  const [showLoader, setShowLoader] = useState(false);
 
   const navigation = useNavigation();
 
@@ -72,16 +73,16 @@ const UserScreen = () => {
     fetchUserData();
   }, []);
 
-const handleOpenPdf = async (id) => {
-     setShowLoader(true);
-  const res = await apiFetch(`/content/pdf-files/${id}`);
-  if (res?.url) {
-       setShowLoader(false);
-    Linking.openURL(res.url); // 👈 opens directly in browser (view + download option)
-  } else {
-    alert("PDF not found");
-  }
-};
+  const handleOpenPdf = async (id) => {
+    setShowLoader(true);
+    const res = await apiFetch(`/content/pdf-files/${id}`);
+    if (res?.url) {
+      setShowLoader(false);
+      Linking.openURL(res.url); // 👈 opens directly in browser (view + download option)
+    } else {
+      alert("PDF not found");
+    }
+  };
 
 
   const handleRefresh = () => {
@@ -214,34 +215,31 @@ const handleOpenPdf = async (id) => {
         )}
       </ScrollView>
 
-            {/* 🔄 Loader Modal */}
-            <AnimatePresence>
-              {showLoader && (
-                <MotiView
-                  from={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ type: "timing", duration: 300 }}
-                  style={styles.confirmationOverlay}
-                >
-                  <MotiView
-                    from={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0.8, opacity: 0 }}
-                    transition={{ type: "timing", duration: 400 }}
-                    style={[styles.loaderBox, { backgroundColor: colors.cardsbackground }]}
-                  >
-                    <MotiView
-                      from={{ rotate: "0deg" }}
-                      animate={{ rotate: "360deg" }}
-                      transition={{ loop: true, type: "timing", duration: 1200 }}
-                      style={[styles.loaderRing, { borderTopColor: colors.primary }]}
-                    />
-                    <Text style={styles.loaderText}>Please wait...</Text>
-                  </MotiView>
-                </MotiView>
-              )}
-            </AnimatePresence>
+      {/* 🔄 Loader Modal */}
+      <AnimatePresence>
+        {showLoader && (
+          <MotiView
+            from={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ type: "timing", duration: 300 }}
+            style={styles.confirmationOverlay}
+          >
+            <MotiView
+              from={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ type: "timing", duration: 400 }}
+              style={[styles.loaderBox, { backgroundColor: colors.cardsbackground }]}
+            >
+              <View style={styles.loaderRing}>
+                <Loading />
+              </View>
+              <Text style={styles.loaderText}>Please wait...</Text>
+            </MotiView>
+          </MotiView>
+        )}
+      </AnimatePresence>
     </View>
   );
 };
@@ -370,11 +368,6 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   loaderRing: {
-    width: 55,
-    height: 55,
-    borderRadius: 30,
-    borderWidth: 4,
-    borderColor: "rgba(255,255,255,0.1)",
     marginBottom: 12,
   },
   loaderText: {
