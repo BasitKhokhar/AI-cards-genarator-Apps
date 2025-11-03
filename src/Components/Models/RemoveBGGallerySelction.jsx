@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { useTheme } from '../../Context/ThemeContext';
+// import { useTheme } from '../../Context/ThemeContext';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import * as ImagePicker from 'expo-image-picker';
 import { LinearGradient } from 'expo-linear-gradient';
 import EnhanceImageModal from '../../Screens/HomeScreen/EnhanceModel';
 
 const RemoveBGGallerySelction = () => {
-  const { theme } = useTheme();
+  // const { theme } = useTheme();
   const [modeldetail, setModedetail] = useState(
     'lucataco/remove-bg:95fcc2a26d3899cd6c2691c900465aaeff466285a65c14638cc5f36f34befaf1'
   );

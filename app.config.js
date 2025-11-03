@@ -26,6 +26,7 @@ export default () => ({
     plugins: [
       "expo-secure-store",
       "expo-web-browser",
+       "expo-font"
     ],
     extra: {
       stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY,

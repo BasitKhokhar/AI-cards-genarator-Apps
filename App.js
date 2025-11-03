@@ -1,7 +1,7 @@
 // import { ThemeProvider } from "./Components/context/ThemeContext";
 // import { useTheme } from "./Components/context/ThemeContext";
 import { colors } from "./src/Themes/colors";
-import { ThemeProvider, useTheme } from "./src/Context/ThemeContext";
+// import { ThemeProvider, useTheme } from "./src/Context/ThemeContext";
 import React, { useState, useEffect } from "react";
 import { StripeProvider } from "@stripe/stripe-react-native";
 import { View, Image, Text, StyleSheet, TouchableOpacity } from "react-native";
@@ -67,8 +67,8 @@ const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const MainLayout = ({ navigation, children, currentScreen }) => {
-  const { theme } = useTheme();
-  const [showPaymentModal, setShowPaymentModal] = useState(false); // ✅ state for modal
+  // const { theme } = useTheme();
+  const [showPaymentModal, setShowPaymentModal] = useState(false); 
   return (
     <View style={styles.container}>
       {/* 🔥 Header */}
@@ -303,7 +303,7 @@ const App = () => {
 
 
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <ThemeProvider>
+        {/* <ThemeProvider> */}
           <StripeProvider
             publishableKey={stripeKey}
             merchantDisplayName="Basit Sanitary App"
@@ -328,7 +328,7 @@ const App = () => {
                 <Stack.Screen name="SplashScreen" component={SplashScreen} options={{ headerShown: false }} />
                 <Stack.Screen name="Profile" component={UserScreen} options={{ title: "Profile" }} />
 
- <Stack.Screen name="CommunityTemplatesScreen" component={CommunityCategoryTemplatesScreen}  options={{ headerShown: false }} />
+                <Stack.Screen name="CommunityTemplatesScreen" component={CommunityCategoryTemplatesScreen} options={{ headerShown: false }} />
 
                 <Stack.Screen name="AitemplateResultsScreen" component={AITemplatesResultScreen} options={{ title: "AI Templates Result Screen", ...commonHeaderOptions, }} />
 
@@ -348,7 +348,7 @@ const App = () => {
               </Stack.Navigator>
             </NavigationContainer>
           </StripeProvider>
-        </ThemeProvider>
+        {/* </ThemeProvider> */}
       </GestureHandlerRootView>
     </TourGuideProvider>
   );

@@ -16,18 +16,14 @@ import { MotiView, AnimatePresence } from "moti";
 
 import { useNavigation } from "@react-navigation/native";
 import PaymentModal from "../PaymentMethodsScreen/PaymentModel";
-import { useTheme } from "../../Context/ThemeContext";
 import Loading from "../../Components/Loader/Loading";
 import Loader from "../../Components/Loader/Loader";
 import { apiFetch } from "../../apiFetch";
 import Constants from "expo-constants";
-import * as Linking from "expo-linking"; // ✅ add this
-import { colors } from "../../Themes/colors"; // ✅ Import colors file
-
-const API_BASE_URL = Constants.expoConfig.extra.API_BASE_URL;
+import * as Linking from "expo-linking"; 
+import { colors } from "../../Themes/colors"; 
 
 const UserScreen = () => {
-  const { theme } = useTheme();
   const [userData, setUserData] = useState(null);
   const [paymnetImgBtndata, setPaymnetImageBtnData] = useState(null);
   const [userImage, setUserImage] = useState(null);

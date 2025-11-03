@@ -6,9 +6,7 @@ import {
   StyleSheet,
   RefreshControl,
 } from "react-native";
-import { useTheme } from "../../Context/ThemeContext";
 import ImageSlider from "../../Components/Sliders/Slider";
-import CategoriesScreen from "./CardsCategories";
 import SearchHeader from "./HomeinputSearch";
 import CommunityTemplatesButton from "./CommunityTemplatesbtn";
 import TrendingTemplates from "./TrendingTemplates";
@@ -21,7 +19,6 @@ import { colors } from "../../Themes/colors";
 const API_BASE_URL = Constants.expoConfig.extra.API_BASE_URL;
 
 const HomeScreen = ({ navigation }) => {
-  const { theme } = useTheme();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [filterExpanded, setFilterExpanded] = useState(false);
