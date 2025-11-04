@@ -17,11 +17,14 @@ import { useNavigation } from "@react-navigation/native";
 import { apiFetch } from "../../apiFetch";
 import { colors } from "../../Themes/colors";
 import { EnhanceLoader } from "../../Components/Loader/EnhancLoader";
+import { useGeneration } from "../../Context/ImageGenerationContext";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 const TemplateDetail = ({ route }) => {
   const { templateId } = route.params;
+  const { startMockGeneration } = useGeneration();
+
   const [template, setTemplate] = useState(null);
   const [prompt, setPrompt] = useState("");
   const [aspectRatio, setAspectRatio] = useState("1:1");
@@ -139,6 +142,7 @@ const handleGenerate = async () => {
 
   console.log("🚀 Starting enhancement with payload:", payload);
   setShowLoader(true);
+  startMockGeneration(payload); 
 };
 
 

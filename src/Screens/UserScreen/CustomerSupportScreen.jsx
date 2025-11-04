@@ -1,12 +1,12 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useTheme } from "../../Context/ThemeContext";
+// import { useTheme } from "../../Context/ThemeContext";
 import Constants from "expo-constants";
 const API_BASE_URL = Constants.expoConfig.extra.API_BASE_URL;
 import { colors } from "../../Themes/colors";
 const CustomerSupportScreen = () => {
-  const { theme } = useTheme();
+  // const { theme } = useTheme();
 
   return (
     <ScrollView

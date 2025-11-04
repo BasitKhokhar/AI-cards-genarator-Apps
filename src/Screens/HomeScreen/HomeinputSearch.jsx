@@ -5,6 +5,8 @@ import React, { useState, useRef, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, TouchableWithoutFeedback, ScrollView, Modal, Dimensions, } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { useGeneration } from "../../Context/ImageGenerationContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { EnhanceLoader } from "../../Components/Loader/EnhancLoader";
 import { apiFetch } from "../../apiFetch";
@@ -34,6 +36,9 @@ const DEFAULT_WIDTH = "1296";
 const DEFAULT_HEIGHT = "2728";
 
 const SearchHeader = () => {
+  const { startMockGeneration } = useGeneration();
+  const navigation = useNavigation();
+
   const [search, setSearch] = useState("");
   const [aspectRatio, setAspectRatio] = useState(aspectRatios[0]);
   const [resolution, setResolution] = useState(resolutions[2]);
@@ -42,6 +47,7 @@ const SearchHeader = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const inputField = useRef(null);
+  const [showGenerationBar, setShowGenerationBar] = useState(false);
 
   // for "T" model
   const [isQuoteModalVisible, setIsQuoteModalVisible] = useState(false);
@@ -124,10 +130,7 @@ const SearchHeader = () => {
   //   }
   // };
   const handleSearch = async () => {
-    if (!search.trim()) return;
-
-    // 🛑 Prevent starting a new loader if one is already running
-    if (showLoader) return;
+    if (!search.trim() || showLoader) return;
 
     const payload = {
       query: search,
@@ -137,12 +140,14 @@ const SearchHeader = () => {
       height: heightPx,
     };
 
-    console.log("🚀 Sending payload:", payload);
-    setPayload(payload);
-    setShowLoader(true); // triggers EnhanceLoader
-    
-  };
+    console.log("🚀 Starting generation:", payload);
 
+    // Start loader + show bottom bar simultaneously
+    setShowLoader(true);
+    setShowGenerationBar(true);
+    startMockGeneration(payload); // context → gallery skeleton trigger
+    setPayload(payload);
+  };
 
 
   const pickImage = async () => {
@@ -153,7 +158,6 @@ const SearchHeader = () => {
     if (!result.canceled) setSelectedImage(result.assets[0].uri);
   };
 
-  const addDoubleQuotes = () => setSearch((prev) => prev + ' " "');
   const toggleModal = () => setIsModalVisible(!isModalVisible);
 
   const handleAspectSelect = (item) => {
@@ -171,18 +175,7 @@ const SearchHeader = () => {
       quoteInputRef.current?.focus();
     }, 100);
   };
-  // add another "" inside modal
-  const addQuotesInModal = () => {
-    const cursorPosition = quoteInputRef.current?._lastNativeSelection?.start || quoteInput.length;
-    const newText =
-      quoteInput.slice(0, cursorPosition) + '""' + quoteInput.slice(cursorPosition);
-    setQuoteInput(newText);
-    setTimeout(() => {
-      quoteInputRef.current?.setNativeProps({
-        selection: { start: cursorPosition + 1, end: cursorPosition + 1 },
-      });
-    }, 50);
-  };
+
 
   // insert text into main input
   const insertQuoteText = () => {
@@ -201,7 +194,7 @@ const SearchHeader = () => {
           <View style={styles.newBadge}>
             <Text style={styles.newText}>New</Text>
           </View>
-          <Text style={styles.title}>Design cards with AI magic</Text>
+          <Text style={styles.title}>Make designs with AI magic</Text>
         </View>
 
         {/* Input + Toolbar */}
@@ -385,7 +378,7 @@ const SearchHeader = () => {
                     end={{ x: 1, y: 1 }}
                     style={styles.insertGradient}
                   > */}
-                    <Text style={styles.insertText}>Insert Text</Text>
+                  <Text style={styles.insertText}>Insert Text</Text>
                   {/* </LinearGradient> */}
                 </TouchableOpacity>
               </MotiView>
@@ -459,12 +452,41 @@ const SearchHeader = () => {
             </View>
           </View>
         </Modal>
+        {/* Bottom statusbar Modal */}
+        <AnimatePresence>
+          {showGenerationBar && (
+            <MotiView
+              from={{ translateY: 100, opacity: 0 }}
+              animate={{ translateY: 0, opacity: 1 }}
+              exit={{ translateY: 100, opacity: 0 }}
+              transition={{ type: "timing", duration: 300 }}
+              style={styles.bottomBarContainer}
+            >
+              <TouchableOpacity
+                activeOpacity={0.9}
+                style={styles.bottomBar}
+                onPress={() => {
+                  setShowGenerationBar(false);
+                  navigation.navigate("Assets");
+                }}
+              >
+                <Text style={styles.bottomBarText}>Your generation has started.</Text>
+                <Text style={styles.bottomBarLink}>Go to Gallery</Text>
+              </TouchableOpacity>
+            </MotiView>
+          )}
+        </AnimatePresence>
+
         {showLoader && (
           <EnhanceLoader
             userId={"123"}
             modelUsed="flux/cardify-v1"
             payload={payload}
-            onFinish={() => setShowLoader(false)}
+            onFinish={() => {
+              // End everything in parallel
+              setShowLoader(false);
+              setShowGenerationBar(false); // 👈 hides the bottom bar automatically
+            }}
           />
         )}
       </View>
@@ -513,84 +535,84 @@ const styles = StyleSheet.create({
   quoteText: { color: colors.mutedText, fontWeight: "bold", fontSize: 15 },
   // "T" model styling
   quoteOverlay: {
-  position: "absolute",
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  backgroundColor: "rgba(0,0,0,0.6)",
-  justifyContent: "flex-end",
-},
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    justifyContent: "flex-end",
+  },
 
-quoteModal: {
-  backgroundColor: colors.cardsbackground,
-  marginHorizontal: 10,
-  borderTopLeftRadius: 24,
-  borderTopRightRadius: 24,
-  padding: 20,
-  minHeight: 250,
-  borderWidth: 1,
-  borderColor: colors.border,
-  shadowColor: "#000",
-  shadowOpacity: 0.15,
-  shadowRadius: 10,
-  elevation: 6,
-},
+  quoteModal: {
+    backgroundColor: colors.cardsbackground,
+    marginHorizontal: 10,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    padding: 20,
+    minHeight: 250,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: "#000",
+    shadowOpacity: 0.15,
+    shadowRadius: 10,
+    elevation: 6,
+  },
 
-closeButton: {
-  position: "absolute",
-  top: 14,
-  right: 14,
-  zIndex: 10,
-  backgroundColor: colors.secondary,
-  borderRadius: 20,
-  padding: 6,
-},
+  closeButton: {
+    position: "absolute",
+    top: 14,
+    right: 14,
+    zIndex: 10,
+    backgroundColor: colors.secondary,
+    borderRadius: 20,
+    padding: 6,
+  },
 
-modalTitle: {
-  color: colors.text,
-  fontSize: 20,
-  fontWeight: "700",
-  marginBottom: 6,
-  textAlign: "left",
-},
+  modalTitle: {
+    color: colors.text,
+    fontSize: 20,
+    fontWeight: "700",
+    marginBottom: 6,
+    textAlign: "left",
+  },
 
-modalSubtitle: {
-  color: colors.mutedText,
-  fontSize: 13,
-  marginBottom: 18,
-  lineHeight: 18,
-},
+  modalSubtitle: {
+    color: colors.mutedText,
+    fontSize: 13,
+    marginBottom: 18,
+    lineHeight: 18,
+  },
 
-quoteInputField: {
-  backgroundColor: colors.cardsbackground,
-  borderRadius: 10,
-  padding: 12,
-  color: colors.text,
-  fontSize: 15,
-  minHeight: 90,
-  borderWidth: 1,
-  borderColor: colors.border,
-  marginBottom: 18,
-},
+  quoteInputField: {
+    backgroundColor: colors.cardsbackground,
+    borderRadius: 10,
+    padding: 12,
+    color: colors.text,
+    fontSize: 15,
+    minHeight: 90,
+    borderWidth: 1,
+    borderColor: colors.border,
+    marginBottom: 18,
+  },
 
-insertButton: {
-  borderRadius: 12,
-  overflow: "hidden",
-},
+  insertButton: {
+    borderRadius: 12,
+    overflow: "hidden",
+  },
 
-insertGradient: {
-  paddingVertical: 14,
-  alignItems: "center",
-  borderRadius: 12,
-  backgroundColor:colors.secondary,borderWidth:1,borderColor:colors.border
-},
+  insertGradient: {
+    paddingVertical: 14,
+    alignItems: "center",
+    borderRadius: 12,
+    backgroundColor: colors.secondary, borderWidth: 1, borderColor: colors.border
+  },
 
-insertText: {
-  color: "#fff",
-  fontSize: 15,
-  fontWeight: "600",
-},
+  insertText: {
+    color: "#fff",
+    fontSize: 15,
+    fontWeight: "600",
+  },
   quoteButtonsRow: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -693,4 +715,38 @@ insertText: {
   doneButton: { marginTop: 25 },
   doneBtnGradient: { borderRadius: 12, paddingVertical: 14, alignItems: "center" },
   doneText: { color: colors.text, fontSize: 16, fontWeight: "700" },
+
+ bottomBarContainer: {
+  position: "absolute",
+  bottom: 0, // 👈 fixed to the bottom of the screen
+  left: 0,
+  right: 0,
+  zIndex: 999, // stays above everything
+  padding: 12,
+  alignItems: "center",
+  justifyContent: "center",
+  backgroundColor: "transparent",
+},
+
+
+  bottomBar: {
+  backgroundColor: colors.primary,
+  flexDirection: "row",
+  justifyContent: "space-between",
+  alignItems: "center",
+  paddingVertical: 25,
+  paddingHorizontal: 18,
+  borderRadius: 8,
+  width: "100%", // 👈 small margin from sides
+  shadowColor: "#000",
+  shadowOpacity: 0.15,
+  shadowRadius: 8,
+  elevation: 6,
+},
+
+
+  bottomBarText: { color: "#fff", fontSize: 14, fontWeight: "500" },
+  bottomBarLink: { color: "#fff", fontWeight: "700", textDecorationLine: "underline", fontSize: 14 },
+
+
 });

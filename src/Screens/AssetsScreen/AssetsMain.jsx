@@ -11,6 +11,13 @@ import FavouriteTemplates from "./FavouriteTemplates";
 const AssetsMainScreen = () => {
   const [activeTab, setActiveTab] = useState("gallery"); 
 
+ // 🟢 Handle event from SearchHeader
+  const handleGenerateStart = (payload) => {
+    console.log("🧠 User started generation with:", payload);
+    // Switch to gallery tab
+    setActiveTab("gallery");
+  };
+
   return (
     <View style={styles.container}>
       {/* 🔹 Tabs */}

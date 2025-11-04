@@ -11,7 +11,7 @@ exports.mockEnhanceImage = async (req, res) => {
 
   try {
     const fixedImageUrl =
-      "https://firebasestorage.googleapis.com/v0/b/basit-b2712.appspot.com/o/CardiFy%2Fbirthday1.png?alt=media&token=6ffaad1c-9897-4549-954d-696d56af3582";
+      "https://firebasestorage.googleapis.com/v0/b/basit-b2712.appspot.com/o/CardiFy%2Fsamples%2Fsample1.jpeg?alt=media&token=e6c64bfb-210d-4dbf-832e-21c1e21f031c";
 
     setTimeout(() => console.log("⏳ Step 1: Preparing input..."), 2000);
     setTimeout(() => console.log("⚙️ Step 2: Generating image..."), 5000);

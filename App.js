@@ -20,6 +20,8 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 
 import GradientIcon from "./src/Screens/AssetsScreen/samplegradient";
 
+import { GenerationProvider } from "./src/Context/ImageGenerationContext";
+
 import CustomTooltip from "./src/Components/IntroGuiding/CustomTooltip";
 // splashscreens //
 import SplashScreen from "./src/Screens/SplashScreens/SplashScreen";
@@ -68,7 +70,7 @@ const Tab = createBottomTabNavigator();
 
 const MainLayout = ({ navigation, children, currentScreen }) => {
   // const { theme } = useTheme();
-  const [showPaymentModal, setShowPaymentModal] = useState(false); 
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   return (
     <View style={styles.container}>
       {/* 🔥 Header */}
@@ -303,7 +305,8 @@ const App = () => {
 
 
       <GestureHandlerRootView style={{ flex: 1 }}>
-        {/* <ThemeProvider> */}
+        <GenerationProvider>
+          {/* <ThemeProvider> */}
           <StripeProvider
             publishableKey={stripeKey}
             merchantDisplayName="Basit Sanitary App"
@@ -348,6 +351,7 @@ const App = () => {
               </Stack.Navigator>
             </NavigationContainer>
           </StripeProvider>
+        </GenerationProvider>
         {/* </ThemeProvider> */}
       </GestureHandlerRootView>
     </TourGuideProvider>
