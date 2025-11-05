@@ -14,6 +14,7 @@ import * as FileSystem from "expo-file-system";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { AnimatePresence, MotiView } from "moti";
 import { colors } from "../../Themes/colors";
+import { fonts } from "../../Themes/fonts";
 import Loading from "../../Components/Loader/Loading";
 
 export default function AITemplatesResultScreen({ route, navigation }) {
@@ -75,7 +76,7 @@ export default function AITemplatesResultScreen({ route, navigation }) {
             />
             <Text style={styles.actionText}>Share</Text>
           </TouchableOpacity>
- <TouchableOpacity style={styles.actionBtn} onPress={handleShare}>
+          <TouchableOpacity style={styles.actionBtn} onPress={handleShare}>
             <Ionicons
               name="share-social-outline"
               size={22}
@@ -214,7 +215,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   actionBtn: { alignItems: "center", justifyContent: "center" },
-  actionText: { color: colors.text, fontSize: 13, marginTop: 4 },
+  actionText: {
+    color: colors.text,
+    fontSize: 13,
+    marginTop: 4,
+    fontFamily: fonts.medium, // ✅ Nunito_500Medium
+  },
   generationdetailsCard: {
     backgroundColor: colors.cardsbackground,
     padding: 16,
@@ -228,7 +234,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 10,
   },
-  heading: { color: colors.text, fontSize: 18, fontWeight: "700" },
+  heading: {
+    color: colors.text,
+    fontSize: 18,
+    fontFamily: fonts.heading, 
+  },
   copyBtn: {
     flexDirection: "row",
     alignItems: "center",
@@ -239,14 +249,15 @@ const styles = StyleSheet.create({
   },
   copyText: {
     color: colors.primary,
-    fontWeight: "600",
     marginLeft: 5,
     fontSize: 13,
+    fontFamily: fonts.medium, 
   },
   promptValue: {
     color: colors.mutedText,
     fontSize: 15,
     lineHeight: 22,
+    fontFamily: fonts.body, 
   },
   detailsCard: { borderRadius: 14, paddingVertical: 10 },
   detailRow: {
@@ -256,8 +267,19 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
-  label: { color: colors.text, fontSize: 15, fontWeight: "600", flex: 1 },
-  value: { color: colors.mutedText, fontSize: 15, flex: 1, textAlign: "right" },
+  label: {
+    color: colors.text,
+    fontSize: 15,
+    flex: 1,
+    fontFamily: fonts.medium, 
+  },
+  value: {
+    color: colors.mutedText,
+    fontSize: 15,
+    flex: 1,
+    textAlign: "right",
+    fontFamily: fonts.body,
+  },
 
   // 🔄 Loader styles
   confirmationOverlay: {
@@ -281,7 +303,11 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   loaderRing: { marginBottom: 12 },
-  loaderText: { color: colors.text, fontSize: 15, fontWeight: "600" },
+  loaderText: {
+    color: colors.text,
+    fontSize: 15,
+    fontFamily: fonts.medium, 
+  },
 
   confirmationBox: {
     width: "75%",
@@ -305,7 +331,7 @@ const styles = StyleSheet.create({
   confirmationTitle: {
     color: colors.text,
     fontSize: 20,
-    fontWeight: "700",
+    fontFamily: fonts.heading, 
     marginBottom: 6,
   },
   confirmationText: {
@@ -313,5 +339,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: "center",
     lineHeight: 20,
+    fontFamily: fonts.body, 
   },
 });

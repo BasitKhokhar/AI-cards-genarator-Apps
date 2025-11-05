@@ -1,4 +1,5 @@
 import { colors } from "../../Themes/colors";
+import { fonts } from "../../Themes/fonts";
 import { AnimatePresence, MotiView } from "moti";
 
 import React, { useState, useRef, useEffect } from "react";
@@ -145,9 +146,19 @@ const SearchHeader = () => {
     // Start loader + show bottom bar simultaneously
     setShowLoader(true);
     setShowGenerationBar(true);
-    startMockGeneration(payload); // context → gallery skeleton trigger
+    startMockGeneration(payload);
     setPayload(payload);
   };
+  // 👇 Add this inside your component
+  useEffect(() => {
+    if (showGenerationBar) {
+      const timer = setTimeout(() => {
+        setShowGenerationBar(false);
+      }, 7000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [showGenerationBar]);
 
 
   const pickImage = async () => {
@@ -347,16 +358,16 @@ const SearchHeader = () => {
                 </TouchableOpacity>
 
                 {/* 🧠 Title + Subtitle */}
-                <Text style={styles.modalTitle}>Highlight Text in Quotes</Text>
+                <Text style={styles.modalTitle}>Add Custom Text to Image</Text>
                 <Text style={styles.modalSubtitle}>
-                  Any text you write here will be inserted into your main prompt wrapped
-                  in quotation marks, making it stand out for the AI.
+                  Type the text you want to appear on the image.
+                  This text will be automatically printed when you generate the image.
                 </Text>
 
                 {/* ✍️ Input Field */}
                 <TextInput
                   ref={quoteInputRef}
-                  placeholder='Example: "vintage poster design"'
+                  placeholder='Example: Basit Khokhar'
                   placeholderTextColor={colors.mutedText}
                   style={styles.quoteInputField}
                   multiline
@@ -372,21 +383,18 @@ const SearchHeader = () => {
                   onPress={insertQuoteText}
                   activeOpacity={0.85}
                 >
-                  {/* <LinearGradient
-                    colors={colors.gradients.ocean}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.insertGradient}
-                  > */}
-                  <Text style={styles.insertText}>Insert Text</Text>
-                  {/* </LinearGradient> */}
+                  <Text style={styles.insertText}>Add Text to Prompt</Text>
                 </TouchableOpacity>
+
+                {/* 💡 Small helper note */}
+                <Text style={[styles.modalSubtitle, { marginTop: 8, fontSize: 12 }]}>
+                  Example: Writing “Basit Khokhar” here will print your name
+                  on the generated image, as shown in the sample.
+                </Text>
               </MotiView>
             </MotiView>
           )}
         </AnimatePresence>
-
-
 
         {/* Settings Modal (keep your existing modal content) */}
         <Modal visible={isModalVisible} animationType="slide" transparent>
@@ -453,29 +461,32 @@ const SearchHeader = () => {
           </View>
         </Modal>
         {/* Bottom statusbar Modal */}
-        <AnimatePresence>
-          {showGenerationBar && (
-            <MotiView
-              from={{ translateY: 100, opacity: 0 }}
-              animate={{ translateY: 0, opacity: 1 }}
-              exit={{ translateY: 100, opacity: 0 }}
-              transition={{ type: "timing", duration: 300 }}
-              style={styles.bottomBarContainer}
-            >
-              <TouchableOpacity
-                activeOpacity={0.9}
-                style={styles.bottomBar}
-                onPress={() => {
-                  setShowGenerationBar(false);
-                  navigation.navigate("Assets");
-                }}
+        <Modal visible={showGenerationBar} transparent animationType="slide">
+          <TouchableWithoutFeedback onPress={() => setShowGenerationBar(false)}>
+            <View style={styles.overlay}>
+              <MotiView
+                from={{ translateY: 100, opacity: 0 }}
+                animate={{ translateY: 0, opacity: 1 }}
+                exit={{ translateY: 100, opacity: 0 }}
+                transition={{ type: "timing", duration: 300 }}
+                style={styles.bottomBarContainer}
               >
-                <Text style={styles.bottomBarText}>Your generation has started.</Text>
-                <Text style={styles.bottomBarLink}>Go to Gallery</Text>
-              </TouchableOpacity>
-            </MotiView>
-          )}
-        </AnimatePresence>
+                <TouchableOpacity
+                  activeOpacity={0.9}
+                  style={styles.bottomBar}
+                  onPress={() => {
+                    setShowGenerationBar(false);
+                    navigation.navigate("Assets");
+                  }}
+                >
+                  <Text style={styles.bottomBarText}>Your generation has started.</Text>
+                  <Text style={styles.bottomBarLink}>Go to Gallery</Text>
+                </TouchableOpacity>
+              </MotiView>
+            </View>
+          </TouchableWithoutFeedback>
+        </Modal>
+
 
         {showLoader && (
           <EnhanceLoader
@@ -483,9 +494,8 @@ const SearchHeader = () => {
             modelUsed="flux/cardify-v1"
             payload={payload}
             onFinish={() => {
-              // End everything in parallel
               setShowLoader(false);
-              setShowGenerationBar(false); // 👈 hides the bottom bar automatically
+              setShowGenerationBar(false);
             }}
           />
         )}
@@ -499,6 +509,7 @@ export default SearchHeader;
 
 const styles = StyleSheet.create({
   headerRow: { flexDirection: "row", alignItems: "center", marginTop: 15 },
+
   newBadge: {
     paddingHorizontal: 8,
     paddingVertical: 4,
@@ -507,8 +518,19 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
     marginRight: 8,
   },
-  newText: { color: colors.text, fontSize: 12, fontWeight: "bold" },
-  title: { fontSize: 18, fontWeight: "600", color: colors.text },
+
+  newText: {
+    color: colors.text,
+    fontSize: 12,
+    fontFamily: fonts.medium,
+  },
+
+  title: {
+    fontSize: 18,
+    color: colors.text,
+    fontFamily: fonts.heading,
+  },
+
   container: {
     backgroundColor: colors.cardsbackground,
     paddingTop: 16,
@@ -518,9 +540,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
+
   searchBar: { flexDirection: "row", marginBottom: 10 },
-  input: { flex: 1, padding: 10, color: colors.text, fontSize: 15, height: 80 },
+  input: {
+    flex: 1,
+    padding: 10,
+    color: colors.text,
+    fontSize: 15,
+    height: 80,
+    fontFamily: fonts.body,
+  },
+
   toolbar: { flexDirection: "row", alignItems: "center" },
+
   iconBtn: {
     backgroundColor: colors.secondary,
     borderRadius: 8,
@@ -532,8 +564,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  quoteText: { color: colors.mutedText, fontWeight: "bold", fontSize: 15 },
-  // "T" model styling
+
+  quoteText: {
+    color: colors.mutedText,
+    fontFamily: fonts.medium,
+    fontSize: 15,
+  },
+
+  // Modal / Overlay
   quoteOverlay: {
     position: "absolute",
     top: 0,
@@ -572,7 +610,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     color: colors.text,
     fontSize: 20,
-    fontWeight: "700",
+    fontFamily: fonts.heading,
     marginBottom: 6,
     textAlign: "left",
   },
@@ -582,6 +620,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginBottom: 18,
     lineHeight: 18,
+    fontFamily: fonts.body,
   },
 
   quoteInputField: {
@@ -594,6 +633,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
     marginBottom: 18,
+    fontFamily: fonts.body,
   },
 
   insertButton: {
@@ -605,27 +645,33 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     alignItems: "center",
     borderRadius: 12,
-    backgroundColor: colors.secondary, borderWidth: 1, borderColor: colors.border
+    backgroundColor: colors.secondary,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
 
   insertText: {
     color: "#fff",
     fontSize: 15,
-    fontWeight: "600",
+    fontFamily: fonts.medium,
   },
+
   quoteButtonsRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
+
   goButton: {
     borderWidth: 1,
     borderRadius: 50,
     paddingVertical: 10,
     paddingHorizontal: 10,
   },
+
   imageWrapper: { position: "relative", width: 50, height: 50, marginVertical: 10 },
   previewImage: { width: 50, height: 50, borderRadius: 8 },
+
   removeIcon: {
     position: "absolute",
     top: -7,
@@ -635,10 +681,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 3,
     paddingVertical: 1,
   },
-  overlay: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
+
+  overlay: { flex: 1, justifyContent: "flex-end" },
+
   modalContainer: {
     backgroundColor: colors.cardsbackground,
     borderWidth: 1,
@@ -648,25 +693,16 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 25,
     padding: 20,
   },
-  closeButton: {
-    position: "absolute",
-    top: 18,
-    right: 15,
-    zIndex: 10,
-    backgroundColor: colors.secondary,
-    borderRadius: 20,
-    padding: 6,
-  },
-  modalTitle: {
+
+  sectionTitle: {
     color: colors.text,
-    fontSize: 20,
-    fontWeight: "700",
-    textAlign: "left",
-    marginBottom: 20,
-    marginTop: 0,
+    fontSize: 15,
+    marginVertical: 8,
+    fontFamily: fonts.medium,
   },
-  sectionTitle: { color: colors.text, fontSize: 15, marginVertical: 8, fontWeight: "500" },
+
   row: { flexDirection: "row", flexWrap: "wrap" },
+
   optionBtn: {
     paddingVertical: 8,
     paddingHorizontal: 12,
@@ -679,8 +715,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
+
   optionSelected: { borderColor: colors.text },
-  optionText: { color: colors.text, fontSize: 14 },
+
+  optionText: { color: colors.text, fontSize: 14, fontFamily: fonts.body },
+
   sizeBox: {
     marginTop: 12,
     backgroundColor: colors.secondary,
@@ -689,8 +728,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
-  sizeLabel: { color: colors.mutedText, marginBottom: 4, fontSize: 14 },
+
+  sizeLabel: { color: colors.mutedText, marginBottom: 4, fontSize: 14, fontFamily: fonts.light },
+
   sizeRow: { flexDirection: "row", alignItems: "center" },
+
   sizeInputContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -701,7 +743,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
-  sizeInputLabel: { color: colors.text, fontWeight: "600", fontSize: 13, marginRight: 6 },
+
+  sizeInputLabel: { color: colors.text, fontFamily: fonts.medium, fontSize: 13, marginRight: 6 },
+
   sizeInput: {
     flex: 1,
     color: colors.mutedText,
@@ -710,43 +754,51 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     fontSize: 14,
     textAlign: "center",
+    fontFamily: fonts.body,
   },
-  xText: { color: colors.mutedText, marginHorizontal: 10, fontSize: 16, fontWeight: "600" },
+
+  xText: { color: colors.mutedText, marginHorizontal: 10, fontSize: 16, fontFamily: fonts.medium },
+
   doneButton: { marginTop: 25 },
+
   doneBtnGradient: { borderRadius: 12, paddingVertical: 14, alignItems: "center" },
-  doneText: { color: colors.text, fontSize: 16, fontWeight: "700" },
 
- bottomBarContainer: {
-  position: "absolute",
-  bottom: 0, // 👈 fixed to the bottom of the screen
-  left: 0,
-  right: 0,
-  zIndex: 999, // stays above everything
-  padding: 12,
-  alignItems: "center",
-  justifyContent: "center",
-  backgroundColor: "transparent",
-},
+  doneText: { color: colors.text, fontSize: 16, fontFamily: fonts.heading },
 
+  bottomBarContainer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex: 999,
+    padding: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "transparent",
+  },
 
   bottomBar: {
-  backgroundColor: colors.primary,
-  flexDirection: "row",
-  justifyContent: "space-between",
-  alignItems: "center",
-  paddingVertical: 25,
-  paddingHorizontal: 18,
-  borderRadius: 8,
-  width: "100%", // 👈 small margin from sides
-  shadowColor: "#000",
-  shadowOpacity: 0.15,
-  shadowRadius: 8,
-  elevation: 6,
-},
+    backgroundColor: colors.secondary,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 25,
+    paddingHorizontal: 18,
+    borderRadius: 8,
+    width: "100%",
+    shadowColor: "#000",
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 6,
+  },
 
-
-  bottomBarText: { color: "#fff", fontSize: 14, fontWeight: "500" },
-  bottomBarLink: { color: "#fff", fontWeight: "700", textDecorationLine: "underline", fontSize: 14 },
-
-
+  bottomBarText: { color: "#fff", fontSize: 14, fontFamily: fonts.body },
+  bottomBarLink: {
+    color: "#fff",
+    // textDecorationLine: "underline",
+    fontSize: 14,
+    fontWeight: '800',
+    fontFamily: fonts.medium,
+  },
 });
+

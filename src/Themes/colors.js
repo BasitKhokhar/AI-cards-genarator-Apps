@@ -1,26 +1,4 @@
-// export const colors = {
-//   bodybackground: '#0d0d0d',
-//   cardsbackground: '#1a1a1a',
-//   primary: '#06b6d4',
-//   accent: '#1a2980',
-//   secondary: '#3D3D3D',
-//   text: '#ffff',
-//   mutedText: '#B3B3B3',
-//   border: '#4d4d4d',
-//   error:'#FF0033',
 
-//    gradients: {
-//     ocean: ["#1a2980", "#26d0ce"], 
-//     mintGlow: ['#00ffa3', '#00b3ff'], 
-//     aquaPulse: ['#00F5A0', '#00D9F5'], 
-//     deepTech: ["#0d0d1a", "#141427"], 
-//   },
-// };
-// colors.js
-
-
-
-// 🟣 Theme 1 — Dark Ocean
 const darkOcean = {
   bodybackground: "#0d0d0d",
   cardsbackground: "#1a1a1a",
@@ -39,7 +17,6 @@ const darkOcean = {
   },
 };
 
-// 🟢 Theme 2 — Light Breeze
 const lightBreeze = {
   bodybackground: "#f7f7f7",
   cardsbackground: "#ffffff",
@@ -58,7 +35,7 @@ const lightBreeze = {
   },
 };
 
-// 🔵 Theme 3 — Blue Neon
+
 const blueNeon = {
   bodybackground: "#01010a",
   cardsbackground: "#0a0a1f",
@@ -77,10 +54,8 @@ const blueNeon = {
   },
 };
 
-// 🧠 Theme Selector
-// Just change this value to switch the color scheme globally
-const activeTheme = "darkOcean"; // 🔁 change to "lightBreeze" or "blueNeon"
 
-// 🎨 Export dynamically based on activeTheme
+const activeTheme = "darkOcean"; 
+
 const themes = { darkOcean, lightBreeze, blueNeon };
 export const colors = themes[activeTheme];

@@ -1,10 +1,26 @@
-// import { ThemeProvider } from "./Components/context/ThemeContext";
-// import { useTheme } from "./Components/context/ThemeContext";
+import { fonts } from "./src/Themes/fonts";
+import { useFonts } from "expo-font";
+import {
+  Poppins_400Regular,
+  Poppins_600SemiBold,
+  Poppins_700Bold,
+} from "@expo-google-fonts/poppins";
+import {
+  Inter_300Light,
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_700Bold,
+} from "@expo-google-fonts/inter";
+import { Orbitron_500Medium, Orbitron_700Bold } from "@expo-google-fonts/orbitron";
+import {
+  Nunito_300Light,
+  Nunito_400Regular,
+  Nunito_500Medium,
+} from "@expo-google-fonts/nunito";
 import { colors } from "./src/Themes/colors";
-// import { ThemeProvider, useTheme } from "./src/Context/ThemeContext";
 import React, { useState, useEffect } from "react";
 import { StripeProvider } from "@stripe/stripe-react-native";
-import { View, Image, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Image, Text, StyleSheet, TouchableOpacity, ActivityIndicator  } from "react-native";
 
 import { TourGuideProvider } from "rn-tourguide";
 // import RootNavigator from "./src/navigation/RootNavigator";
@@ -16,7 +32,6 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from "react-native-vector-icons/MaterialIcons";
-
 
 import GradientIcon from "./src/Screens/AssetsScreen/samplegradient";
 
@@ -206,6 +221,24 @@ export const commonHeaderOptions = {
 };
 
 const App = () => {
+ // for diffferent custom fonts 
+ const [fontsLoaded] = useFonts({
+    Orbitron_500Medium,
+    Orbitron_700Bold,
+    Inter_300Light,
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_700Bold,
+    Poppins_400Regular,
+    Poppins_600SemiBold,
+    Poppins_700Bold,
+    Nunito_300Light,
+    Nunito_400Regular,
+    Nunito_500Medium,
+  });
+
+ 
+
   const [userId, setUserId] = useState(null);
   const [checkingLogin, setCheckingLogin] = useState(true);
   const [isSplash1Visible, setIsSplash1Visible] = useState(true);
@@ -288,6 +321,14 @@ const App = () => {
     return <SplashScreen4 onNext={() => setIsSplash4Visible(false)} />;
   }
 
+ // ✅ Conditional rendering happens AFTER all hooks
+  if (!fontsLoaded) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#00f0ff" />
+      </View>
+    );
+  }
 
   if (checkingLogin) {
     return <SplashScreen />;
@@ -302,8 +343,6 @@ const App = () => {
       backdropColor="rgba(0,0,0,0.7)"   // ✅ darker focus effect
       tooltipStyle={{ borderRadius: 12 }}
     >
-
-
       <GestureHandlerRootView style={{ flex: 1 }}>
         <GenerationProvider>
           {/* <ThemeProvider> */}
@@ -320,6 +359,8 @@ const App = () => {
                 <Stack.Screen name="Main" options={{ headerShown: false }}>
                   {(props) => <BottomTabs {...props} />}
                 </Stack.Screen>
+                 <Stack.Screen name="BottomTabs" component={BottomTabs} options={{ headerShown: false }}/>
+
                 <Stack.Screen name="AllNotifications" component={AllNotifications} options={{ title: "All Notifications", ...commonHeaderOptions, }} />
                 <Stack.Screen name="templatefeatures" component={TemplateDetail} options={{
                   title: "Template Features Detail", ...commonHeaderOptions,
@@ -333,7 +374,7 @@ const App = () => {
 
                 <Stack.Screen name="CommunityTemplatesScreen" component={CommunityCategoryTemplatesScreen} options={{ headerShown: false }} />
 
-                <Stack.Screen name="AitemplateResultsScreen" component={AITemplatesResultScreen} options={{ title: "AI Templates Result Screen", ...commonHeaderOptions, }} />
+                <Stack.Screen name="AitemplateResultsScreen" component={AITemplatesResultScreen} options={{ title: "AI Genaration Details", ...commonHeaderOptions, }} />
 
 
                 <Stack.Screen name="PaymentmethodsScreen" component={PaymentSelectionScreen} options={{ title: "Payment Methods", ...commonHeaderOptions, }} />

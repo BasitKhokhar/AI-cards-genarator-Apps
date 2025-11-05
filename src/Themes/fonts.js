@@ -1,38 +1,39 @@
-// Themes/fonts.js
 
-// 🖋️ Font Theme 1 — Futuristic Sans (AI Tech Feel)
+const systemDefault = {
+  heading: "System", 
+  subheading: "System",
+  body: "System",
+  medium: "System",
+  light: "System",
+};
+
 const futuristSans = {
-  heading: "Montserrat-Bold",
-  subheading: "Montserrat-SemiBold",
-  body: "Inter-Regular",
-  medium: "Inter-Medium",
-  light: "Inter-Light",
-  mono: "SpaceMono-Regular",
+  heading: "Orbitron_700Bold",
+  subheading: "Orbitron_500Medium",
+  body: "Inter_400Regular",
+  medium: "Inter_500Medium",
+  light: "Inter_300Light",
 };
 
-// 🌬️ Font Theme 2 — Minimal Modern
+
 const minimalModern = {
-  heading: "Poppins-Bold",
-  subheading: "Poppins-SemiBold",
-  body: "Nunito-Regular",
-  medium: "Nunito-Medium",
-  light: "Nunito-Light",
-  mono: "JetBrainsMono-Regular",
+  heading: "Poppins_700Bold",
+  subheading: "Poppins_600SemiBold",
+  body: "Nunito_400Regular",
+  medium: "Nunito_500Medium",
+  light: "Nunito_300Light",
 };
 
-// 🔵 Font Theme 3 — Tech Display
-const techDisplay = {
-  heading: "Orbitron-Bold",
-  subheading: "Orbitron-Medium",
-  body: "Roboto-Regular",
-  medium: "Roboto-Medium",
-  light: "Roboto-Light",
-  mono: "JetBrainsMono-Regular",
+const cleanPro = {
+  heading: "Inter_700Bold",
+  subheading: "Inter_500Medium",
+  body: "Inter_400Regular",
+  medium: "Inter_500Medium",
+  light: "Inter_300Light",
 };
 
-// 🧠 Selector (switch font set globally)
-const activeFontTheme = "futuristSans"; // 🔁 change to "minimalModern" or "techDisplay"
+const activeFontTheme = "minimalModern";
 
-// 🎨 Export dynamically
-const fontThemes = { futuristSans, minimalModern, techDisplay };
+
+const fontThemes = { systemDefault, futuristSans, minimalModern, cleanPro };
 export const fonts = fontThemes[activeFontTheme];

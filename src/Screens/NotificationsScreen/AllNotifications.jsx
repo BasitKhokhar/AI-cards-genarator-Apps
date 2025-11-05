@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { colors } from "../../Themes/colors";
+import { fonts } from "../../Themes/fonts";
 
 function AllNotifications() {
   // 📨 Static notification data
@@ -157,7 +158,6 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     borderWidth: 1,
     borderColor: colors.border,
-    // shadowColor: colors.primary,
     shadowOpacity: 0.2,
     shadowRadius: 6,
     elevation: 4,
@@ -169,18 +169,21 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 15,
-    fontWeight: "700", marginBottom:6,
     color: colors.primary,
+    marginBottom: 6,
+    fontFamily: fonts.heading, 
   },
   message: {
     fontSize: 14,
     color: colors.mutedText,
     lineHeight: 20,
+    fontFamily: fonts.body, 
   },
   time: {
     fontSize: 12,
     color: "#999",
     marginTop: 8,
     textAlign: "right",
+    fontFamily: fonts.light,
   },
 });

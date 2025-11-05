@@ -36,10 +36,10 @@ const TrendingTemplates = () => {
           {},
           navigation
         );
-
+       
         if (!res.ok) throw new Error("Failed to fetch templates");
         const data = await res.json();
-
+         console.log("response in trending ",data)
         const { templates: fetched, hasMore: moreAvailable } = data;
 
         // ✅ Calculate image height proportionally
