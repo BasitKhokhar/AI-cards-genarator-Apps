@@ -425,6 +425,7 @@ import { View, Text, Image, TextInput, TouchableOpacity, TouchableWithoutFeedbac
 import Icon from "react-native-vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { LinearGradient } from "expo-linear-gradient";
+import { AnimatePresence, MotiView } from "moti";
 import { useNavigation } from "@react-navigation/native";
 import { apiFetch } from "../../apiFetch";
 import { colors } from "../../Themes/colors";
@@ -520,9 +521,10 @@ const TemplateDetail = ({ route }) => {
       );
     }
   }, [template?.imageUrl]);
-
+ console.log("payload in cardstemplate after fetching template details",templateId, prompt, aspectRatio, resolution, width, height)
   // 🔹 Handle generation (with delay + modal show)
   const handleGenerate = async () => {
+
     const payload = { templateId, prompt, aspectRatio, resolution, width, height };
     
     console.log("🚀 Starting enhancement with payload:", payload);
@@ -744,7 +746,7 @@ const TemplateDetail = ({ route }) => {
           </LinearGradient>
         </TouchableOpacity>
         {/* Bottom Modal */}
-        <Modal visible={showGenerationBar} transparent animationType="slide">
+        {/* <Modal visible={showGenerationBar} transparent animationType="slide">
           <TouchableWithoutFeedback onPress={() => setShowGenerationBar(false)}>
             <View style={styles.overlay}>
               <View style={styles.bottomBarContainer}>
@@ -764,15 +766,51 @@ const TemplateDetail = ({ route }) => {
               </View>
             </View>
           </TouchableWithoutFeedback>
-        </Modal>
+        </Modal> */}
+  <Modal visible={showGenerationBar} transparent animationType="slide">
+          <View style={styles.overlay}>
+            {/* Background dismiss area */}
+            <TouchableWithoutFeedback onPress={() => setShowGenerationBar(false)}>
+              <View style={StyleSheet.absoluteFillObject} />
+            </TouchableWithoutFeedback>
 
+            {/* Bottom bar (non-dismissable area) */}
+            <MotiView
+              from={{ translateY: 100, opacity: 0 }}
+              animate={{ translateY: 0, opacity: 1 }}
+              exit={{ translateY: 100, opacity: 0 }}
+              transition={{ type: "timing", duration: 300 }}
+              style={styles.bottomBarContainer}
+            >
+              <View style={styles.bottomBar}>
+                <Text style={styles.bottomBarText}>
+                  {showLoader
+                    ? "Your generation has been started."
+                    : "Your image has been generated."}
+                </Text>
+
+                {/* Show this only when generation is completed */}
+                {!showLoader && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setShowGenerationBar(false);
+                      navigation.navigate("BottomTabs", { screen: "Assets" });
+                    }}
+                  >
+                    <Text style={styles.bottomBarLink}>Go to Gallery</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            </MotiView>
+          </View>
+        </Modal>
 
         {/* Loader */}
         {showLoader && (
           <EnhanceLoader
             // userId={"123"}
             modelUsed="flux/cardify-v1"
-            payload={{ templateId, query: prompt, aspectRatio, resolution, width, height, }}
+            payload={{ templateId, prompt, aspectRatio, resolution, width, height, }}
             onFinish={(status) => {
               setShowLoader(false);
               if (status === "success") {
@@ -862,14 +900,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 20,
-    paddingHorizontal: 16,
-    borderRadius: 10,
+    paddingVertical: 25,
+    paddingHorizontal: 18,
+    borderRadius: 12,
     width: "100%",
     shadowColor: "#000",
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.15,
     shadowRadius: 8,
-    elevation: 8,
+    elevation: 6,
   },
   bottomBarText: { color: "#fff", fontSize: 14, fontWeight: "500" },
   bottomBarLink: {
