@@ -49,29 +49,22 @@ const SearchHeader = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const inputField = useRef(null);
   const [showGenerationBar, setShowGenerationBar] = useState(false);
-
   // for "T" model
   const [isQuoteModalVisible, setIsQuoteModalVisible] = useState(false);
   const [quoteInput, setQuoteInput] = useState("");
   const quoteInputRef = useRef(null);
-
-
   // mdoell states
   const [showLoader, setShowLoader] = useState(false);
   const [payload, setPayload] = useState(null);
 
-
   const [layoutReady, setLayoutReady] = useState(false);
   // tour controller
   const { start, canStart } = useTourGuideController();
-
   // refs (optional if needing to measure)
   const inputFieldRef = useRef(null);
   const imageBtnRef = useRef(null);
   const quoteBtnRef = useRef(null);
   const addBtnRef = useRef(null);
-
-
 
   const isTyping = search.trim().length > 0;
 
@@ -103,7 +96,6 @@ const SearchHeader = () => {
     }
   }, [canStart, layoutReady]);
 
-
   // const handleSearch = async () => {
   //   if (!search.trim()) return;
 
@@ -132,17 +124,14 @@ const SearchHeader = () => {
   // };
   const handleSearch = async () => {
     if (!search.trim() || showLoader) return;
-
     const payload = {
-      query: search,
+      prompt: search,
       aspectRatio: aspectRatio.label,
       resolution: resolution.value,
       width,
       height: heightPx,
     };
-
     console.log("🚀 Starting generation:", payload);
-
     // Start loader + show bottom bar simultaneously
     setShowLoader(true);
     setShowGenerationBar(true);
@@ -155,11 +144,9 @@ const SearchHeader = () => {
       const timer = setTimeout(() => {
         setShowGenerationBar(false);
       }, 7000);
-
       return () => clearTimeout(timer);
     }
   }, [showGenerationBar]);
-
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -186,8 +173,6 @@ const SearchHeader = () => {
       quoteInputRef.current?.focus();
     }, 100);
   };
-
-
   // insert text into main input
   const insertQuoteText = () => {
     if (!quoteInput.trim()) return; // ignore empty input
@@ -207,7 +192,6 @@ const SearchHeader = () => {
           </View>
           <Text style={styles.title}>Make designs with AI magic</Text>
         </View>
-
         {/* Input + Toolbar */}
         {/* ========== MAIN ZONE (Step 1) ========== */}
         <TourGuideZone
@@ -219,7 +203,6 @@ const SearchHeader = () => {
           zonePadding={12}
         >
           <View style={styles.container} onLayout={() => setLayoutReady(true)}>
-
             {/* ======= INPUT FIELD (Step 2) ======= */}
             <TourGuideZone
               zone={2}
@@ -243,11 +226,9 @@ const SearchHeader = () => {
                 />
               </View>
             </TourGuideZone>
-
             {/* ======= TOOLBAR ROW ======= */}
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginVertical: 10 }}>
               <View style={[styles.toolbar, { alignItems: "center" }]}>
-
                 {/* 🖼️ IMAGE BUTTON (Step 3) */}
                 <TourGuideZone
                   zone={3}
@@ -261,7 +242,6 @@ const SearchHeader = () => {
                     <Ionicons name="image-outline" size={18} color={colors.mutedText} />
                   </TouchableOpacity>
                 </TourGuideZone>
-
                 {/* ✨ QUOTE BUTTON (Step 4) */}
                 <TourGuideZone
                   zone={4}
@@ -275,7 +255,6 @@ const SearchHeader = () => {
                     <Text style={styles.quoteText}>T</Text>
                   </TouchableOpacity>
                 </TourGuideZone>
-
                 {/* ➕ SETTINGS BUTTON (Step 5) */}
                 <TourGuideZone
                   zone={5}
@@ -316,7 +295,6 @@ const SearchHeader = () => {
                   </TouchableOpacity>
                 </TourGuideZone>
               </View>
-
             </View>
             {selectedImage && (
               <View style={styles.imageWrapper}>
@@ -331,7 +309,6 @@ const SearchHeader = () => {
             )}
           </View>
         </TourGuideZone>
-
         {/* Model for "T" */}
         <AnimatePresence>
           {isQuoteModalVisible && (
@@ -363,7 +340,6 @@ const SearchHeader = () => {
                   Type the text you want to appear on the image.
                   This text will be automatically printed when you generate the image.
                 </Text>
-
                 {/* ✍️ Input Field */}
                 <TextInput
                   ref={quoteInputRef}
@@ -376,7 +352,6 @@ const SearchHeader = () => {
                   value={quoteInput}
                   onChangeText={setQuoteInput}
                 />
-
                 {/* 🚀 Insert Button */}
                 <TouchableOpacity
                   style={styles.insertGradient}
@@ -385,7 +360,6 @@ const SearchHeader = () => {
                 >
                   <Text style={styles.insertText}>Add Text to Prompt</Text>
                 </TouchableOpacity>
-
                 {/* 💡 Small helper note */}
                 <Text style={[styles.modalSubtitle, { marginTop: 8, fontSize: 12 }]}>
                   Example: Writing “Basit Khokhar” here will print your name
@@ -395,7 +369,6 @@ const SearchHeader = () => {
             </MotiView>
           )}
         </AnimatePresence>
-
         {/* Settings Modal (keep your existing modal content) */}
         <Modal visible={isModalVisible} animationType="slide" transparent>
           <View style={styles.overlay}>
@@ -462,51 +435,63 @@ const SearchHeader = () => {
         </Modal>
         {/* Bottom statusbar Modal */}
         <Modal visible={showGenerationBar} transparent animationType="slide">
-          <TouchableWithoutFeedback onPress={() => setShowGenerationBar(false)}>
-            <View style={styles.overlay}>
-              <MotiView
-                from={{ translateY: 100, opacity: 0 }}
-                animate={{ translateY: 0, opacity: 1 }}
-                exit={{ translateY: 100, opacity: 0 }}
-                transition={{ type: "timing", duration: 300 }}
-                style={styles.bottomBarContainer}
-              >
-                <TouchableOpacity
-                  activeOpacity={0.9}
-                  style={styles.bottomBar}
-                  onPress={() => {
-                    setShowGenerationBar(false);
-                    navigation.navigate("Assets");
-                  }}
-                >
-                  <Text style={styles.bottomBarText}>Your generation has started.</Text>
-                  <Text style={styles.bottomBarLink}>Go to Gallery</Text>
-                </TouchableOpacity>
-              </MotiView>
-            </View>
-          </TouchableWithoutFeedback>
+          <View style={styles.overlay}>
+            {/* Background dismiss area */}
+            <TouchableWithoutFeedback onPress={() => setShowGenerationBar(false)}>
+              <View style={StyleSheet.absoluteFillObject} />
+            </TouchableWithoutFeedback>
+
+            {/* Bottom bar (non-dismissable area) */}
+            <MotiView
+              from={{ translateY: 100, opacity: 0 }}
+              animate={{ translateY: 0, opacity: 1 }}
+              exit={{ translateY: 100, opacity: 0 }}
+              transition={{ type: "timing", duration: 300 }}
+              style={styles.bottomBarContainer}
+            >
+              <View style={styles.bottomBar}>
+                <Text style={styles.bottomBarText}>
+                  {showLoader
+                    ? "Your generation has been started."
+                    : "Your image has been generated."}
+                </Text>
+
+                {/* Show this only when generation is completed */}
+                {!showLoader && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setShowGenerationBar(false);
+                      navigation.navigate("Assets");
+                    }}
+                  >
+                    <Text style={styles.bottomBarLink}>Go to Gallery</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            </MotiView>
+          </View>
         </Modal>
 
 
         {showLoader && (
           <EnhanceLoader
-            userId={"123"}
-            modelUsed="flux/cardify-v1"
+            // userId={"123"}
+            modelUsed="SeaDream 4.0"
             payload={payload}
-            onFinish={() => {
+            onFinish={(status) => {
               setShowLoader(false);
-              setShowGenerationBar(false);
+              if (status === "success") {
+                // ✅ Show bottom status bar again with updated text
+                setShowGenerationBar(true);
+              }
             }}
           />
         )}
       </View>
-
     </TouchableWithoutFeedback>
   );
 };
-
 export default SearchHeader;
-
 const styles = StyleSheet.create({
   headerRow: { flexDirection: "row", alignItems: "center", marginTop: 15 },
 
@@ -784,7 +769,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 25,
     paddingHorizontal: 18,
-    borderRadius: 8,
+    borderRadius: 12,
     width: "100%",
     shadowColor: "#000",
     shadowOpacity: 0.15,

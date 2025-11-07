@@ -142,6 +142,8 @@
 //     textAlign: "center",
 //   },
 // });
+
+
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { MotiView, AnimatePresence } from "moti";
@@ -151,8 +153,8 @@ import { useNavigation } from "@react-navigation/native";
 import { colors } from "../../Themes/colors";
 import { apiFetch } from "../../apiFetch";
 
-export const EnhanceLoader = ({ userId, modelUsed, payload, onFinish }) => {
-  // console.log("payload in enahcer component",payload)
+export const EnhanceLoader = ({ modelUsed, payload, onFinish }) => {
+  console.log("payload in enahcer component",payload)
   const [progressText, setProgressText] = useState("Starting...");
   const [progress, setProgress] = useState(0);
   const [showLoader, setShowLoader] = useState(true);
@@ -192,7 +194,7 @@ export const EnhanceLoader = ({ userId, modelUsed, payload, onFinish }) => {
         const res = await apiFetch(`/Model/mock-enhance`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId, modelUsed, ...payload }),
+          body: JSON.stringify({ modelUsed, ...payload }),
         });
         const data = await res.json();
 
@@ -200,16 +202,8 @@ export const EnhanceLoader = ({ userId, modelUsed, payload, onFinish }) => {
         setTimeout(() => {
           clearInterval(interval);
           setShowLoader(false);
-          navigation.navigate("AitemplateResultsScreen", {
-            imageUrl: data.enhancedImageUrl,
-            prompt: payload.query,
-            model: modelUsed,
-            createdAt: data.createdAt,
-            resolution: payload.resolution,
-            aspectratio: payload.aspectRatio,
-          });
-          if (onFinish) onFinish();
-        }, 1000); // small delay for smoother finish
+          if (onFinish) onFinish("success"); // ✅ notify parent (SearchHeader)
+        }, 1000);
       } catch (err) {
         clearInterval(interval);
         setProgressText("⚠️ Network or server error");
@@ -238,42 +232,7 @@ export const EnhanceLoader = ({ userId, modelUsed, payload, onFinish }) => {
             transition={{ type: "timing", duration: 400 }}
             style={styles.card}
           >
-            {/* Circular progress indicator */}
-            {/* <View style={{ justifyContent: "center", alignItems: "center" }}>
-              <Svg width={size} height={size}> */}
-            {/* Background ring */}
-            {/* <Circle
-                  stroke={colors.border}
-                  fill="none"
-                  cx={size / 2}
-                  cy={size / 2}
-                  r={radius}
-                  strokeWidth={strokeWidth}
-                /> */}
-            {/* Foreground progress ring */}
-            {/* <Circle
-                  stroke={colors.primary}
-                  fill="none"
-                  cx={size / 2}
-                  cy={size / 2}
-                  r={radius}
-                  strokeWidth={strokeWidth}
-                  strokeDasharray={circumference}
-                  strokeDashoffset={strokeDashoffset}
-                  strokeLinecap="round"
-                  transform={`rotate(-90 ${size / 2} ${size / 2})`}
-                />
-              </Svg> */}
 
-            {/* Rotating overlay for AI “movement” */}
-            {/* <MotiView
-                from={{ rotate: "0deg" }}
-                animate={{ rotate: "360deg" }}
-                transition={{ loop: true, type: "timing", duration: 1500 }}
-                style={styles.rotatorOverlay}
-              />
-              <Text style={styles.percentage}>{progress}%</Text>
-            </View> */}
             <View style={styles.loaderRing}>
               <Loading />
             </View>
@@ -301,7 +260,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: "center",
     width: 220,
-     borderWidth: 1.5,
+    borderWidth: 1.5,
     borderColor: colors.border,
   },
   rotatorOverlay: {
@@ -319,7 +278,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: colors.primary,
   },
-   loaderRing: {
+  loaderRing: {
     marginBottom: 12,
   },
   text: {

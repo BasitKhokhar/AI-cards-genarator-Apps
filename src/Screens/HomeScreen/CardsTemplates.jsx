@@ -421,18 +421,7 @@
 //   bottomBarLink: { color: "#fff", fontWeight: "700", textDecorationLine: "underline", fontSize: 14 },
 // });
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  Image,
-  TextInput,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  StyleSheet,
-  Modal,
-  ScrollView,
-  Dimensions,
-} from "react-native";
+import { View, Text, Image, TextInput, TouchableOpacity, TouchableWithoutFeedback, StyleSheet, Modal, ScrollView, Dimensions, } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -535,7 +524,7 @@ const TemplateDetail = ({ route }) => {
   // 🔹 Handle generation (with delay + modal show)
   const handleGenerate = async () => {
     const payload = { templateId, prompt, aspectRatio, resolution, width, height };
-
+    
     console.log("🚀 Starting enhancement with payload:", payload);
     setShowLoader(true);
     setShowGenerationBar(true);
@@ -544,7 +533,15 @@ const TemplateDetail = ({ route }) => {
     // Delay bottom bar appearance
     // setTimeout(() => setShowGenerationBar(true), 1500);
   };
-
+// 👇 Add this inside your component
+  useEffect(() => {
+    if (showGenerationBar) {
+      const timer = setTimeout(() => {
+        setShowGenerationBar(false);
+      }, 7000);
+      return () => clearTimeout(timer);
+    }
+  }, [showGenerationBar]);
   // 🔹 Auto-hide bottom modal after 5 seconds
   useEffect(() => {
     if (showGenerationBar) {
@@ -759,8 +756,10 @@ const TemplateDetail = ({ route }) => {
                     navigation.navigate("BottomTabs", { screen: "Assets" }); // ✅ Correct navigation
                   }}
                 >
-                  <Text style={styles.bottomBarText}>Your generation has started.</Text>
-                  <Text style={styles.bottomBarLink}>Go to Gallery</Text>
+                  <Text style={styles.bottomBarText}>
+                    {showLoader ? "Your generation has started." : "Your image has been generated."}
+                  </Text>
+                  <Text style={styles.bottomBarLink}> {showLoader ? "" : "Go to Gallery"}</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -771,12 +770,15 @@ const TemplateDetail = ({ route }) => {
         {/* Loader */}
         {showLoader && (
           <EnhanceLoader
-            userId={"123"}
+            // userId={"123"}
             modelUsed="flux/cardify-v1"
             payload={{ templateId, query: prompt, aspectRatio, resolution, width, height, }}
-            onFinish={() => {
+            onFinish={(status) => {
               setShowLoader(false);
-              setShowGenerationBar(false);
+              if (status === "success") {
+                // ✅ Show bottom status bar again with updated text
+                setShowGenerationBar(true);
+              }
             }}
           />
         )}

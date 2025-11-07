@@ -1,22 +1,9 @@
 import { fonts } from "./src/Themes/fonts";
 import { useFonts } from "expo-font";
-import {
-  Poppins_400Regular,
-  Poppins_600SemiBold,
-  Poppins_700Bold,
-} from "@expo-google-fonts/poppins";
-import {
-  Inter_300Light,
-  Inter_400Regular,
-  Inter_500Medium,
-  Inter_700Bold,
-} from "@expo-google-fonts/inter";
+import {Poppins_400Regular,Poppins_600SemiBold,Poppins_700Bold,} from "@expo-google-fonts/poppins";
+import {Inter_300Light,Inter_400Regular,Inter_500Medium,Inter_700Bold,} from "@expo-google-fonts/inter";
 import { Orbitron_500Medium, Orbitron_700Bold } from "@expo-google-fonts/orbitron";
-import {
-  Nunito_300Light,
-  Nunito_400Regular,
-  Nunito_500Medium,
-} from "@expo-google-fonts/nunito";
+import {Nunito_300Light,Nunito_400Regular,Nunito_500Medium,} from "@expo-google-fonts/nunito";
 import { colors } from "./src/Themes/colors";
 import React, { useState, useEffect } from "react";
 import { StripeProvider } from "@stripe/stripe-react-native";

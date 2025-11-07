@@ -5,33 +5,134 @@ const fetch = require('node-fetch');
 
 // controllers/MockModelController.js
 
+// exports.mockEnhanceImage = async (req, res) => {
+//   const {
+//     userId,
+//     modelUsed,
+//     prompt,
+//     aspectRatio,
+//     height,
+//     resolution,
+//     width,
+//   } = req.body;
+
+//   console.log("🎨 Mock enhancement request:", {
+//     userId,
+//     modelUsed,
+//     prompt,
+//     aspectRatio,
+//     height,
+//     resolution,
+//     width,
+//   });
+
+//   try {
+//     // Mock generated image URL
+//     const fixedImageUrl =
+//       "https://firebasestorage.googleapis.com/v0/b/basit-b2712.appspot.com/o/CardiFy%2Fmockapiimg.jpeg?alt=media&token=a6328f93-cd86-4cb9-9caf-14b3489dc3f5";
+
+//     // Optional simulated steps (for logs)
+//     setTimeout(() => console.log("⏳ Step 1: Preparing input..."), 2000);
+//     setTimeout(() => console.log("⚙️ Step 2: Generating image..."), 5000);
+//     setTimeout(() => console.log("📤 Step 3: Uploading to Firebase..."), 8000);
+
+//     // Save mock data to DB immediately (no need to wait for 10s)
+//     const newImage = await prisma.userGeneratedImage.create({
+
+//       data: {
+//         userId: parseInt(userId),
+//         prompt: prompt || null,
+//         imageUrl: fixedImageUrl,
+//         aspectRatio: aspectRatio || null,
+//         height: height ? parseInt(height) : null,
+//         resolution: resolution || null,
+//         width: width ? parseInt(width) : null,
+//       },
+//     });
+
+//     console.log("🗄️ Saved mock record to DB:", newImage.id);
+
+//     // Send the mock result after 10s to match frontend loader
+//     setTimeout(() => {
+//       console.log("✅ Enhancement completed.");
+//       res.json({
+//         success: true,
+//         enhancedImageUrl: fixedImageUrl,
+//         createdAt: newImage.createdAt,
+//         promptUsed: prompt,
+//       });
+//     }, 10000);
+//   } catch (err) {
+//     console.error("❌ Mock enhancement failed:", err);
+//     res.status(500).json({ error: "Mock enhancement failed" });
+//   }
+// };
 exports.mockEnhanceImage = async (req, res) => {
-  const { userId, modelUsed, prompt } = req.body;
-  console.log("🎨 Mock enhancement request:", { userId, modelUsed, prompt });
-
   try {
-    const fixedImageUrl =
-      "https://firebasestorage.googleapis.com/v0/b/basit-b2712.appspot.com/o/CardiFy%2Fsamples%2Fsample1.jpeg?alt=media&token=e6c64bfb-210d-4dbf-832e-21c1e21f031c";
+    // ✅ Get userId from middleware
+    const userId = req.user?.id;
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Unauthorized: No user found in request" });
+    }
 
+    const { modelUsed, prompt, aspectRatio, height, resolution, width, templateId } = req.body;
+
+    console.log("🎨 Mock enhancement request:", {
+      userId,
+      modelUsed,
+      prompt,
+      aspectRatio,
+      height,
+      resolution,
+      width,
+      templateId,
+    });
+
+    // Mock generated image URL
+    const fixedImageUrl =
+      "https://firebasestorage.googleapis.com/v0/b/basit-b2712.appspot.com/o/CardiFy%2Fmockapiimg.jpeg?alt=media&token=a6328f93-cd86-4cb9-9caf-14b3489dc3f5";
+
+    // Optional simulated logs
     setTimeout(() => console.log("⏳ Step 1: Preparing input..."), 2000);
     setTimeout(() => console.log("⚙️ Step 2: Generating image..."), 5000);
     setTimeout(() => console.log("📤 Step 3: Uploading to Firebase..."), 8000);
 
-    // Send result after 10s (sync with frontend)
+    // ✅ Save mock data in Prisma immediately
+    const newImage = await prisma.userGeneratedImage.create({
+      data: {
+        userId: Number(userId),
+        templateId: templateId ? Number(templateId) : null, // ✅ store templateId if provided
+        prompt: prompt || null,
+        imageUrl: fixedImageUrl,
+        aspectRatio: aspectRatio || null,
+        height: height ? Number(height) : null,
+        resolution: resolution || null,
+        width: width ? Number(width) : null,
+      },
+    });
+
+    console.log("🗄️ Saved mock record to DB:", newImage.id);
+
+    // ✅ Send mock result after 10 seconds (simulate processing delay)
     setTimeout(() => {
       console.log("✅ Enhancement completed.");
       res.json({
         success: true,
         enhancedImageUrl: fixedImageUrl,
-        createdAt: new Date(),
+        createdAt: newImage.createdAt,
         promptUsed: prompt,
+        templateId: newImage.templateId, // ✅ send it back too
       });
     }, 10000);
   } catch (err) {
-    console.error("Mock enhancement failed:", err);
-    res.status(500).json({ error: "Mock enhancement failed" });
+    console.error("❌ Mock enhancement failed:", err);
+    res.status(500).json({ success: false, message: "Mock enhancement failed" });
   }
 };
+
+
 
 // const modelInputSchemas = {
 //   'flux-kontext-apps/restore-image': 'input_image',
@@ -133,12 +234,11 @@ exports.mockEnhanceImage = async (req, res) => {
 
 // ✅ controllers/ModelController.js
 
-
 exports.getGeneratedImages = async (req, res) => {
   try {
     const userId = req.user.id;
-    const page = parseInt(req.query.page) || 1; 
-    const limit = parseInt(req.query.limit) || 10; 
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
     console.log(`📥 Fetching generated images for userId: ${userId}, page: ${page}`);

@@ -19,6 +19,7 @@ import React, { createContext, useState, useContext } from "react";
 const GenerationContext = createContext();
 
 export const GenerationProvider = ({ children }) => {
+  const [refreshKey, setRefreshKey] = useState(0);
   const [generationStatus, setGenerationStatus] = useState({
     isLoading: false,
     progress: 0,
@@ -44,13 +45,17 @@ export const GenerationProvider = ({ children }) => {
       }));
     }
 
+    // After completion
     setTimeout(() => {
       setGenerationStatus({ isLoading: false, progress: 100, message: "" });
+      setRefreshKey((prev) => prev + 1); // 🔁 trigger gallery refresh
     }, 1200);
   };
 
   return (
-    <GenerationContext.Provider value={{ generationStatus, startMockGeneration }}>
+    <GenerationContext.Provider
+      value={{ generationStatus, startMockGeneration, refreshKey }}
+    >
       {children}
     </GenerationContext.Provider>
   );

@@ -7,12 +7,12 @@ const stepLabels = {
    1: {
     title: "Guide to Features",
     description:
-      "Learn how each feature works to make your card design process smoother and faster.",
+      "Learn how each feature works to make your design process smoother and faster.",
   },
   2: {
     title: "Describe Your Idea",
     description:
-      "Describe your card design here. The AI will generate cards based on your input.",
+      "Describe your design here. The AI will generate images based on your input.",
   },
   3: {
     title: "Add Image Reference",
@@ -22,7 +22,7 @@ const stepLabels = {
   4: {
     title: "Quote Shortcut",
     description:
-      'Tap “T” to quickly insert quotation marks for short quotes or phrases.',
+      'Tap “T” to display your Text on attached refrence image.',
   },
   5: {
     title: "Advanced Settings",

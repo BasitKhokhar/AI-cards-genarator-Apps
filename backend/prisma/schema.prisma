@@ -45,19 +45,24 @@ model CardTemplate {
 
 
 model UserGeneratedImage {
-  id         Int           @id @default(autoincrement())
-  userId     Int
-  templateId Int?                          // optional: which template was used
-  prompt     String?       @db.Text        // prompt used for generation
-  imageUrl   String        @db.VarChar(512) // generated image url (firebase)
-  createdAt  DateTime      @default(now())
+  id           Int           @id @default(autoincrement())
+  userId       Int
+  templateId   Int?                          // optional: which template was used
+  prompt       String?       @db.Text        // text prompt used for generation
+  imageUrl     String        @db.VarChar(512) // generated image url (firebase)
+  aspectRatio  String?       @db.VarChar(20)
+  width        Int?
+  height       Int?
+  resolution   String?       @db.VarChar(50)
+  createdAt    DateTime      @default(now())
 
-  user       users         @relation(fields: [userId], references: [user_id], onDelete: Cascade)
-  template   CardTemplate? @relation(fields: [templateId], references: [id])
+  user         users         @relation(fields: [userId], references: [user_id], onDelete: Cascade)
+  template     CardTemplate? @relation(fields: [templateId], references: [id])
 
   @@index([userId])
   @@index([templateId])
 }
+
 
 model UserFavouriteTemplate {
   id         Int          @id @default(autoincrement())

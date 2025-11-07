@@ -4,28 +4,31 @@ const { verifyToken } = require("../middleware/authMiddleware");
 const {
   getCategories,
   getTemplatesByCategory,getTemplatesBySpecificCategory,
-  getTemplateById,
+  getTemplateById,getImageById,
   getTrendingTemplates,
   searchTemplates,getRelatedTemplates
 } = require("../controllers/CardsController");
 
 router.get("/templates/:id/related",verifyToken ,getRelatedTemplates);
 
-// ✅ Get all categories
+//  Get all categories
 router.get("/categories", verifyToken, getCategories);
 
-// ✅ Get templates for a specific category (paginated)
+//  Get templates for a specific category (paginated)
 router.get("/categories/:id/templates", verifyToken, getTemplatesBySpecificCategory);
 
-// ✅ Get templates for a specific category (paginated)
+//  Get templates for a specific category (paginated)
 router.get("/categories/:id/templates", verifyToken, getTemplatesByCategory);
-// ✅ Search templates
+//  Search templates
 router.get("/templates/search", verifyToken, searchTemplates);
 
-// ✅ Get a single template
+// Get a single template
 router.get("/templates/:id", verifyToken, getTemplateById);
+//  Get a single template
+router.get("/image/:id",verifyToken, getImageById);
 
-// ✅ Get trending templates (for infinite scroll)
+
+//  Get trending templates (for infinite scroll)
 router.get("/trendingtemplates/home", verifyToken, getTrendingTemplates);
 
 module.exports = router;

@@ -6,5 +6,5 @@ const {  getGeneratedImages,mockEnhanceImage } = require('../controllers/ModelCo
 // router.post('/enhance',verifyToken, enhanceImage);
 router.get('/gallery-images',verifyToken, getGeneratedImages);
 
-router.post("/mock-enhance", mockEnhanceImage);
+router.post("/mock-enhance",verifyToken, mockEnhanceImage);
 module.exports = router;

@@ -23,9 +23,7 @@ exports.getCategories = async (req, res) => {
   }
 };
 
-/**
- * ✅ Fetch templates for a specific category (with pagination)
- */
+/** ✅ Fetch templates for a specific category (with pagination)*/
 exports.getTemplatesByCategory = async (req, res) => {
   try {
     const categoryId = parseInt(req.params.id);
@@ -54,7 +52,7 @@ exports.getTemplatesByCategory = async (req, res) => {
   }
 };
 
-
+// fetch a tempalte details by id when user click on any template
 exports.getTemplateById = async (req, res) => {
   console.log("📥 [API] /cards/templates/:id called", req.params);
 
@@ -105,6 +103,49 @@ exports.getTemplateById = async (req, res) => {
   }
 };
 
+// ✅ Get single image details from gallery table
+exports.getImageById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user?.id; // 👈 safely extract from token middleware
+
+    console.log("🆔 Image ID:", id, "| 👤 User ID:", userId);
+
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized: Missing user ID" });
+    }
+
+    // ✅ Fetch image owned by this user (protects from unauthorized access)
+    const image = await prisma.userGeneratedImage.findFirst({
+      where: {
+        id: Number(id),
+        userId: Number(userId),
+      },
+    });
+
+    if (!image) {
+      return res.status(404).json({ success: false, message: "Image not found or not owned by user" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      image: {
+        id: image.id,
+        url: image.imageUrl,
+        prompt: image.prompt,
+        createdAt: image.createdAt,
+        resolution: image.resolution,
+        aspectratio: image.aspectRatio,
+        model: image.model || "Seedream 4.0 (mock)",
+      },
+    });
+  } catch (err) {
+    console.error("❌ Error fetching image details:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+
 // ✅ Get Trending Templates (with pagination for infinite scroll)
 exports.getTrendingTemplates = async (req, res) => {
   try {
@@ -120,12 +161,12 @@ exports.getTrendingTemplates = async (req, res) => {
       select: {
         id: true,
         title: true,
-        description: true,
+        // description: true,
         imageUrl: true,
-        prompt: true,
-        uses: true,
-        aspectRatio: true,
-        createdAt: true,
+        // prompt: true,
+        // uses: true,
+        // aspectRatio: true,
+        // createdAt: true,
       },
     });
 
@@ -141,7 +182,7 @@ exports.getTrendingTemplates = async (req, res) => {
   }
 };
 
-// ✅ src/controllers/CardsController.js
+// ✅ search templates by user searching
 exports.searchTemplates = async (req, res) => {
   try {
     const { q, page = 1, limit = 10 } = req.query;
@@ -208,7 +249,7 @@ exports.searchTemplates = async (req, res) => {
 
 
 /**
- * ✅ Fetch templates for a specific category (with pagination + hasMore flag)
+ * ✅ Fetch templates for a specific category/usecommmunity btn (with pagination + hasMore flag)
  */
 exports.getTemplatesBySpecificCategory = async (req, res) => {
   try {
