@@ -913,7 +913,6 @@ const styles = StyleSheet.create({
   bottomBarLink: {
     color: "#fff",
     fontWeight: "700",
-    textDecorationLine: "underline",
     fontSize: 14,
   },
 });
