@@ -5,7 +5,7 @@ import * as Animatable from "react-native-animatable";
 import { colors } from "../../Themes/colors"; 
 
 const SplashScreen = ({ navigation }) => {
-  const fullText = "Welcome to CardiFy-AI — Your AI Designer for Every Occasion";
+  const fullText = "Welcome to PicNova-AI — Your AI Designer for Every Occasion";
   const [displayedText, setDisplayedText] = useState("");
 
   useEffect(() => {
@@ -28,7 +28,7 @@ const SplashScreen = ({ navigation }) => {
 
   return (
     <LinearGradient
-      colors={colors.gradients.deepTech} // ✅ using app gradient background
+      colors={colors.gradients.deepTech} 
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.container}
@@ -46,7 +46,7 @@ const SplashScreen = ({ navigation }) => {
       <Animatable.Image
         animation="fadeInDown"
         duration={2000}
-        source={require("../../../assets/logo.png")}
+        source={require("../../../assets/logoo.png")}
         style={styles.logo}
       />
 
@@ -86,9 +86,9 @@ const styles = StyleSheet.create({
     width: 250,
     height: 250,
     borderRadius: 125,
-    backgroundColor: colors.primary, // ✅ soft cyan glow
+    backgroundColor: colors.primary, 
     opacity: 0.15,
-    shadowColor: colors.accent, // ✅ deep bluish accent
+    shadowColor: colors.accent, 
     shadowOpacity: 0.8,
     shadowRadius: 40,
   },
@@ -97,9 +97,6 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 28,
     marginBottom: 30,
-    // borderWidth: 2,
-    // borderColor: colors.primary, // ✅ primary highlight
-    // shadowColor: colors.accent, // ✅ accent neon shadow
     shadowOpacity: 0.8,
     shadowRadius: 25,
   },

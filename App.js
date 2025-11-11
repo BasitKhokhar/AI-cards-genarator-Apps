@@ -1,19 +1,20 @@
 import { fonts } from "./src/Themes/fonts";
+
 import { useFonts } from "expo-font";
-import {Poppins_400Regular,Poppins_600SemiBold,Poppins_700Bold,} from "@expo-google-fonts/poppins";
-import {Inter_300Light,Inter_400Regular,Inter_500Medium,Inter_700Bold,} from "@expo-google-fonts/inter";
+import { Poppins_400Regular, Poppins_600SemiBold, Poppins_700Bold, } from "@expo-google-fonts/poppins";
+import { Inter_300Light, Inter_400Regular, Inter_500Medium, Inter_700Bold, } from "@expo-google-fonts/inter";
 import { Orbitron_500Medium, Orbitron_700Bold } from "@expo-google-fonts/orbitron";
-import {Nunito_300Light,Nunito_400Regular,Nunito_500Medium,} from "@expo-google-fonts/nunito";
+import { Nunito_300Light, Nunito_400Regular, Nunito_500Medium, } from "@expo-google-fonts/nunito";
 import { colors } from "./src/Themes/colors";
 import React, { useState, useEffect } from "react";
 import { StripeProvider } from "@stripe/stripe-react-native";
-import { View, Image, Text, StyleSheet, TouchableOpacity, ActivityIndicator  } from "react-native";
+import { View, Image, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
 
 import { TourGuideProvider } from "rn-tourguide";
 // import RootNavigator from "./src/navigation/RootNavigator";
 import { NavigationContainer } from "@react-navigation/native";
 
-import { createStackNavigator } from "@react-navigation/stack";
+import { createStackNavigator, CardStyleInterpolators } from "@react-navigation/stack";
 import { LinearGradient } from "expo-linear-gradient";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -78,7 +79,14 @@ const MainLayout = ({ navigation, children, currentScreen }) => {
       {/* 🔥 Header */}
       <View style={styles.header}>
         <View style={styles.headerItem}>
-          <Image source={require("./assets/logo.png")} style={styles.logo} />
+          <View style={styles.logoWrapper}>
+            <Image
+              source={require("./assets/logoo.png")}
+              style={styles.logo}
+              resizeMode="cover" // fills container
+            />
+          </View>
+
         </View>
         <View style={styles.headerRight}>
           {/* 💎 Pro Button */}
@@ -208,8 +216,8 @@ export const commonHeaderOptions = {
 };
 
 const App = () => {
- // for diffferent custom fonts 
- const [fontsLoaded] = useFonts({
+  // for diffferent custom fonts 
+  const [fontsLoaded] = useFonts({
     Orbitron_500Medium,
     Orbitron_700Bold,
     Inter_300Light,
@@ -224,7 +232,7 @@ const App = () => {
     Nunito_500Medium,
   });
 
- 
+
 
   const [userId, setUserId] = useState(null);
   const [checkingLogin, setCheckingLogin] = useState(true);
@@ -308,7 +316,7 @@ const App = () => {
     return <SplashScreen4 onNext={() => setIsSplash4Visible(false)} />;
   }
 
- // ✅ Conditional rendering happens AFTER all hooks
+  // ✅ Conditional rendering happens AFTER all hooks
   if (!fontsLoaded) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -338,7 +346,12 @@ const App = () => {
             merchantDisplayName="Basit Sanitary App"
           >
             <NavigationContainer>
-              <Stack.Navigator initialRouteName={userId ? "Main" : "Login"}>
+              <Stack.Navigator initialRouteName={userId ? "Main" : "Login"}
+                screenOptions={{
+               
+                  cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid,
+                }}
+              >
                 <Stack.Screen name="Signup" component={SignupScreen} options={{ headerShown: false }} />
                 <Stack.Screen name="Login" options={{ headerShown: false }}>
                   {(props) => <LoginScreen {...props} setUserId={setUserId} />}
@@ -346,7 +359,7 @@ const App = () => {
                 <Stack.Screen name="Main" options={{ headerShown: false }}>
                   {(props) => <BottomTabs {...props} />}
                 </Stack.Screen>
-                 <Stack.Screen name="BottomTabs" component={BottomTabs} options={{ headerShown: false }}/>
+                <Stack.Screen name="BottomTabs" component={BottomTabs} options={{ headerShown: false }} />
 
                 <Stack.Screen name="AllNotifications" component={AllNotifications} options={{ title: "All Notifications", ...commonHeaderOptions, }} />
                 <Stack.Screen name="templatefeatures" component={TemplateDetail} options={{
@@ -447,11 +460,20 @@ const styles = StyleSheet.create({
     textShadowRadius: 4,
   },
 
-  logo: {
-    width: 90,
-    height: 70,
+  logoWrapper: {
+    width: 60,
+    height: 60,
     borderRadius: 12,
+    borderWidth: 1.5,
+    borderColor: colors.primary,
+    overflow: "hidden", // ✅ ensures image stays inside border perfectly
   },
+
+  logo: {
+    width: "100%",
+    height: "100%",
+  },
+
 
   // ⚡ App Title
   appTitle: {

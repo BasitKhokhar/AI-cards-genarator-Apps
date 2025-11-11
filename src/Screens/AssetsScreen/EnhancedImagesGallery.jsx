@@ -816,9 +816,9 @@ import {
   ActivityIndicator,
   Text,
   FlatList,
-  Dimensions,
+  Dimensions, RefreshControl
 } from "react-native";
-import { useFocusEffect,useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MotiView, AnimatePresence } from "moti";
 import { colors } from "../../Themes/colors";
@@ -831,7 +831,7 @@ const { width } = Dimensions.get("window");
 const CARD_WIDTH = (width - 36) / 2;
 
 const EnhancedImageGallery = () => {
-   const navigation = useNavigation();
+  const navigation = useNavigation();
   const { generationStatus, refreshKey } = useGeneration();
   const { isLoading } = generationStatus || {};
   const [images, setImages] = useState([]);
@@ -839,6 +839,7 @@ const EnhancedImageGallery = () => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
+  const [refreshing, setRefreshing] = useState(false);
 
   // ✅ Fetch gallery data (paginated)
   const fetchGallery = useCallback(
@@ -903,6 +904,13 @@ const EnhancedImageGallery = () => {
       }
     }, [refreshKey, fetchGallery])
   );
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchGallery(1);
+    setRefreshing(false);
+  }, [fetchGallery]);
+
 
   const handleLoadMore = useCallback(() => {
     if (loadingMore || !hasMore || loading) return;
@@ -992,6 +1000,13 @@ const EnhancedImageGallery = () => {
         onEndReachedThreshold={0.3}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 100 }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.primary} // spinner color
+          />
+        }
         ListFooterComponent={
           loadingMore ? (
             <View style={{ paddingVertical: 20 }}>

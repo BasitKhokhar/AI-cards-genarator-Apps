@@ -1,9 +1,8 @@
-
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Image } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import * as Animatable from "react-native-animatable";
-import { colors } from "../../Themes/colors"; 
+import { colors } from "../../Themes/colors";
 import Constants from "expo-constants";
 
 const API_BASE_URL = Constants.expoConfig.extra.API_BASE_URL;
@@ -12,14 +11,18 @@ const SplashScreen1 = () => {
   return (
     <View style={styles.container}>
       {/* Animated Logo */}
-      <Animatable.Image
+      <Animatable.View
         animation="zoomIn"
         duration={1500}
-        source={require("../../../assets/mainlogo.jpg")}
-        style={styles.image}
-      />
+        style={styles.imageWrapper}
+      >
+        <Image
+          source={require("../../../assets/logoo.png")}
+          style={styles.image}
+        />
+      </Animatable.View>
 
-      {/* Bottom credits */}
+      {/* Bottom Credits */}
       <View style={styles.bottomTextContainer}>
         <Text style={styles.bottomText}>
           Made With <FontAwesome name="heart" size={20} color={colors.primary} />
@@ -33,25 +36,27 @@ const SplashScreen1 = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.cardsbackground, 
+    backgroundColor: colors.cardsbackground,
     justifyContent: "center",
     alignItems: "center",
+  },
+  imageWrapper: {
+     width: 110,
+    height: 110,
+    borderWidth: 2,
+    borderColor: colors.primary,
+    borderRadius: 12,
+    overflow: "hidden", // ✅ ensures border hugs image perfectly
   },
   image: {
     width: 110,
     height: 110,
-    resizeMode: "contain",
-    shadowColor: colors.primary,
-    shadowOpacity: 0.5,
-    shadowRadius: 20,
-    elevation: 15,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: colors.text,
+    resizeMode: "contain", // ✅ keeps image proportions clean
+    backgroundColor: "transparent",
   },
   bottomTextContainer: {
     position: "absolute",
-    bottom: 70,
+    bottom: 80,
     alignItems: "center",
   },
   bottomText: {

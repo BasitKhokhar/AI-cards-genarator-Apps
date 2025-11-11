@@ -5,7 +5,7 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
-  Dimensions,
+  Dimensions,RefreshControl,
   FlatList,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -19,6 +19,7 @@ const CARD_WIDTH = (width - 36) / 2;
 
 const TrendingTemplates = () => {
   const [templates, setTemplates] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -36,10 +37,10 @@ const TrendingTemplates = () => {
           {},
           navigation
         );
-       
+
         if (!res.ok) throw new Error("Failed to fetch templates");
         const data = await res.json();
-         console.log("response in trending ",data)
+        console.log("response in trending ", data)
         const { templates: fetched, hasMore: moreAvailable } = data;
 
         // ✅ Calculate image height proportionally
@@ -78,7 +79,12 @@ const TrendingTemplates = () => {
   useEffect(() => {
     fetchTemplates(1);
   }, [fetchTemplates]);
-
+  // for refreshiing //
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchTemplates(1);
+    setRefreshing(false);
+  }, [fetchTemplates]);
   // ✅ Infinite scroll
   const handleLoadMore = useCallback(() => {
     if (loadingMore || !hasMore) return;
@@ -147,6 +153,13 @@ const TrendingTemplates = () => {
         keyExtractor={() => "masonry"}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.2}
+         refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={colors.primary} // spinner color
+            />
+          }
         showsVerticalScrollIndicator={false}
       />
     </View>

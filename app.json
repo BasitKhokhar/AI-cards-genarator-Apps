@@ -5,7 +5,7 @@
     "owner": "basitkhokhar4949",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/logo.png",
+    "icon": "./assets/logoo.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
@@ -18,12 +18,12 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/logo.png"
+        "foregroundImage": "./assets/logoo.png"
       },
       "package": "com.basitkhokhar4949.BasitSanitaryApp"
     },
     "web": {
-      "favicon": "./assets/logo.png"
+      "favicon": "./assets/logoo.png"
     },
     "extra": {
       "stripePublishableKey": "pk_test_51QDQ8SFwMkFMTBSOlvaQpkvAtkXcpvW94d77oG94OK83dzf23WzbkvrVU29y0HaJLP4TbWhtdnqQTxCbit7N9AuN009e4UsCVL",
