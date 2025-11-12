@@ -456,17 +456,26 @@ const SearchHeader = () => {
                     : "Your image has been generated."}
                 </Text>
 
+               
                 {/* Show this only when generation is completed */}
-                {!showLoader && (
+                <TouchableOpacity
+                    onPress={() => {
+                      setShowGenerationBar(false);
+                      navigation.navigate("Assets");
+                    }}
+                  >
+                    <Text style={styles.bottomBarLink}>Go to Assets</Text>
+                  </TouchableOpacity>
+                {/* {!showLoader && (
                   <TouchableOpacity
                     onPress={() => {
                       setShowGenerationBar(false);
                       navigation.navigate("Assets");
                     }}
                   >
-                    <Text style={styles.bottomBarLink}>Go to Gallery</Text>
+                    <Text style={styles.bottomBarLink}>Go to Assets</Text>
                   </TouchableOpacity>
-                )}
+                )} */}
               </View>
             </MotiView>
           </View>

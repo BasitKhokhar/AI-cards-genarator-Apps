@@ -12,6 +12,24 @@ model logoimage {
   image_url String @db.VarChar(255)
 }
 
+model Notification {
+  id          Int      @id @default(autoincrement())
+  userId      Int?                                 // null if it's a global (admin broadcast)
+  title       String   @db.VarChar(255)
+  message     String   @db.Text
+  type        String   @default("system")          // e.g. "system", "admin", "image_generated"
+  isRead      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // ✅ Add relation name for clarity
+  user        users?   @relation("UserNotifications", fields: [userId], references: [user_id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
+}
+
+
 model sliderimages {
   id              Int    @id @default(autoincrement())
   sliderimage_url String @db.VarChar(255)
@@ -101,6 +119,9 @@ model users {
   userimages   userimages[]
   generated    UserGeneratedImage[]
   favourites   UserFavouriteTemplate[]
+  
+  // ✅ Add this reverse relation:
+  notifications Notification[]      @relation("UserNotifications")
 }
 
 

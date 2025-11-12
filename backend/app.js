@@ -15,7 +15,7 @@ const ModelRoutes = require('./routes/ModelRoutes');
 
 const paymentRoutes = require('./routes/paymentRoutes');
 const contentRoutes = require('./routes/contentRoutes');
-
+const notificationsRoutes = require('./routes/NotificationsRoutes');
 const splashScreensRoutes = require('./routes/splashScreensRoutes');
 
 const app = express();
@@ -36,7 +36,7 @@ app.use('/Model', ModelRoutes);
 
 app.use('/payments', paymentRoutes);
 app.use('/content', contentRoutes);
-
+app.use('/notifications', notificationsRoutes);
 app.use('/splashscreens', splashScreensRoutes);
 
 app.get('/', (req, res) => res.send("Basit's modular backend is live 🚀"));

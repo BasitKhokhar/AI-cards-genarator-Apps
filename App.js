@@ -63,6 +63,7 @@ import FAQ from "./src/Screens/UserScreen/FAQ";
 // import StripePayment from "./Components/Cart/StripePayment";
 import LogoutScreen from "./src/Screens/UserScreen/LogoutScreen";
 import 'react-native-gesture-handler';
+import { useGeneration } from "./src/Context/ImageGenerationContext";
 import * as SecureStore from 'expo-secure-store';
 import Constants from 'expo-constants';
 import PrivacyPolicy from "./src/Screens/UserScreen/PrivacyPolicy";
@@ -73,6 +74,7 @@ const Tab = createBottomTabNavigator();
 
 const MainLayout = ({ navigation, children, currentScreen }) => {
   // const { theme } = useTheme();
+    const { unreadCount } = useGeneration();
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   return (
     <View style={styles.container}>
@@ -106,7 +108,7 @@ const MainLayout = ({ navigation, children, currentScreen }) => {
           </TouchableOpacity>
 
           {/* 🔔 Notification Icon */}
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() => navigation.navigate("AllNotifications")}
             style={[styles.circularButton, { borderWidth: 2, borderColor: colors.primary }]}
             activeOpacity={0.8}
@@ -114,6 +116,33 @@ const MainLayout = ({ navigation, children, currentScreen }) => {
             <View style={[styles.circularGradient, { backgroundColor: "#1f1f1f" }]}>
               <Icon name="notifications" size={22} color="#fff" />
             </View>
+          </TouchableOpacity> */}
+            <TouchableOpacity
+           style={[styles.circularButton, {position:'relative', borderWidth: 2, borderColor: colors.primary }]}
+            onPress={() => navigation.navigate("AllNotifications")}
+          >
+            <View
+             style={[styles.circularGradient, { backgroundColor: "#1f1f1f" }]}
+            >
+              <Icon name="notifications" size={22} color="#fff" />
+            </View>
+            {unreadCount > 0 && (
+              <View
+                style={{
+                  position: "absolute",
+                  right: -2,
+                  top: -2,
+                  backgroundColor: "red",
+                  borderRadius: 8,
+                  width: 16,
+                  height: 16,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ color: "white", fontSize: 10 }}>{unreadCount}</Text>
+              </View>
+            )}
           </TouchableOpacity>
         </View>
       </View>

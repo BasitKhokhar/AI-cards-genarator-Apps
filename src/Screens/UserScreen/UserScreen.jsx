@@ -958,14 +958,14 @@ const [showLogoutModal, setShowLogoutModal] = useState(false);
                 style={[styles.modalButton, { backgroundColor: colors.secondary }]}
                 onPress={() => setShowLogoutModal(false)}
               >
-                <Text style={{ color: colors.text }}>Cancel</Text>
+                <Text style={{ color: colors.text ,fontWeight:'600' }}>Cancel</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[styles.modalButton, { backgroundColor: colors.error }]}
+                style={[styles.modalButton, { backgroundColor: colors.text }]}
                 onPress={handleLogout}
               >
-                <Text style={{ color: "#fff" }}>Confirm</Text>
+                <Text style={{ color:colors.error,fontWeight:'600' }}>Confirm</Text>
               </TouchableOpacity>
             </View>
           </View>

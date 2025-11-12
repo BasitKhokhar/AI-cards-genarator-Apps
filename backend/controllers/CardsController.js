@@ -174,7 +174,7 @@ exports.getTrendingTemplates = async (req, res) => {
 
     res.status(200).json({
       templates,
-      hasMore: skip + limit < totalCount, // ✅ tells frontend if more data available
+      hasMore: skip + limit < totalCount, 
     });
   } catch (err) {
     console.error("❌ Error fetching trending templates:", err);
