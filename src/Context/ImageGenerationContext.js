@@ -102,8 +102,8 @@ export const GenerationProvider = ({ children }) => {
       await apiFetch("/notifications/Createnotifications", {
         method: "POST",
         body: JSON.stringify({
-          title: "AI Image Generated ✅",
-          message: `Your prompt "${payload.prompt}" has been generated successfully.`,
+          title: "New Generated Image",
+          message: `Your image of prompt "${payload.prompt}" has been generated successfully.`,
         }),
         headers: { "Content-Type": "application/json" },
       });

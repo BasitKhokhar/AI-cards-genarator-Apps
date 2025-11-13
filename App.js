@@ -74,7 +74,7 @@ const Tab = createBottomTabNavigator();
 
 const MainLayout = ({ navigation, children, currentScreen }) => {
   // const { theme } = useTheme();
-    const { unreadCount } = useGeneration();
+  const { unreadCount } = useGeneration();
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   return (
     <View style={styles.container}>
@@ -108,21 +108,12 @@ const MainLayout = ({ navigation, children, currentScreen }) => {
           </TouchableOpacity>
 
           {/* 🔔 Notification Icon */}
-          {/* <TouchableOpacity
-            onPress={() => navigation.navigate("AllNotifications")}
-            style={[styles.circularButton, { borderWidth: 2, borderColor: colors.primary }]}
-            activeOpacity={0.8}
-          >
-            <View style={[styles.circularGradient, { backgroundColor: "#1f1f1f" }]}>
-              <Icon name="notifications" size={22} color="#fff" />
-            </View>
-          </TouchableOpacity> */}
-            <TouchableOpacity
-           style={[styles.circularButton, {position:'relative', borderWidth: 2, borderColor: colors.primary }]}
+          <TouchableOpacity
+            style={[styles.circularButton, { position: 'relative', borderWidth: 2, borderColor: colors.primary }]}
             onPress={() => navigation.navigate("AllNotifications")}
           >
             <View
-             style={[styles.circularGradient, { backgroundColor: "#1f1f1f" }]}
+              style={[styles.circularGradient, { backgroundColor: "#1f1f1f" }]}
             >
               <Icon name="notifications" size={22} color="#fff" />
             </View>
@@ -138,6 +129,7 @@ const MainLayout = ({ navigation, children, currentScreen }) => {
                   height: 16,
                   justifyContent: "center",
                   alignItems: "center",
+                  zIndex: 999
                 }}
               >
                 <Text style={{ color: "white", fontSize: 10 }}>{unreadCount}</Text>
@@ -377,7 +369,7 @@ const App = () => {
             <NavigationContainer>
               <Stack.Navigator initialRouteName={userId ? "Main" : "Login"}
                 screenOptions={{
-               
+
                   cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid,
                 }}
               >
@@ -461,7 +453,7 @@ const styles = StyleSheet.create({
     width: 45,
     height: 45,
     borderRadius: 24,
-    overflow: "hidden",
+    // overflow: "hidden",
     justifyContent: "center",
     alignItems: "center",
     elevation: 8,
@@ -490,12 +482,12 @@ const styles = StyleSheet.create({
   },
 
   logoWrapper: {
-    width: 60,
-    height: 60,
+    width: 50,
+    height: 50,
     borderRadius: 12,
     borderWidth: 1.5,
     borderColor: colors.primary,
-    overflow: "hidden", // ✅ ensures image stays inside border perfectly
+    overflow: "hidden", 
   },
 
   logo: {

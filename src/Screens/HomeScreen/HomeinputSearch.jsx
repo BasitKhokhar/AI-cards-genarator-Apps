@@ -490,7 +490,6 @@ const SearchHeader = () => {
             onFinish={(status) => {
               setShowLoader(false);
               if (status === "success") {
-                // ✅ Show bottom status bar again with updated text
                 setShowGenerationBar(true);
               }
             }}

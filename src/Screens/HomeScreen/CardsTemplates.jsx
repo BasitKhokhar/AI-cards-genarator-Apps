@@ -790,16 +790,24 @@ const TemplateDetail = ({ route }) => {
                 </Text>
 
                 {/* Show this only when generation is completed */}
-                {!showLoader && (
+                {/* {!showLoader && (
                   <TouchableOpacity
                     onPress={() => {
                       setShowGenerationBar(false);
                       navigation.navigate("BottomTabs", { screen: "Assets" });
                     }}
                   >
-                    <Text style={styles.bottomBarLink}>Go to Gallery</Text>
+                    <Text style={styles.bottomBarLink}>Go to Assets</Text>
                   </TouchableOpacity>
-                )}
+                )} */}
+                <TouchableOpacity
+                    onPress={() => {
+                      setShowGenerationBar(false);
+                      navigation.navigate("BottomTabs", { screen: "Assets" });
+                    }}
+                  >
+                    <Text style={styles.bottomBarLink}>Go to Assets</Text>
+                  </TouchableOpacity>
               </View>
             </MotiView>
           </View>

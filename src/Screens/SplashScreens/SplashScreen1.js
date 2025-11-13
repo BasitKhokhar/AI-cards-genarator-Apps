@@ -43,8 +43,8 @@ const styles = StyleSheet.create({
   imageWrapper: {
      width: 110,
     height: 110,
-    borderWidth: 2,
-    borderColor: colors.primary,
+    // borderWidth: 2,
+    // borderColor: colors.primary,
     borderRadius: 12,
     overflow: "hidden", // ✅ ensures border hugs image perfectly
   },

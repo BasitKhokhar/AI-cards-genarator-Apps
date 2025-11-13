@@ -1,16 +1,45 @@
 const prisma = require("../prisma/client");
 
 // ✅ Get all notifications (latest first)
+// exports.getNotifications = async (req, res) => {
+//   try {
+//     const notifications = await prisma.notification.findMany({
+//       where: { userId: req.user.id },
+//       orderBy: { createdAt: "desc" },
+//     });
+
+//     const unreadCount = notifications.filter((n) => !n.isRead).length;
+
+//     res.json({ success: true, notifications, unreadCount });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ success: false, message: "Failed to fetch notifications" });
+//   }
+// };
 exports.getNotifications = async (req, res) => {
   try {
+    const userId = req.user.id;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
     const notifications = await prisma.notification.findMany({
-      where: { userId: req.user.id },
+      where: { userId },
       orderBy: { createdAt: "desc" },
+      skip,
+      take: limit,
     });
+
+    const totalCount = await prisma.notification.count({ where: { userId } });
 
     const unreadCount = notifications.filter((n) => !n.isRead).length;
 
-    res.json({ success: true, notifications, unreadCount });
+    res.json({
+      success: true,
+      notifications,
+      unreadCount,
+      hasMore: skip + limit < totalCount, 
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: "Failed to fetch notifications" });
